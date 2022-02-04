@@ -8,13 +8,14 @@
 [![Development Status](https://img.shields.io/pypi/status/napari-surface-processing.svg)](https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-surface-processing)](https://napari-hub.org/plugins/napari-surface-processing)
 
-Edit and analyse surface layers using [pymeshlab](https://pymeshlab.readthedocs.io/).
+Edit and analyse surface layers using [pymeshlab](https://pymeshlab.readthedocs.io/) in [napari].
 
 ## Usage
 
-You find a couple of surface-generation, -smoothing and analysis functions in the menu `Tools > Surfaces`
+You find a couple of surface generation, smoothing and analysis functions in the menu `Tools > Surfaces`. For running 
+the shown operations from scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-surface-processing/blob/main/docs/demo.ipynb).
 
-![img.png](docs/screenshot.png)
+![img.png](https://github.com/haesleinhuepf/napari-surface-processing/blob/main/docs/screenshot.png)
 
 ## Installation
 
