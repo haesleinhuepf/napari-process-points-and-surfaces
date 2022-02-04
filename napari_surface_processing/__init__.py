@@ -56,7 +56,6 @@ def largest_label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceDa
 
 
 @register_function(menu="Surfaces > Convex hull (pymeshlab, nsurfpro)")
-@time_slicer
 def convex_hull(surface: SurfaceData, viewer:napari.Viewer=None) -> SurfaceData:
     import pymeshlab
     mesh = pymeshlab.Mesh(surface[0], surface[1])
@@ -76,7 +75,6 @@ def convex_hull(surface: SurfaceData, viewer:napari.Viewer=None) -> SurfaceData:
 
 
 @register_function(menu="Surfaces > Laplacian smooth (pymeshlab, nsurfpro)")
-@time_slicer
 def laplacian_smooth(surface: SurfaceData, steps_mooth_num: int = 10,
                             viewer:napari.Viewer=None) -> SurfaceData:
     import pymeshlab
@@ -94,7 +92,6 @@ def laplacian_smooth(surface: SurfaceData, steps_mooth_num: int = 10,
     return (vertices, faces, values)
 
 @register_function(menu="Surfaces > Taubin smooth (pymeshlab, nsurfpro)")
-@time_slicer
 def taubin_smooth(surface: SurfaceData,
                   lambda_: float = 0.5,
                   mu: float = -0.53,
@@ -122,7 +119,6 @@ def taubin_smooth(surface: SurfaceData,
 
 
 @register_function(menu="Surfaces > Simplification clustering decimation (pymeshlab, nsurfpro)")
-@time_slicer
 def simplification_clustering_decimation(surface: SurfaceData,
                                          threshold_percentage: float = 1,
                                          viewer:napari.Viewer=None
@@ -153,7 +149,6 @@ class CurvatureType(Enum):
     approxmean = 'ApproxMean'
 
 @register_function(menu="Surfaces > Colorize curvature (apss, pymeshlab, nsurfpro)")
-@time_slicer
 def colorize_curvature_apss(surface: SurfaceData,
                             filter_scale: float = 2,
                             projection_accuracy: float = 0.0001,
