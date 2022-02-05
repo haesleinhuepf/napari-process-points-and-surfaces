@@ -4,7 +4,7 @@
 
 napari
 scikit-image
-pymeshlab
+open3d
 napari-tools-menu
 napari-time-slicer
 -e .
