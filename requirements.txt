@@ -5,6 +5,8 @@
 napari
 scikit-image
 open3d
+ipyvtklink
+vedo
 napari-tools-menu
 napari-time-slicer
 -e .

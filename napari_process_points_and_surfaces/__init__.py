@@ -11,6 +11,7 @@ import numpy as np
 import napari
 
 from napari_time_slicer import time_slicer
+from ._quantification import add_quality, Quality
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
@@ -30,7 +31,8 @@ def napari_experimental_provide_function():
             surface_from_point_cloud_alpha_shape,
             surface_from_point_cloud_ball_pivoting,
             label_to_surface,
-            largest_label_to_surface]
+            largest_label_to_surface,
+            add_quality]
 
 def _knot_mesh() -> SurfaceData:
     import open3d

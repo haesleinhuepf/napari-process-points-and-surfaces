@@ -8,17 +8,25 @@
 [![Development Status](https://img.shields.io/pypi/status/napari-process-points-and-surfaces.svg)](https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-process-points-and-surfaces)](https://napari-hub.org/plugins/napari-process-points-and-surfaces)
 
-Edit and analyse surface layers using [open3d](http://www.open3d.org/) in [napari].
+Edit and analyse surface layers using [open3d](http://www.open3d.org/) and [vedo](https://vedo.embl.es/) in [napari].
 
 ## Usage
 
 You find a couple of surface generation, smoothing and analysis functions in the menu `Tools > Surfaces` and `Tools > Points`. For detailed explanation of the underlying algorithms, please refer to the [open3d](http://www.open3d.org/docs/release/) documentation.
-Some code snippets and the knot example data have been taken from the open3d project which is [MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/open3d_LICENSE).
+Some code snippets and the knot example data have been taken from the open3d project which is 
+MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/open3d_LICENSE) 
+and from the [vedo documentation](https://vedo.embl.es/autodocs/index.html) 
+which is [MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/vedo_LICENSE).
 The Standford Bunny example dataset has been taken from the [The Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/).
 
-For executing operations from Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/demo.ipynb). There you also learn how this screenshot is made:
+For processing meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/demo.ipynb). There you also learn how this screenshot is made:
 
 ![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot.png)
+
+For performing quantitative measurements of meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/quality_measurements.ipynb). 
+There you also learn how this screenshot is made:
+
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot2.png)
 
 ## Installation
 
