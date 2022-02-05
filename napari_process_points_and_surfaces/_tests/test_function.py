@@ -20,7 +20,9 @@ def test_something():
             surface_from_point_cloud_alpha_shape,\
             surface_from_point_cloud_ball_pivoting,\
             label_to_surface,\
-            largest_label_to_surface
+            largest_label_to_surface,\
+            add_quality,\
+            Quality
 
     import numpy as np
 
@@ -49,3 +51,4 @@ def test_something():
     points_to_convex_hull_surface(points)
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
+    add_quality(surface, Quality.SKEW)
