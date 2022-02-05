@@ -1,0 +1,20 @@
+
+# Add labels from the EDAM Bioimaging ontology
+labels:
+  ontology: EDAM-BIOIMAGING:alpha06
+  terms:
+  - Spatial coordinates
+  - Volume
+  - Distribution-based clustering
+  - Surface rendering
+  - Image generation
+  - Landmark assignment
+  - Cell segmentation
+  - Scientific visualisation
+  - Tissue image analysis
+#  - Spatial properties
+#  - Object shape
+#  - Shape features extraction
+#  - Skeletonisation
+#  - Overlap analysis
+#  - Image crop
