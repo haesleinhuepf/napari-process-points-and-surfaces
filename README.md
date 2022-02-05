@@ -22,7 +22,7 @@ For executing operations from Python scripts, see the [demo notebook](https://gi
 
 ## Installation
 
-You can install `napari-process-points-and-surfaces` via [conda](https://docs.conda.io/en/latest/miniconda.html) [pip]:
+You can install `napari-process-points-and-surfaces` via [pip]:
 
 ```
 pip install napari-process-points-and-surfaces
