@@ -26,6 +26,7 @@ For processing meshes in Python scripts, see the [demo notebook](https://github.
 For performing quantitative measurements of meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/quality_measurements.ipynb). 
 There you also learn how this screenshot is made:
 
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot2.png)
 
 ## Installation
 
