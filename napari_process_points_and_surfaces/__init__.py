@@ -6,7 +6,7 @@ from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerData
 
 from napari_plugin_engine import napari_hook_implementation
-from napari_tools_menu import register_function
+from napari_tools_menu import register_function, register_action
 import numpy as np
 import napari
 
@@ -32,7 +32,32 @@ def napari_experimental_provide_function():
             label_to_surface,
             largest_label_to_surface]
 
+def _knot_mesh() -> SurfaceData:
+    import open3d
+    from pathlib import Path
+    data = str(Path(__file__).parent / "data" / "knot.ply")
+    return to_surface(open3d.io.read_triangle_mesh(data))
 
+def _standford_bunny() -> SurfaceData:
+    import open3d
+    from pathlib import Path
+    data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
+    return to_surface(open3d.io.read_triangle_mesh(data))
+
+@register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
+def example_data_knot(viewer:napari.viewer):
+    viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
+
+@register_action(menu = "Surfaces > Example data: Standford bunng (nppas)")
+def example_data_standford_bunny(viewer:napari.viewer):
+    viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
+
+# todo: this doesn't work with surfaces:
+#@napari_hook_implementation
+#def napari_provide_sample_data():
+#    return {
+#        "KnotMesh": _knot_mesh,
+#    }
 
 def to_vector_d(data):
     import open3d
@@ -173,7 +198,7 @@ def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> Su
 
 
 @register_function(menu="Surfaces > Simplify using quadratic decimation (open3d, nppas)")
-def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles: int = 5000) -> SurfaceData:
+def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles: int = 500) -> SurfaceData:
     """Simplify a surface using quadratic decimation
 
     Parameters

@@ -1,0 +1,11 @@
+Source: http://graphics.stanford.edu/data/3Dscanrep/
+Description:
+
+Stanford Bunny
+Source: Stanford University Computer Graphics Laboratory
+Scanner: Cyberware 3030 MS
+Number of scans: 10
+Total size of scans: 362,272 points (about 725,000 triangles)
+Reconstruction: zipper
+Size of reconstruction: 35947 vertices, 69451 triangles
+Comments: contains 5 holes in the bottom
