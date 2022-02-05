@@ -26,6 +26,12 @@ You can install `napari-process-points-and-surfaces` via [conda](https://docs.co
 pip install napari-process-points-and-surfaces
 ```
 
+## See also
+
+There are other napari plugins with similar / overlapping functionality
+* [pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
+* [napari-pyclesperanto-assistant](https://www.napari-hub.org/plugins/napari-pyclesperanto-assistant)
+
 ## Contributing
 
 Contributions are very welcome. Tests can be run with [tox], please ensure
