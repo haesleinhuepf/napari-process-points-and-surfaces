@@ -8,7 +8,7 @@
 [![Development Status](https://img.shields.io/pypi/status/napari-process-points-and-surfaces.svg)](https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-process-points-and-surfaces)](https://napari-hub.org/plugins/napari-process-points-and-surfaces)
 
-Edit and analyse surface layers using [open3d](http://www.open3d.org/) and [vedo](https://vedo.embl.es/) in [napari].
+Process and analyze surfaces using [open3d](http://www.open3d.org/) and [vedo](https://vedo.embl.es/) in [napari].
 
 ## Usage
 
