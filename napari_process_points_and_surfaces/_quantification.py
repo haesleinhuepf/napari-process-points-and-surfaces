@@ -41,6 +41,7 @@ class Quality(Enum):
     AREA = 28
     ASPECT_BETA = 29
 
+@register_function(menu="Measurement > Surface quality (vedo, nppas)")
 def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -> SurfaceData:
     import vedo
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
