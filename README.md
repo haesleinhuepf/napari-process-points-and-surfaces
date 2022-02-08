@@ -14,7 +14,7 @@ Process and analyze surfaces using [open3d](http://www.open3d.org/) and [vedo](h
 
 You find a couple of surface generation, smoothing and analysis functions in the menu `Tools > Surfaces` and `Tools > Points`. For detailed explanation of the underlying algorithms, please refer to the [open3d](http://www.open3d.org/docs/release/) documentation.
 Some code snippets and the knot example data have been taken from the open3d project which is 
-MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/open3d_LICENSE) 
+[MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/open3d_LICENSE) 
 and from the [vedo documentation](https://vedo.embl.es/autodocs/index.html) 
 which is [MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/vedo_LICENSE).
 The Standford Bunny example dataset has been taken from the [The Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/).
