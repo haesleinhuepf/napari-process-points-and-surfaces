@@ -11,7 +11,7 @@ import numpy as np
 import napari
 
 from napari_time_slicer import time_slicer
-from ._quantification import add_quality, Quality, add_curvature, spherefitted_curvature
+from ._quantification import add_quality, Quality, add_curvature, Curvature, spherefitted_curvature
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
