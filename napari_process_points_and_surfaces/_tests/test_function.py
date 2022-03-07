@@ -24,8 +24,6 @@ def test_something():
             add_quality,\
             Quality
 
-    import numpy as np
-
     from skimage.data import cells3d
     nuclei = cells3d()[:, 1, 60:120, 30:80]
 
@@ -52,3 +50,21 @@ def test_something():
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
     add_quality(surface, Quality.SKEW)
+    
+def test_curvature():
+    from napari_process_points_and_surfaces import add_curvature,\
+        Curvature,\
+        spherefitted_curvature
+    import vedo
+    import numpy as np
+
+    shape = vedo.shapes.Ellipsoid()
+    surface_data = (shape.points(), np.asarray(shape.faces()))
+    
+    add_curvature(surface_data, Curvature.Gauss_Curvature)
+    add_curvature(surface_data, Curvature.Mean_Curvature)
+    add_curvature(surface_data, Curvature.Maximum_Curvature)
+    add_curvature(surface_data, Curvature.Minimum_Curvature)
+    
+    spherefitted_curvature(surface_data, radius=1)
+    
