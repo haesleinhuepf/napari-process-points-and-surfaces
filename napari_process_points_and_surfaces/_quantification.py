@@ -115,6 +115,6 @@ def spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> List[La
     props_res = {'name': 'fit residues', 'colormap': 'magma'}
         
     layer1 = ((mesh.points(), np.asarray(mesh.faces()), curvature), props_curv, 'surface')
-    layer2 = ((mesh.points(), np.asarray(mesh.faces()), curvature), props_res, 'surface')
+    layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), props_res, 'surface')
         
     return [layer1, layer2]
