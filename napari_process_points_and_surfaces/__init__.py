@@ -11,7 +11,8 @@ import numpy as np
 import napari
 
 from napari_time_slicer import time_slicer
-from ._quantification import add_quality, Quality, add_curvature, Curvature, spherefitted_curvature
+from ._quantification import add_quality, Quality, add_curvature_scalars,\
+    Curvature, add_spherefitted_curvature
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
@@ -33,8 +34,8 @@ def napari_experimental_provide_function():
             label_to_surface,
             largest_label_to_surface,
             add_quality,
-            add_curvature,
-            spherefitted_curvature]
+            add_curvature_scalars,
+            add_spherefitted_curvature]
 
 def _knot_mesh() -> SurfaceData:
     import open3d

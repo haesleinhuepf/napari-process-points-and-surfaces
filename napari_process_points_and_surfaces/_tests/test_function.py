@@ -52,19 +52,19 @@ def test_something():
     add_quality(surface, Quality.SKEW)
     
 def test_curvature():
-    from napari_process_points_and_surfaces import add_curvature,\
+    from napari_process_points_and_surfaces import add_curvature_scalars,\
         Curvature,\
-        spherefitted_curvature
+        add_spherefitted_curvature
     import vedo
     import numpy as np
 
     shape = vedo.shapes.Ellipsoid()
     surface_data = (shape.points(), np.asarray(shape.faces()))
     
-    add_curvature(surface_data, Curvature.Gauss_Curvature)
-    add_curvature(surface_data, Curvature.Mean_Curvature)
-    add_curvature(surface_data, Curvature.Maximum_Curvature)
-    add_curvature(surface_data, Curvature.Minimum_Curvature)
+    add_curvature_scalars(surface_data, Curvature.Gauss_Curvature)
+    add_curvature_scalars(surface_data, Curvature.Mean_Curvature)
+    add_curvature_scalars(surface_data, Curvature.Maximum_Curvature)
+    add_curvature_scalars(surface_data, Curvature.Minimum_Curvature)
     
-    spherefitted_curvature(surface_data, radius=1)
+    add_spherefitted_curvature(surface_data, radius=1)
     
