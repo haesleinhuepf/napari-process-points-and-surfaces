@@ -6,7 +6,7 @@ from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
 import numpy as np
 import napari
-from typing import List
+from typing import List, Union
 from qtpy.QtWidgets import QWidget, QMessageBox, QPushButton
 
 from enum import Enum
@@ -70,18 +70,73 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
 
 
 @register_function(menu="Measurement > Surface curvature (vedo, nppas)")
-def add_curvature(surface: SurfaceData, curvature_id: Curvature = Curvature.Gauss_Curvature) -> SurfaceData:
+def add_curvature_scalars(surface: SurfaceData,
+                          curvature_id: Curvature = Curvature,
+                          ) -> SurfaceData:
+    """
+    Determine the surface curvature using vedo built-in functions.
+    
+    This function determines surface curvature using the built-in methods of
+    the vedo library.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+        3-Tuple of (points, faces, values)
+    curvature_id : Union[Curvature, int] optional
+        Method to be used: 0-gaussian, 1-mean, 2-max, 3-min curvature. The
+        default is 0 (gaussian).
+    Returns
+    -------
+    SurfaceData
+        3-tuple consiting of (points, faces, values)
+        
+    See also
+    --------
+    Vedo curvature: https://vedo.embl.es/autodocs/content/vedo/mesh.html?highlight=curvature#vedo.mesh.Mesh.addCurvatureScalars
+    """
     import vedo
 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))    
-    mesh.addCurvatureScalars(method=curvature_id.value)
+    if isinstance(curvature_id, int):
+        used_method = curvature_id
+    else:
+        used_method = curvature_id.value
     
+    mesh.addCurvatureScalars(method=used_method)
     values = mesh.pointdata[curvature_id.name]
     
     return (mesh.points(), np.asarray(mesh.faces()), values)
 
 @register_function(menu="Measurement > Sphere-fitted surface curvature (nppas)")
-def spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> List[LayerDataTuple]:
+def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> List[LayerDataTuple]:
+    """
+    Determine surface curvature by fitting a sphere to every vertex.
+    
+    This function iterates over all verteces in a surface, retrieves all points
+    in a neighborhood defined by `radius` and fits a sphere to the retrieved
+    points. The ocal curvature is then defined as 1/radius**2.
+
+    Parameters
+    ----------
+    surface : SurfaceData
+        3-Tuple of (points, faces, values)
+    radius : float, optional
+        Radius within which other points of the surface will be considered
+        neighbors. The default is 1.0.
+
+    Returns
+    -------
+    List[LayerDataTuple]
+        A list of surface data items. The first entry corresponds to the curvature-
+        anotated surface, the second entry corresponds to the fit
+        residue-annotated surface.
+        
+    See also
+    --------
+    sphere-fitting curvature: https://github.com/marcomusy/vedo/blob/master/examples/advanced/measure_curvature.py
+    Curvature: https://en.wikipedia.org/wiki/Gaussian_curvature
+    """
     import vedo
     
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
