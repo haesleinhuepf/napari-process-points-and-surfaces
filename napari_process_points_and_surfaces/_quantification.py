@@ -166,10 +166,10 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
         msgBox.exec()
         return 0
         
-    props_curv = {'name': 'curvature', 'colormap': 'viridis'}
-    props_res = {'name': 'fit residues', 'colormap': 'magma'}
+    properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
+    properties_residues_layer = {'name': 'fit residues', 'colormap': 'magma'}
         
-    layer1 = ((mesh.points(), np.asarray(mesh.faces()), curvature), props_curv, 'surface')
-    layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), props_res, 'surface')
+    layer1 = ((mesh.points(), np.asarray(mesh.faces()), curvature), properties_curvature_layer, 'surface')
+    layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), properties_residues_layer, 'surface')
         
     return [layer1, layer2]
