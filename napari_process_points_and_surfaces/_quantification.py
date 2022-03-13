@@ -89,7 +89,7 @@ def add_curvature_scalars(surface: SurfaceData,
     Returns
     -------
     SurfaceData
-        3-tuple consiting of (points, faces, values)
+        3-tuple consisting of (points, faces, values)
         
     See also
     --------
