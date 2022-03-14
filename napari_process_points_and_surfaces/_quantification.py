@@ -128,9 +128,10 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
     Returns
     -------
     List[LayerDataTuple]
-        A list of surface data items. The first entry corresponds to the curvature-
-        anotated surface, the second entry corresponds to the fit
-        residue-annotated surface.
+        A list of surface data items. The items correspond to the curvature- and
+        fit residue-annotated surface, respectively. 
+        With each item consisting of a `(points, faces, values)` tuple, the 
+        `value` variable reflects each vertice's curvature or fit residue result.'
         
     See also
     --------
