@@ -40,6 +40,7 @@ pip install napari-process-points-and-surfaces
 
 There are other napari plugins with similar / overlapping functionality
 * [pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
+* [morphometrics](https://www.napari-hub.org/plugins/morphometrics)  
 * [napari-pyclesperanto-assistant](https://www.napari-hub.org/plugins/napari-pyclesperanto-assistant)
 
 ## Contributing
