@@ -68,7 +68,7 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
 
 @register_function(menu="Measurement > Surface curvature (vedo, nppas)")
 def add_curvature_scalars(surface: SurfaceData,
-                          curvature_id: Curvature = Curvature,
+                          curvature_id: Curvature = Curvature.Gauss_Curvature,
                           ) -> SurfaceData:
     """
     Determine the surface curvature using vedo built-in functions.
