@@ -105,7 +105,7 @@ def add_curvature_scalars(surface: SurfaceData,
     
     return (mesh.points(), np.asarray(mesh.faces()), values)
 
-@register_function(menu="Measurement > Sphere-fitted surface curvature (nppas)")
+@register_function(menu="Measurement > Surface curvature (sphere-fitted, nppas)")
 def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> List[LayerDataTuple]:
     """
     Determine surface curvature by fitting a sphere to every vertex.
