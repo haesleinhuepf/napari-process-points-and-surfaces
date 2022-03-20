@@ -11,7 +11,8 @@ import numpy as np
 import napari
 
 from napari_time_slicer import time_slicer
-from ._quantification import add_quality, Quality
+from ._quantification import add_quality, Quality, add_curvature_scalars,\
+    Curvature, add_spherefitted_curvature
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
@@ -32,7 +33,9 @@ def napari_experimental_provide_function():
             surface_from_point_cloud_ball_pivoting,
             label_to_surface,
             largest_label_to_surface,
-            add_quality]
+            add_quality,
+            add_curvature_scalars,
+            add_spherefitted_curvature]
 
 def _knot_mesh() -> SurfaceData:
     import open3d
@@ -46,6 +49,11 @@ def _standford_bunny() -> SurfaceData:
     data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
     return to_surface(open3d.io.read_triangle_mesh(data))
 
+def _vedo_ellipsoid() -> SurfaceData:
+    import vedo
+    shape = vedo.shapes.Ellipsoid()
+    return (shape.points(), np.asarray(shape.faces()))
+
 @register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
 def example_data_knot(viewer:napari.viewer):
     viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
@@ -53,6 +61,10 @@ def example_data_knot(viewer:napari.viewer):
 @register_action(menu = "Surfaces > Example data: Standford bunng (nppas)")
 def example_data_standford_bunny(viewer:napari.viewer):
     viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
+
+@register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
+def example_data_vedo_ellipsoid(viewer:napari.viewer):
+    viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
 
 # todo: this doesn't work with surfaces:
 #@napari_hook_implementation
