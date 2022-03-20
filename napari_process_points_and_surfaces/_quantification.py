@@ -2,12 +2,9 @@
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerDataTuple
 
-from napari_plugin_engine import napari_hook_implementation
-from napari_tools_menu import register_function, register_action
+from napari_tools_menu import register_function
 import numpy as np
-import napari
-from typing import List, Union
-from qtpy.QtWidgets import QWidget, QMessageBox, QPushButton
+from typing import List
 
 from enum import Enum
 
@@ -157,15 +154,9 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
             residues[idx] = 0
             
     if 0 in curvature:
-        msgBox = QMessageBox()
-        msgBox.setIcon(QMessageBox.Warning)
-        msgBox.setWindowTitle("Warning")
-        msgBox.setText(f"The chosen curvature radius ({radius})"
-                       "was too small to calculate curvatures. Increase " 
-                       "the radius to silence this error.")
-        msgBox.addButton(QPushButton('Ok'), QMessageBox.YesRole)
-        msgBox.exec()
-        return 0
+        raise ValueError(f"The chosen curvature radius ({radius})"
+                          "was too small to calculate curvatures. Increase " 
+                          "the radius to silence this error.")
         
     properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
     properties_residues_layer = {'name': 'fit residues', 'colormap': 'magma'}
