@@ -1,6 +1,6 @@
 # from napari_segment_blobs_and_things_with_membranes import threshold, image_arithmetic
 
-# add your tests here...
+import numpy as np
 
 
 def test_something(make_napari_viewer):
@@ -31,10 +31,9 @@ def test_something(make_napari_viewer):
 
     from skimage.measure import label
     labels = label(nuclei > 20000)
-    viewer.add_labels(labels)
+    viewer.add_labels(labels, scale=np.array([2, 2, 2]))
 
     surface = label_to_surface(viewer.layers[0], 3)
-
     surface = largest_label_to_surface(viewer.layers[0])
 
     convex_hull(surface)
@@ -48,7 +47,7 @@ def test_something(make_napari_viewer):
     sample_points_uniformly(surface)
     points = sample_points_poisson_disk(surface)
     voxel_down_sample(points)
-    points_to_labels(points, labels)
+    points_to_labels(points, viewer.layers[0])
     points_to_convex_hull_surface(points)
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
@@ -70,3 +69,7 @@ def test_curvature():
     add_curvature_scalars(surface_data, Curvature.Minimum_Curvature)
 
     add_spherefitted_curvature(surface_data, radius=1)
+
+if __name__ == '__main__':
+    import napari
+    test_something(napari.Viewer)
