@@ -438,7 +438,10 @@ def label_to_surface(labels: Union[Labels, LabelsData],
     """
     from skimage.measure import marching_cubes
 
-    binary = np.asarray(labels.data == label_id)
+    if isinstance(labels, Labels):
+        labels = labels.data
+
+    binary = np.asarray(labels == label_id)
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
 
@@ -459,7 +462,10 @@ def largest_label_to_surface(labels: Union[Labels, LabelsData]) -> SurfaceData:
     labels_data: Union[[napari.layers.Labels, napari.types.LabelsData]]
     """
     from skimage.measure import regionprops
-    statistics = regionprops(labels.data)
+    if isinstance(labels, Labels):
+        statistics = regionprops(labels.data)
+    else:
+        statistics = regionprops(labels)
 
     label_index = np.argmax([r.area for r in statistics])
     labels_list = [r.label for r in statistics]
