@@ -4,7 +4,7 @@ __common_alias__ = "nppas"
 
 from napari.types import SurfaceData, PointsData, LayerDataTuple
 from napari.types import LabelsData, LayerData
-from napari.layers import Points, Surface, Labels
+from napari.layers import Labels, Layer
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
@@ -323,7 +323,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
 @register_function(menu="Points > Points to labels (nppas)")
 @register_function(menu="Segmentation / labeling > Points to labels (nppas)")
 @time_slicer
-def points_to_labels(points_data:PointsData, as_large_as_image:LayerData, viewer:napari.Viewer=None) -> LabelsData:
+def points_to_labels(points_data:PointsData, as_large_as_image:Layer, viewer:napari.Viewer=None) -> LabelsData:
     """Mark single pixels in an zero-image if there is a point in a given point list.
     Point with index 0 in the list will get pixel intensity 1.
     If there are multiple points where the rounded coordinate is within the same pixel,
@@ -341,7 +341,8 @@ def points_to_labels(points_data:PointsData, as_large_as_image:LayerData, viewer
 
     # labels_stack[points_data] = np.arange(len(points_data))
 
-    labels_stack = np.zeros(as_large_as_image.shape, dtype=int)
+    labels_stack = np.zeros(as_large_as_image.data.shape, dtype=int)
+    points_data = points_data / as_large_as_image.scale[None, :]
     for i, p in enumerate(points_data):
         labels_stack[int(p[0] + 0.5), int(p[1] + 0.5), int(p[2] + 0.5)] = i + 1
 
