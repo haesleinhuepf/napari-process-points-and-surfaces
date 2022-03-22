@@ -5,6 +5,7 @@ __common_alias__ = "nppas"
 from napari.types import SurfaceData, PointsData, LayerDataTuple
 from napari.types import LabelsData, LayerData
 from napari.layers import Labels, Layer
+from typing import Union
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
@@ -323,7 +324,9 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
 @register_function(menu="Points > Points to labels (nppas)")
 @register_function(menu="Segmentation / labeling > Points to labels (nppas)")
 @time_slicer
-def points_to_labels(points_data:PointsData, as_large_as_image:Layer, viewer:napari.Viewer=None) -> LabelsData:
+def points_to_labels(points_data:PointsData,
+                     as_large_as_image:Union[Layer, LayerData],
+                     viewer:napari.Viewer=None) -> LabelsData:
     """Mark single pixels in an zero-image if there is a point in a given point list.
     Point with index 0 in the list will get pixel intensity 1.
     If there are multiple points where the rounded coordinate is within the same pixel,
@@ -331,8 +334,8 @@ def points_to_labels(points_data:PointsData, as_large_as_image:Layer, viewer:nap
 
     Parameters
     ----------
-    surface:napari.types.SurfaceData
-    as_large_as_image:napari.types.LayerData
+    points_data:napari.types.PointsData
+    as_large_as_image: Union[napari.layers.Layer, napari.types.LayerData]
         An image to specify the size of the output image. This image will not be overwritten.
     """
 
@@ -342,7 +345,9 @@ def points_to_labels(points_data:PointsData, as_large_as_image:Layer, viewer:nap
     # labels_stack[points_data] = np.arange(len(points_data))
 
     labels_stack = np.zeros(as_large_as_image.data.shape, dtype=int)
-    points_data = points_data / as_large_as_image.scale[None, :]
+
+    if isinstance(as_large_as_image, Layer):
+        points_data = points_data / as_large_as_image.scale[None, :]
     for i, p in enumerate(points_data):
         labels_stack[int(p[0] + 0.5), int(p[1] + 0.5), int(p[2] + 0.5)] = i + 1
 
@@ -421,13 +426,14 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
 
 @register_function(menu="Surfaces > Any label to surface (marching cubes, scikit-image, nppas)")
 @time_slicer
-def label_to_surface(labels: Labels, label_id: int = 1) -> SurfaceData:
+def label_to_surface(labels: Union[Labels, LabelsData],
+                     label_id: int = 1) -> SurfaceData:
     """
-    Turn a single label out of a label image into a surface using the marching cubes algorithm
+    Turn a single label out of a label image into a surface using the marching cubes algorithm.
 
     Parameters
     ----------
-    labels_data:napari.types.LabelsData
+    labels_data: Union[napari.layers.Labels, napari.types.LabelsData]
     label_id: int
     """
     from skimage.measure import marching_cubes
@@ -435,20 +441,22 @@ def label_to_surface(labels: Labels, label_id: int = 1) -> SurfaceData:
     binary = np.asarray(labels.data == label_id)
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
-    vertices = vertices * labels.scale[None, :]
+
+    if isinstance(labels, Labels):
+        vertices = vertices * labels.scale[None, :]
 
     return (vertices, faces, values)
 
 
 @register_function(menu="Surfaces > Largest label to surface (marching cubes, scikit-image, nppas)")
 @time_slicer
-def largest_label_to_surface(labels: Labels) -> SurfaceData:
+def largest_label_to_surface(labels: Union[Labels, LabelsData]) -> SurfaceData:
     """
     Turn the largest label in a label image into a surface using the marching cubes algorithm
 
     Parameters
     ----------
-    labels_data:napari.types.LabelsData
+    labels_data: Union[[napari.layers.Labels, napari.types.LabelsData]]
     """
     from skimage.measure import regionprops
     statistics = regionprops(labels.data)
