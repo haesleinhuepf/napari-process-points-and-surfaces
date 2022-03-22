@@ -2,7 +2,7 @@
 __version__ = "0.1.3"
 __common_alias__ = "nppas"
 
-from napari.types import SurfaceData, PointsData, LayerDataTuple
+from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerData
 from napari.layers import Labels, Layer
 from typing import Union
