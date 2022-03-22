@@ -2,8 +2,9 @@
 __version__ = "0.1.3"
 __common_alias__ = "nppas"
 
-from napari.types import SurfaceData, PointsData
+from napari.types import SurfaceData, PointsData, LayerDataTuple
 from napari.types import LabelsData, LayerData
+from napari.layers import Points, Surface, Labels
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
@@ -419,7 +420,7 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
 
 @register_function(menu="Surfaces > Any label to surface (marching cubes, scikit-image, nppas)")
 @time_slicer
-def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
+def label_to_surface(labels: Labels, label_id: int = 1) -> SurfaceData:
     """
     Turn a single label out of a label image into a surface using the marching cubes algorithm
 
@@ -430,16 +431,17 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
     """
     from skimage.measure import marching_cubes
 
-    binary = np.asarray(labels == label_id)
+    binary = np.asarray(labels.data == label_id)
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
+    vertices = vertices * labels.scale[None, :]
 
     return (vertices, faces, values)
 
 
 @register_function(menu="Surfaces > Largest label to surface (marching cubes, scikit-image, nppas)")
 @time_slicer
-def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
+def largest_label_to_surface(labels: Labels) -> SurfaceData:
     """
     Turn the largest label in a label image into a surface using the marching cubes algorithm
 
@@ -448,11 +450,10 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
     labels_data:napari.types.LabelsData
     """
     from skimage.measure import regionprops
-    statistics = regionprops(labels)
+    statistics = regionprops(labels.data)
 
     label_index = np.argmax([r.area for r in statistics])
     labels_list = [r.label for r in statistics]
     label = labels_list[label_index]
 
     return label_to_surface(labels, label)
-
