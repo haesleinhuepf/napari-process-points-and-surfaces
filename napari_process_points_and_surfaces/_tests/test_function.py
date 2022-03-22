@@ -3,7 +3,7 @@
 # add your tests here...
 
 
-def test_something():
+def test_something(make_napari_viewer):
     from napari_process_points_and_surfaces import convex_hull,\
             filter_smooth_simple,\
             filter_smooth_laplacian,\
@@ -24,15 +24,18 @@ def test_something():
             add_quality,\
             Quality
 
+    viewer = make_napari_viewer()
+
     from skimage.data import cells3d
     nuclei = cells3d()[:, 1, 60:120, 30:80]
 
     from skimage.measure import label
     labels = label(nuclei > 20000)
+    viewer.add_labels(labels)
 
-    surface = label_to_surface(labels, 3)
+    surface = label_to_surface(viewer.layers[0], 3)
 
-    surface = largest_label_to_surface(labels)
+    surface = largest_label_to_surface(viewer.layers[0])
 
     convex_hull(surface)
     filter_smooth_simple(surface)
@@ -50,7 +53,7 @@ def test_something():
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
     add_quality(surface, Quality.SKEW)
-    
+
 def test_curvature():
     from napari_process_points_and_surfaces import add_curvature_scalars,\
         Curvature,\
@@ -60,11 +63,10 @@ def test_curvature():
 
     shape = vedo.shapes.Ellipsoid()
     surface_data = (shape.points(), np.asarray(shape.faces()))
-    
+
     add_curvature_scalars(surface_data, Curvature.Gauss_Curvature)
     add_curvature_scalars(surface_data, Curvature.Mean_Curvature)
     add_curvature_scalars(surface_data, Curvature.Maximum_Curvature)
     add_curvature_scalars(surface_data, Curvature.Minimum_Curvature)
-    
+
     add_spherefitted_curvature(surface_data, radius=1)
-    
