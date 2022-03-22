@@ -34,7 +34,9 @@ def test_something(make_napari_viewer):
     viewer.add_labels(labels, scale=np.array([2, 2, 2]))
 
     surface = label_to_surface(viewer.layers[0], 3)
+    surface = label_to_surface(labels, 3)
     surface = largest_label_to_surface(viewer.layers[0])
+    surface = largest_label_to_surface(labels)
 
     convex_hull(surface)
     filter_smooth_simple(surface)
