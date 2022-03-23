@@ -4,6 +4,7 @@ __common_alias__ = "nppas"
 
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerData
+from napari.layers import Surface
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
@@ -456,3 +457,21 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 
     return label_to_surface(labels, label)
 
+@register_function(menu="Surfaces > Fill holes (vedo, nppas)")
+@time_slicer
+def fill_holes(surface: Surface, size_limit: float = 100) -> SurfaceData:
+    """
+    Fill holes in a surface.
+
+    Parameters
+    ----------
+    surface : napari.layers.Surface
+    size_limit : float, optional
+        Size limit to hole-filling. The default is 100.
+    """
+    import vedo
+
+    mesh = vedo.mesh.Mesh((surface.data[0], surface.data[1]))
+    mesh.fillHoles(size=size_limit)
+
+    return (mesh.points(), np.asarray(mesh.faces()))
