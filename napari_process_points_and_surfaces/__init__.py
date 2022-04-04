@@ -456,3 +456,24 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 
     return label_to_surface(labels, label)
 
+@register_function(menu="Surfaces > Fill holes (vedo, nppas)")
+def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
+    """
+    Fill holes in a surface up to a specified size.
+
+    Parameters
+    ----------
+    surface : napari.layers.Surface
+    size_limit : float, optional
+        Size limit to hole-filling. The default is 100.
+
+    See also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
+    """
+    import vedo
+
+    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
+    mesh.fillHoles(size=size_limit)
+
+    return (mesh.points(), np.asarray(mesh.faces()))

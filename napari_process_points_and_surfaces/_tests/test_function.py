@@ -22,7 +22,8 @@ def test_something():
             label_to_surface,\
             largest_label_to_surface,\
             add_quality,\
-            Quality
+            Quality,\
+            fill_holes
 
     from skimage.data import cells3d
     nuclei = cells3d()[:, 1, 60:120, 30:80]
@@ -46,11 +47,12 @@ def test_something():
     points = sample_points_poisson_disk(surface)
     voxel_down_sample(points)
     points_to_labels(points, labels)
-    points_to_convex_hull_surface(points)
+    surface = points_to_convex_hull_surface(points)
+    surface = fill_holes(surface)
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
     add_quality(surface, Quality.SKEW)
-    
+
 def test_curvature():
     from napari_process_points_and_surfaces import add_curvature_scalars,\
         Curvature,\
@@ -60,11 +62,10 @@ def test_curvature():
 
     shape = vedo.shapes.Ellipsoid()
     surface_data = (shape.points(), np.asarray(shape.faces()))
-    
+
     add_curvature_scalars(surface_data, Curvature.Gauss_Curvature)
     add_curvature_scalars(surface_data, Curvature.Mean_Curvature)
     add_curvature_scalars(surface_data, Curvature.Maximum_Curvature)
     add_curvature_scalars(surface_data, Curvature.Minimum_Curvature)
-    
+
     add_spherefitted_curvature(surface_data, radius=1)
-    
