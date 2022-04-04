@@ -4,7 +4,6 @@ __common_alias__ = "nppas"
 
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerData
-from napari.layers import Surface
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
@@ -468,6 +467,10 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     surface : napari.layers.Surface
     size_limit : float, optional
         Size limit to hole-filling. The default is 100.
+
+    See also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
     """
     import vedo
 
