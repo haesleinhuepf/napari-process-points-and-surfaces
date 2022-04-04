@@ -459,7 +459,7 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
 def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     """
-    Fill holes in a surface.
+    Fill holes in a surface up to a specified size.
 
     Parameters
     ----------
