@@ -457,7 +457,6 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
     return label_to_surface(labels, label)
 
 @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
-@time_slicer
 def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     """
     Fill holes in a surface.
