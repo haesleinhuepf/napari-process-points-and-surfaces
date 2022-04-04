@@ -459,7 +459,7 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 
 @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
 @time_slicer
-def fill_holes(surface: Surface, size_limit: float = 100) -> SurfaceData:
+def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     """
     Fill holes in a surface.
 
@@ -471,7 +471,7 @@ def fill_holes(surface: Surface, size_limit: float = 100) -> SurfaceData:
     """
     import vedo
 
-    mesh = vedo.mesh.Mesh((surface.data[0], surface.data[1]))
+    mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.fillHoles(size=size_limit)
 
     return (mesh.points(), np.asarray(mesh.faces()))
