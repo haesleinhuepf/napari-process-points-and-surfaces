@@ -107,14 +107,6 @@ def to_point_cloud(data):
     return pcd
 
 
-def return_points(data, viewer: napari.Viewer = None):
-    if viewer is not None:
-        # This is a workaround, because I don't know how to pass point size back as result
-        viewer.add_points(data, size=0.5, edge_color="white")
-    else:
-        return data
-
-
 def to_surface(mesh):
     vertices = to_numpy(mesh.vertices)
     faces = to_numpy(mesh.triangles)
@@ -249,7 +241,7 @@ def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> Surfac
 
 
 @register_function(menu="Points > Labels to centroids (nppas)")
-def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None):
+def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> PointsData:
     """Determine centroids from all labels and store them as points.
 
     Parameters
@@ -260,11 +252,11 @@ def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None):
 
     statistics = regionprops(labels_data)
     centroids = [s.centroid for s in statistics]
-    return return_points(centroids, viewer)
+    return centroids
 
 
 @register_function(menu="Points > Sample from surface uniformly (open3d, nppas)")
-def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None):
+def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None) -> PointsData:
     """Sample points uniformly
 
     Parameters
@@ -280,11 +272,11 @@ def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, vi
     point_cloud = mesh_in.sample_points_uniformly(number_of_points=number_of_points)
 
     result = to_numpy(point_cloud.points)
-    return return_points(result, viewer)
+    return result
 
 
 @register_function(menu="Points > Sample from surface using Poisson disk (open3d, nppas)")
-def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None):
+def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None) -> PointsData:
     """Sample a list of points from a surface using the Poisson disk algorithm
 
     Parameters
@@ -301,11 +293,11 @@ def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500,
     point_cloud = mesh_in.sample_points_poisson_disk(number_of_points=number_of_points, init_factor=init_factor)
 
     result = to_numpy(point_cloud.points)
-    return return_points(result, viewer)
+    return result
 
 
 @register_function(menu="Points > Down-sample (open3d, nppas)")
-def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napari.Viewer=None):
+def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napari.Viewer=None) -> PointsData:
     """Removes points from a point cloud so that the remaining points lie within a grid of
     defined voxel size.
 
@@ -316,7 +308,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
     new_point_cloud = point_cloud.voxel_down_sample(voxel_size)
 
     result = to_numpy(new_point_cloud.points)
-    return return_points(result, viewer)
+    return result
 
 
 @register_function(menu="Points > Points to labels (nppas)")
