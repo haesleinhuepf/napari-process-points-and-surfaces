@@ -116,7 +116,7 @@ def to_surface(mesh):
 
 
 @register_function(menu="Surfaces > Convex hull (open3d, nppas)")
-def convex_hull(surface):
+def convex_hull(surface:SurfaceData) -> SurfaceData:
     """Produce the convex hull surface around a surface
     """
     mesh = to_mesh(surface)
@@ -240,7 +240,7 @@ def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> Surfac
     return to_surface(mesh_out)
 
 
-@register_function(menu="Points > Labels to centroids (nppas)")
+@register_function(menu="Points > Create points from labels centroids (nppas)")
 def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> PointsData:
     """Determine centroids from all labels and store them as points.
 
@@ -255,7 +255,7 @@ def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> 
     return centroids
 
 
-@register_function(menu="Points > Sample from surface uniformly (open3d, nppas)")
+@register_function(menu="Points > Create points from surface sampling uniformly (open3d, nppas)")
 def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None) -> PointsData:
     """Sample points uniformly
 
@@ -275,7 +275,7 @@ def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, vi
     return result
 
 
-@register_function(menu="Points > Sample from surface using Poisson disk (open3d, nppas)")
+@register_function(menu="Points > Create points from surface using Poisson disk sampling (open3d, nppas)")
 def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None) -> PointsData:
     """Sample a list of points from a surface using the Poisson disk algorithm
 
@@ -312,7 +312,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
 
 
 @register_function(menu="Points > Points to labels (nppas)")
-@register_function(menu="Segmentation / labeling > Points to labels (nppas)")
+@register_function(menu="Segmentation / labeling > Create labels from points (nppas)")
 @time_slicer
 def points_to_labels(points_data:PointsData, as_large_as_image:LayerData, viewer:napari.Viewer=None) -> LabelsData:
     """Mark single pixels in an zero-image if there is a point in a given point list.
@@ -358,7 +358,7 @@ def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Surface from points (alpha-shape, open3d, nppas)")
+@register_function(menu="Surfaces > Create surface from points (alpha-shape, open3d, nppas)")
 def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5) -> SurfaceData:
     """Turn point into a surface using alpha shapes
 
@@ -377,7 +377,7 @@ def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5
     return to_surface(mesh)
 
 
-@register_function(menu="Surfaces > Surface from points (ball-pivoting, open3d, nppas)")
+@register_function(menu="Surfaces > Create surface from points (ball-pivoting, open3d, nppas)")
 def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float = 5, delta_radius=0) -> SurfaceData:
     """Turn point into a surface using ball pivoting
 
@@ -409,7 +409,7 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
     return to_surface(mesh)
 
 
-@register_function(menu="Surfaces > Any label to surface (marching cubes, scikit-image, nppas)")
+@register_function(menu="Surfaces > Create surface from any label (marching cubes, scikit-image, nppas)")
 @time_slicer
 def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
     """
@@ -429,7 +429,7 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
     return (vertices, faces, values)
 
 
-@register_function(menu="Surfaces > Largest label to surface (marching cubes, scikit-image, nppas)")
+@register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
 @time_slicer
 def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
     """
