@@ -41,18 +41,18 @@ def _knot_mesh() -> SurfaceData:
     import open3d
     from pathlib import Path
     data = str(Path(__file__).parent / "data" / "knot.ply")
-    return to_surface(open3d.io.read_triangle_mesh(data))
+    return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 0.1)
 
 def _standford_bunny() -> SurfaceData:
     import open3d
     from pathlib import Path
     data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
-    return to_surface(open3d.io.read_triangle_mesh(data))
+    return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 100)
 
 def _vedo_ellipsoid() -> SurfaceData:
     import vedo
     shape = vedo.shapes.Ellipsoid()
-    return (shape.points(), np.asarray(shape.faces()))
+    return isotropic_scale_surface((shape.points(), np.asarray(shape.faces())), 10)
 
 @register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
 def example_data_knot(viewer:napari.viewer):
@@ -469,3 +469,23 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     mesh.fillHoles(size=size_limit)
 
     return (mesh.points(), np.asarray(mesh.faces()))
+
+@register_function(menu = "Surfaces > Scale surface (isotropic, nppas)",
+                   scale_factor={'min':0.01, 'max':100000})
+def isotropic_scale_surface(surface:SurfaceData, scale_factor:float = 1) -> SurfaceData:
+    """
+    Scales a surface with a given factor.
+
+    Parameters
+    ----------
+    surface
+    scale_factor
+
+    Returns
+    -------
+    surface
+    """
+    result = list(surface)
+    result[0] = result[0] * scale_factor
+    return tuple(result)
+
