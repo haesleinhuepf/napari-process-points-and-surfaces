@@ -1,5 +1,5 @@
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 __common_alias__ = "nppas"
 
 from napari.types import SurfaceData, PointsData
