@@ -3,7 +3,7 @@ __version__ = "0.3.0"
 __common_alias__ = "nppas"
 
 from napari.types import SurfaceData, PointsData
-from napari.types import LabelsData, LayerData
+from napari.types import LabelsData, ImageData
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
@@ -314,27 +314,28 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
 @register_function(menu="Points > Points to labels (nppas)")
 @register_function(menu="Segmentation / labeling > Create labels from points (nppas)")
 @time_slicer
-def points_to_labels(points_data:PointsData, as_large_as_image:LayerData, viewer:napari.Viewer=None) -> LabelsData:
-    """Mark single pixels in an zero-image if there is a point in a given point list.
+def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer:napari.Viewer=None) -> LabelsData:
+    """Mark single pixels in a zero-value pixel image if there is a point in a given point list.
     Point with index 0 in the list will get pixel intensity 1.
     If there are multiple points where the rounded coordinate is within the same pixel,
     some will be overwritten. There is no constraint which will be overwritten.
 
     Parameters
     ----------
-    surface:napari.types.SurfaceData
-    as_large_as_image:napari.types.LayerData
+    points_data:napari.types.PointsData
+    as_large_as_image:napari.types.ImageData
         An image to specify the size of the output image. This image will not be overwritten.
     """
 
-    # labels_stack, _ = np.histogramdd(np.asarray(points_data), bins=as_large_as_image.shape, range=[(0, x) for x in as_large_as_image.shape])
-    # labels_stack = labels_stack.astype(int)
-
-    # labels_stack[points_data] = np.arange(len(points_data))
-
     labels_stack = np.zeros(as_large_as_image.shape, dtype=int)
     for i, p in enumerate(points_data):
-        labels_stack[int(p[0] + 0.5), int(p[1] + 0.5), int(p[2] + 0.5)] = i + 1
+        if len(labels_stack.shape) == 3:
+            labels_stack[int(p[0] + 0.5), int(p[1] + 0.5), int(p[2] + 0.5)] = i + 1
+        elif len(labels_stack.shape) == 2:
+            labels_stack[int(p[0] + 0.5), int(p[1] + 0.5)] = i + 1
+        else:
+            raise NotImplementedError("Points to labels only supports 2D and 3D data")
+            break
 
     return labels_stack
 
