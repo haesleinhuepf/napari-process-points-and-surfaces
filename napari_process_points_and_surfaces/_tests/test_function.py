@@ -69,3 +69,21 @@ def test_curvature():
     add_curvature_scalars(surface_data, Curvature.Minimum_Curvature)
 
     add_spherefitted_curvature(surface_data, radius=1)
+
+def test_surface_to_binary_volume():
+    import numpy as np
+    from napari_process_points_and_surfaces import largest_label_to_surface, surface_to_binary_volume
+    image = np.zeros((32, 32, 32)).astype(int)
+    image[1:30, 1:30, 1:30] = 1
+
+    surface = largest_label_to_surface(image)
+    binary_image = surface_to_binary_volume(surface, image)
+
+    overlap = np.logical_and(image, binary_image)
+    union = np.logical_or(image, binary_image)
+
+    jaccard_index = np.sum(overlap) / np.sum(union)
+
+    assert jaccard_index > 0.9
+
+
