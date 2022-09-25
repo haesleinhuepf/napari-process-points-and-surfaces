@@ -339,6 +339,49 @@ def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer
 
     return labels_stack
 
+@register_function(menu="Surfaces > Surface to binary volumne (nppas)")
+@register_function(menu="Segmentation / binarization > Create binary volume from surface (nppas)")
+@time_slicer
+def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
+                     viewer: napari.Viewer = None) -> LabelsData:
+    """Render a closed surface as binary image with the same size as a specified image.
+
+    Notes
+    -----
+    * The outlines of the binary volume are subject to numeric rounding issues and may not be voxel-perfect.
+
+    See Also
+    --------
+    * [1] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.binarize
+    * [2] https://vedo.embl.es/autodocs/content/vedo/volume.html#vedo.volume.BaseVolume.tonumpy
+
+    Parameters
+    ----------
+    surface: SurfaceData
+    as_large_as_image: ImageData
+    viewer: napari.Viewer, optional
+
+    Returns
+    -------
+    binary_image:ImageData
+    """
+    import vedo
+
+    my_mesh = vedo.mesh.Mesh((surface[0], surface[1]))
+    vertices = my_mesh.points()  # get coordinates of surface vertices
+
+    # get bounding box of mesh
+    boundaries_l = np.min(vertices, axis=0).astype(int)
+    boundaries_r = np.max(vertices, axis=0).astype(int)
+
+    # replace region within bounding box with binary image
+    binary_image = np.zeros_like(as_large_as_image)
+    binary_image[boundaries_l[0] : boundaries_r[0],
+                boundaries_l[1] : boundaries_r[1],
+                boundaries_l[2] : boundaries_r[2]] = my_mesh.binarize().tonumpy()
+
+    return binary_image
+
 
 @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
 def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
