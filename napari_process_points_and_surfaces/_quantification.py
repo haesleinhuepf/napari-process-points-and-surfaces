@@ -1,3 +1,4 @@
+import warnings
 
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerDataTuple
@@ -6,6 +7,8 @@ from napari_tools_menu import register_function, register_dock_widget
 import numpy as np
 from typing import List
 from magicgui import magic_factory
+from napari_tools_menu import register_function
+
 
 from enum import Enum
 
@@ -73,7 +76,7 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
 def _surface_quality_table(surface: SurfaceData, qualities, napari_viewer:"napari.Viewer"):
     return surface_quality_table(surface, qualities, napari_viewer)
 
-def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napari.Viewer" = None):
+def surface_quality_table(surface: SurfaceData, qualities = [Quality.AREA, Quality.MIN_ANGLE, Quality.MAX_ANGLE], napari_viewer: "napari.Viewer" = None):
     """Produces a table of specified measurements and adds it to the napari viewer (if given)
 
     Parameters
@@ -86,6 +89,8 @@ def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napar
     -------
     pandas.DataFrame in case napari_viewer is None
     """
+    import pandas
+
     table = {}
     for quality in qualities:
         result = add_quality(surface, quality)
@@ -98,14 +103,62 @@ def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napar
         # Store results in the properties dictionary:
         from napari_workflows._workflow import _get_layer_from_data
         surface_layer = _get_layer_from_data(napari_viewer, surface)
+        # todo: this needs to be changed once surface layes support properties/features
+        # https://github.com/napari/napari/issues/5205
         surface_layer.properties = table
+        surface_layer.features = pandas.DataFrame(table)
 
         # turn table into a widget
         from napari_skimage_regionprops import add_table
         add_table(surface_layer, napari_viewer)
     else:
-        import pandas
         return pandas.DataFrame(table)
+
+
+@register_function(menu="Measurement > Surface quality/annotation to table (nppas)")
+def surface_quality_to_properties(surface: SurfaceData,
+                                  napari_viewer: "napari.Viewer",
+                                  column_name: str = "annotation"):
+    """Reads from an existing surface data/layer if values are present and stores the
+    values in the properties/features of the layer.
+
+    Parameters
+    ----------
+    surface: SurfaceData
+    napari_viewer: napari.Viewer
+    column_name: str
+
+    Returns
+    -------
+
+    """
+    import pandas
+    # Store results in the properties dictionary:
+    from napari_workflows._workflow import _get_layer_from_data
+    surface_layer = _get_layer_from_data(napari_viewer, surface)
+
+    table = {}
+    if hasattr(surface_layer, "features"):
+        if surface_layer.features is not None:
+            table = surface_layer.features
+
+    values = surface[2]
+
+    if len(table.keys()) == 0:
+        table["triangle_index"] = list(range(len(values)))
+    table[column_name] = values
+
+    table = pandas.DataFrame(table)
+
+    # save results back
+    # todo: update this as soon as napari Surface layers support properties/features.
+    # https://github.com/napari/napari/issues/5205
+    surface_layer.properties = table.to_dict(orient="list")
+    surface_layer.features = table
+
+    # turn table into a widget
+    from napari_skimage_regionprops import add_table
+    add_table(surface_layer, napari_viewer)
 
 
 @register_function(menu="Measurement > Surface curvature (vedo, nppas)")
