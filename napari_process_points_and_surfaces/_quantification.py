@@ -73,10 +73,10 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
 # @register_function(menu="Measurement > Surface quality table (vedo, nppas)", quality=dict(widget_type='Select', choices=Quality))
 @register_dock_widget(menu="Measurement > Surface quality table (vedo, nppas)")
 @magic_factory(qualities=dict(widget_type='Select', choices=Quality))
-def _surface_quality_table(surface: SurfaceData, qualities, napari_viewer:"napari.Viewer"):
+def _surface_quality_table(surface: SurfaceData, qualities:Quality = [Quality.AREA, Quality.MIN_ANGLE, Quality.MAX_ANGLE, Quality.ASPECT_RATIO], napari_viewer:"napari.Viewer" = None):
     return surface_quality_table(surface, qualities, napari_viewer)
 
-def surface_quality_table(surface: SurfaceData, qualities = [Quality.AREA, Quality.MIN_ANGLE, Quality.MAX_ANGLE], napari_viewer: "napari.Viewer" = None):
+def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napari.Viewer" = None):
     """Produces a table of specified measurements and adds it to the napari viewer (if given)
 
     Parameters
