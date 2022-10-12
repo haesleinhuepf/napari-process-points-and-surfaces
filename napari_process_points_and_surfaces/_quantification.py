@@ -2,9 +2,10 @@
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, LayerDataTuple
 
-from napari_tools_menu import register_function
+from napari_tools_menu import register_function, register_dock_widget
 import numpy as np
 from typing import List
+from magicgui import magic_factory
 
 from enum import Enum
 
@@ -64,6 +65,47 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
     values = np.asarray(mesh2.pointdata[mesh2.pointdata.keys()[0]])
 
     return (vertices, faces, values)
+
+
+# @register_function(menu="Measurement > Surface quality table (vedo, nppas)", quality=dict(widget_type='Select', choices=Quality))
+@register_dock_widget(menu="Measurement > Surface quality table (vedo, nppas)")
+@magic_factory(qualities=dict(widget_type='Select', choices=Quality))
+def _surface_quality_table(surface: SurfaceData, qualities, napari_viewer:"napari.Viewer"):
+    return surface_quality_table(surface, qualities, napari_viewer)
+
+def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napari.Viewer" = None):
+    """Produces a
+
+    Parameters
+    ----------
+    surface: napari.types.SurfaceData
+    qualities: list of Quality
+    napari_viewer: napari.Viewer
+
+    Returns
+    -------
+    pandas.DataFrame in case napari_viewer is None
+    """
+    table = {}
+    for quality in qualities:
+        result = add_quality(surface, quality)
+        values = result[2]
+        if len(table.keys()) == 0:
+            table["triangle_index"] = list(range(len(values)))
+        table[str(quality)] = values
+
+    if napari_viewer is not None:
+        # Store results in the properties dictionary:
+        from napari_workflows._workflow import _get_layer_from_data
+        surface_layer = _get_layer_from_data(napari_viewer, surface)
+        surface_layer.properties = table
+
+        # turn table into a widget
+        from napari_skimage_regionprops import add_table
+        add_table(surface_layer, napari_viewer)
+    else:
+        import pandas
+        return pandas.DataFrame(table)
 
 
 @register_function(menu="Measurement > Surface curvature (vedo, nppas)")
