@@ -74,7 +74,7 @@ def _surface_quality_table(surface: SurfaceData, qualities, napari_viewer:"napar
     return surface_quality_table(surface, qualities, napari_viewer)
 
 def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napari.Viewer" = None):
-    """Produces a
+    """Produces a table of specified measurements and adds it to the napari viewer (if given)
 
     Parameters
     ----------
