@@ -75,6 +75,10 @@ class surface_annotator(QWidget):
 
     def on_push_button(self, button):
 
+        # make sure that the surface layer in the dropdown is selected in the
+        # layer list when a button is clicked.
+        self.viewer.layers.selection.active = self.surface_layer_select.value
+
         # remove previous callbacks
         if len(self.surface_layer_select.value.mouse_drag_callbacks) > 0:
             self.surface_layer_select.value.mouse_drag_callbacks.pop(0)
@@ -104,7 +108,7 @@ class surface_annotator(QWidget):
 
         return super().eventFilter(obj, event)
 
-    def get_napari_visual(self, viewer, layer):
+    def get_napari_visual(self, viewer):
         """Get the visual class for a given layer
         Parameters
         ----------
@@ -117,6 +121,7 @@ class surface_annotator(QWidget):
         visual
             The napari visual class for the layer.
         """
+        layer = self.surface_layer_select.value
         visual = viewer.window._qt_window._qt_viewer.layer_to_visual[layer]
 
         return visual
