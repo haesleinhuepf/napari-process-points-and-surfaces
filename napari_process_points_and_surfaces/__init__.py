@@ -65,7 +65,7 @@ def _vedo_ellipsoid() -> SurfaceData:
 def example_data_knot(viewer:napari.viewer):
     viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
 
-@register_action(menu = "Surfaces > Example data: Standford bunng (nppas)")
+@register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
 def example_data_standford_bunny(viewer:napari.viewer):
     viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
 
