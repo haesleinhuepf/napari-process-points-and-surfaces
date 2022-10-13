@@ -12,7 +12,7 @@ import napari
 
 from napari_time_slicer import time_slicer
 from ._quantification import add_quality, Quality, add_curvature_scalars,\
-    Curvature, add_spherefitted_curvature
+    Curvature, add_spherefitted_curvature, surface_quality_table
 
 @napari_hook_implementation
 def napari_experimental_provide_function():

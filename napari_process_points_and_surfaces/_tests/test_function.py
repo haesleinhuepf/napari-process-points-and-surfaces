@@ -86,4 +86,13 @@ def test_surface_to_binary_volume():
 
     assert jaccard_index > 0.9
 
+def test_surface_to_measurement_table():
+    import numpy as np
+    from napari_process_points_and_surfaces import largest_label_to_surface, surface_quality_table, Quality
+    image = np.zeros((32, 32, 32)).astype(int)
+    image[1:30, 1:30, 1:30] = 1
+
+    surface = largest_label_to_surface(image)
+    table = surface_quality_table(surface, qualities=[Quality.MIN_ANGLE, Quality.MAX_ANGLE, Quality.AREA])
+    assert len(table.keys()) == 4
 

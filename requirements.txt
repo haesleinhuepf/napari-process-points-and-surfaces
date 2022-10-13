@@ -10,4 +10,7 @@ vedo
 napari-tools-menu>=0.1.14
 napari-time-slicer>=0.4.5
 napari-workflows>=0.2.3
+napari-skimage-regionprops
+pandas
+imageio!=2.22.1
 -e .
