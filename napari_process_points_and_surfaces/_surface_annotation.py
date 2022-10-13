@@ -22,11 +22,11 @@ class surface_annotator(QWidget):
     def __init__(self, napari_viewer):
         super().__init__()
 
-        self.selected_vertices = []
-        if "start_end_points" not in napari_viewer.layers :
-            self.points_layer = napari_viewer.add_points(np.empty((0,3)), ndim=3, name="start_end_points")
-        else:
-            self.points_layer = napari_viewer.layers["start_end_points"]
+        # self.selected_vertices = []
+        # # if "start_end_points" not in napari_viewer.layers :
+        # #     self.points_layer = napari_viewer.add_points(np.empty((0,3)), ndim=3, name="start_end_points")
+        # # else:
+        # #     self.points_layer = napari_viewer.layers["start_end_points"]
 
         self.viewer = napari_viewer
 
@@ -75,7 +75,7 @@ class surface_annotator(QWidget):
             self.surface_layer_select.value.mouse_drag_callbacks = []
 
         if button == self.button_single_face:
-            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_single_face)
+            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_on_drag)
             self.currently_selected_button = button
 
         if button == self.button_radius:
@@ -112,12 +112,25 @@ class surface_annotator(QWidget):
         return visual
 
 
-    def paint_face(self, surface_layer, index):
+    def paint_face(self, surface_layer, face_index: int, label: int = 0):
+        """
+        Paint a face according to its index in the list of faces with a label.
+
+        Parameters
+        ----------
+        surface_layer : napari.layers.Surface
+        face_index : int
+
+        Returns
+        -------
+        None.
+
+        """
         data = list(surface_layer.data)
-        indeces_of_triangle_points = data[1][index]
+        indeces_of_triangle_points = data[1][face_index]
 
         values = data[2]
-        values[indeces_of_triangle_points] = self.label_select_spinbox.value()
+        values[indeces_of_triangle_points] = label
 
         surface_visual = self.get_napari_visual(self.viewer, surface_layer)
         meshdata = surface_visual.node._meshdata
@@ -126,40 +139,21 @@ class surface_annotator(QWidget):
 
         surface_visual.node.set_data(meshdata=meshdata)
 
-    def _paint_single_face(self, layer, event):
+    def _paint_face_on_drag(self, layer, event):
         if "Alt" not in event.modifiers:
             return
 
-        if self.button_single_face.isChecked():
+        _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
+        self.paint_face(layer, triangle_index, self.label_select_spinbox.value())
+
+        yield
+        layer.interactive = False
+
+        while event.type == 'mouse_move':
             _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-
-            candidate_vertices = layer.data[1][triangle_index]
-            candidate_points = layer.data[0][candidate_vertices]
-
-            _,intersection_coords = napari.utils.geometry.find_nearest_triangle_intersection(event.position, event.view_direction, candidate_points[None, :, :])
-
-            distances=np.linalg.norm(intersection_coords[None, :] - candidate_points, axis=1)
-            index = np.argmin(distances)
-
-            if len(self.selected_vertices) >=2:
-                self.selected_vertices.pop(0)
-            self.selected_vertices.append(candidate_vertices[index])
-
-            points = list(self.points_layer.data)
-            if len(points) >=2:
-                points.pop(0)
-                self.points_layer.data = np.asarray(points)
-
-            vertex = candidate_vertices[index]
-            self.points_layer.add(layer.data[0][vertex])
-
-            if len(self.selected_vertices) == 2:
-                geoalg = geodesic.PyGeodesicAlgorithmExact(layer.data[0], layer.data[1])
-                distance, path = geoalg.geodesicDistance(self.selected_vertices[0], self.selected_vertices[1])
-
-
-                self.viewer.add_shapes(path, shape_type = "Path")
-                self.viewer.layers.selection.active = self.surface_layer_select.value
+            self.paint_face(layer, triangle_index, self.label_select_spinbox.value())
+            yield
+        layer.interactive = True
 
 
 
