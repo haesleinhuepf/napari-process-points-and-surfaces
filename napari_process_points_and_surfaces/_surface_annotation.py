@@ -60,7 +60,7 @@ class surface_annotator(QWidget):
         self.tool_select_group.addButton(self.button_geodesic_radius)
 
         self.label_select_spinbox = QSpinBox()
-        self.label_select_spinbox.value = 2
+        self.label_select_spinbox.setValue(2)
 
         self.setLayout(QVBoxLayout())
 
