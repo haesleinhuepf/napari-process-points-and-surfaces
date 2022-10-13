@@ -13,6 +13,9 @@ from magicgui.widgets import create_widget
 from napari.layers import Surface
 from scipy import spatial
 
+from napari_tools_menu import register_dock_widget
+
+@register_dock_widget(menu = "Surfaces > Annotate surface manually (nppas)")
 class surface_annotator(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
@@ -59,10 +62,6 @@ class surface_annotator(QWidget):
         self.installEventFilter(self)
 
         self.currently_selected_button = None
-
-        self.tree = spatial.KDTree(self.surface_layer_select.value.data[0])
-
-        #self.surface_layer_select.value.mouse_drag_callbacks.append(self.paint_single_face)
 
     def on_push_button(self, button):
 
@@ -175,6 +174,7 @@ class surface_annotator(QWidget):
         candidate_points = layer.data[0][candidate_vertices]
         _,intersection_coords = napari.utils.geometry.find_nearest_triangle_intersection(event.position, event.view_direction, candidate_points[None, :, :])
 
+        self.tree = spatial.KDTree(self.surface_layer_select.value.data[0])
         indices = self.tree.query_ball_point(intersection_coords, r=10)
 
         original_values = layer.data[2]
@@ -224,7 +224,6 @@ class surface_annotator(QWidget):
 
             #indices = tree.query_ball_point(intersection_coords, r=radius)
             indices = np.argwhere(distances <= radius)
-            print(indices)
 
             #_, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
             #layer.data[2] = original_values
@@ -235,8 +234,6 @@ class surface_annotator(QWidget):
             data = list(layer.data)
             data[2] = new_values
             self.viewer.layers[layer.name].data = data
-
-            print("done")
 
             yield
             # the yield statement allows the mouse UI to keep working while
