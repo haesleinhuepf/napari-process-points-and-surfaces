@@ -59,8 +59,7 @@ class surface_annotator(QWidget):
         self.setLayout(QVBoxLayout())
 
         self.layout().addWidget(self.surface_layer_select.native, 0)
-        if use_pygeodesic:
-            self.layout().addWidget(self.button_single_face)
+        self.layout().addWidget(self.button_single_face)
         self.layout().addWidget(self.button_radius)
         if use_pygeodesic:
             self.layout().addWidget(self.button_geodesic_radius)
