@@ -14,7 +14,8 @@ from ._surface_annotation import surface_annotator
 
 from napari_time_slicer import time_slicer
 from ._quantification import add_quality, Quality, add_curvature_scalars,\
-    Curvature, add_spherefitted_curvature, surface_quality_table
+    Curvature, add_spherefitted_curvature, surface_quality_table, \
+    surface_quality_to_properties
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
