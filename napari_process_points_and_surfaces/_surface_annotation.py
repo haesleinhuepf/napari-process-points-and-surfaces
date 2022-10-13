@@ -60,6 +60,7 @@ class surface_annotator(QWidget):
         self.tool_select_group.addButton(self.button_geodesic_radius)
 
         self.label_select_spinbox = QSpinBox()
+        self.label_select_spinbox.value = 2
 
         self.setLayout(QVBoxLayout())
 
@@ -104,7 +105,7 @@ class surface_annotator(QWidget):
     def _on_erase_button(self):
         """Replace the values of a surface with zeroes."""
         data = list(self.surface_layer_select.value.data)
-        data[2] = np.zeros_like(data[2])
+        data[2] = np.ones_like(data[2])
         self.surface_layer_select.value.data = data
 
     def eventFilter(self, obj: QObject, event: QEvent):
