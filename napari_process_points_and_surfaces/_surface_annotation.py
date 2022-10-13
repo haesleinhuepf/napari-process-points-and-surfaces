@@ -54,6 +54,9 @@ class surface_annotator(QWidget):
 
         self.button_geodesic_radius = QPushButton("geodesic Radius")
         self.button_geodesic_radius.setCheckable(True)
+
+        self.button_erase = QPushButton('Erase annotations')
+
         self.tool_select_group.addButton(self.button_geodesic_radius)
 
         self.label_select_spinbox = QSpinBox()
@@ -67,8 +70,10 @@ class surface_annotator(QWidget):
         if use_pygeodesic:
             self.layout().addWidget(self.button_geodesic_radius)
         self.layout().addWidget(self.label_select_spinbox)
+        self.layout().addWidget(self.button_erase)
 
         self.tool_select_group.buttonClicked.connect(self.on_push_button)
+        self.button_erase.clicked.connect(self._on_erase_button)
         self.installEventFilter(self)
 
         self.currently_selected_button = None
@@ -96,6 +101,11 @@ class surface_annotator(QWidget):
             self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_geodesic_distance)
             self.currently_selected_button = button
 
+    def _on_erase_button(self):
+        """Replace the values of a surface with zeroes."""
+        data = list(self.surface_layer_select.value.data)
+        data[2] = np.zeros_like(data[2])
+        self.surface_layer_select.value.data = data
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
