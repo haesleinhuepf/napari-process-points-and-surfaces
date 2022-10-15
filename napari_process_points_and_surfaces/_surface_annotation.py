@@ -4,10 +4,10 @@ import napari
 import copy
 import numpy as np
 
-use_pygeodesic = False
+_use_pygeodesic = False
 try:
     from pygeodesic import geodesic
-    use_pygeodesic = True
+    _use_pygeodesic = True
 except:
     pass
 
@@ -28,58 +28,58 @@ class SurfaceAnnotationWidget(QWidget):
     def __init__(self, napari_viewer):
         super().__init__()
 
-        self.viewer = napari_viewer
+        self._viewer = napari_viewer
 
         # select layer
-        self.surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
+        self._surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
 
         # select tool
-        self.tool_select_group = QButtonGroup()
-        self.tool_select_group.setExclusive(True)
+        self._tool_select_group = QButtonGroup()
+        self._tool_select_group.setExclusive(True)
 
-        self.button_off = QPushButton("Off")
-        self.button_off.setCheckable(True)
-        self.button_off.setChecked(True)
-        self.tool_select_group.addButton(self.button_off)
+        self._button_off = QPushButton("Off")
+        self._button_off.setCheckable(True)
+        self._button_off.setChecked(True)
+        self._tool_select_group.addButton(self._button_off)
 
-        self.button_single_face = QPushButton("Freehand drawing")
-        self.button_single_face.setCheckable(True)
-        self.tool_select_group.addButton(self.button_single_face)
+        self._button_single_face = QPushButton("Freehand drawing")
+        self._button_single_face.setCheckable(True)
+        self._tool_select_group.addButton(self._button_single_face)
 
-        self.button_radius = QPushButton("Draw circle")
-        self.button_radius.setCheckable(True)
-        self.tool_select_group.addButton(self.button_radius)
+        self._button_radius = QPushButton("Draw circle")
+        self._button_radius.setCheckable(True)
+        self._tool_select_group.addButton(self._button_radius)
 
-        self.button_geodesic_radius = QPushButton("Geodesic radius")
-        self.button_geodesic_radius.setCheckable(True)
-        self.tool_select_group.addButton(self.button_geodesic_radius)
+        self._button_geodesic_radius = QPushButton("Geodesic radius")
+        self._button_geodesic_radius.setCheckable(True)
+        self._tool_select_group.addButton(self._button_geodesic_radius)
 
-        self.button_erase = QPushButton('Erase annotations (set all to 1)')
+        self._button_erase = QPushButton('Erase annotations (set all to 1)')
 
         # annotation configuration
-        self.annotation_label_select_spinbox = QSpinBox()
-        self.annotation_label_select_spinbox.setValue(2)
+        self._annotation_label_select = QSpinBox()
+        self._annotation_label_select.setValue(2)
 
         # configure layout
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(QLabel("Surface layer to draw on"))
-        self.layout().addWidget(self.surface_layer_select.native, 0)
+        self.layout().addWidget(self._surface_layer_select.native, 0)
 
 
         self.layout().addWidget(QLabel("Drawing mode"))
-        self.layout().addWidget(self.button_off)
-        self.layout().addWidget(self.button_single_face)
-        self.layout().addWidget(self.button_radius)
-        if use_pygeodesic:
-            self.layout().addWidget(self.button_geodesic_radius)
+        self.layout().addWidget(self._button_off)
+        self.layout().addWidget(self._button_single_face)
+        self.layout().addWidget(self._button_radius)
+        if _use_pygeodesic:
+            self.layout().addWidget(self._button_geodesic_radius)
 
         self.layout().addWidget(QLabel("Annotation label"))
-        self.layout().addWidget(self.annotation_label_select_spinbox)
-        self.layout().addWidget(self.button_erase)
+        self.layout().addWidget(self._annotation_label_select)
+        self.layout().addWidget(self._button_erase)
 
         # connect events
-        self.tool_select_group.buttonClicked.connect(self._on_push_button)
-        self.button_erase.clicked.connect(self._on_erase_button)
+        self._tool_select_group.buttonClicked.connect(self._on_push_button)
+        self._button_erase.clicked.connect(self._on_erase_button)
         self.installEventFilter(self)
 
         self.currently_selected_button = None
@@ -87,42 +87,42 @@ class SurfaceAnnotationWidget(QWidget):
     def _on_push_button(self, button):
         # make sure that the surface layer in the dropdown is selected in the
         # layer list when a button is clicked.
-        self.viewer.layers.selection.active = self.surface_layer_select.value
+        self._viewer.layers.selection.active = self._surface_layer_select.value
 
         # remove previous callbacks
-        while len(self.surface_layer_select.value.mouse_drag_callbacks) > 0:
-            self.surface_layer_select.value.mouse_drag_callbacks.pop(0)
+        while len(self._surface_layer_select.value.mouse_drag_callbacks) > 0:
+            self._surface_layer_select.value.mouse_drag_callbacks.pop(0)
 
         # if a button is just de-activated
-        if button == self.currently_selected_button or button == self.button_off:
+        if button == self.currently_selected_button or button == self._button_off:
             button.setChecked(False)
-            self.surface_layer_select.value.mouse_drag_callbacks = []
-            self.button_off.setChecked(True)
-            button = self.button_off
+            self._surface_layer_select.value.mouse_drag_callbacks = []
+            self._button_off.setChecked(True)
+            button = self._button_off
 
-        self.viewer.camera.interactive = button == self.button_off
+        self._viewer.camera.interactive = button == self._button_off
 
         button_function = {
-            self.button_single_face: self._paint_face_on_drag,
-            self.button_radius:self._paint_face_by_euclidean_distance,
-            self.button_geodesic_radius:self._paint_face_by_geodesic_distance
+            self._button_single_face: self._paint_face_on_drag,
+            self._button_radius:self._paint_face_by_euclidean_distance,
+            self._button_geodesic_radius:self._paint_face_by_geodesic_distance
         }
 
         if button in button_function.keys():
-            self.surface_layer_select.value.mouse_drag_callbacks.append(button_function[button])
+            self._surface_layer_select.value.mouse_drag_callbacks.append(button_function[button])
 
         self.currently_selected_button = button
 
     def _on_erase_button(self):
         """Replace the values of a surface with ones. This marks all vertices as un-annotated."""
-        data = list(self.surface_layer_select.value.data)
+        data = list(self._surface_layer_select.value.data)
         data[2] = np.ones_like(data[2])
-        self.surface_layer_select.value.data = data
+        self._surface_layer_select.value.data = data
 
     def eventFilter(self, obj: QObject, event: QEvent):
         """https://forum.image.sc/t/composing-workflows-in-napari/61222/3."""
         if event.type() == QEvent.ParentChange:
-            self.surface_layer_select.parent_changed.emit(self.parent())
+            self._surface_layer_select.parent_changed.emit(self.parent())
 
         return super().eventFilter(obj, event)
 
@@ -139,13 +139,13 @@ class SurfaceAnnotationWidget(QWidget):
         visual
             The napari visual class for the layer.
         """
-        layer = self.surface_layer_select.value
+        layer = self._surface_layer_select.value
         visual = viewer.window._qt_window._qt_viewer.layer_to_visual[layer]
 
         return visual
 
 
-    def paint_face(self, surface_layer:"napari.layer.Surface", face_index: int, annotation_label: int = 0):
+    def _paint_face(self, surface_layer: "napari.layer.Surface", face_index: int, annotation_label: int = 0):
         """
         Paint a face according to its index in the list of faces with a label.
 
@@ -165,7 +165,7 @@ class SurfaceAnnotationWidget(QWidget):
         values = data[2]
         values[indices_of_triangle_points] = annotation_label
 
-        surface_visual = self.get_napari_visual(self.viewer)
+        surface_visual = self.get_napari_visual(self._viewer)
         meshdata = surface_visual.node._meshdata
 
         meshdata.set_vertex_values(values)
@@ -177,14 +177,14 @@ class SurfaceAnnotationWidget(QWidget):
         #    return
 
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-        self.paint_face(layer, triangle_index, self.annotation_label_select_spinbox.value())
+        self._paint_face(layer, triangle_index, self._annotation_label_select.value())
 
         yield
         layer.interactive = False
 
         while event.type == 'mouse_move':
             _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-            self.paint_face(layer, triangle_index, self.annotation_label_select_spinbox.value())
+            self._paint_face(layer, triangle_index, self._annotation_label_select.value())
             yield
         layer.interactive = True
 
@@ -199,7 +199,7 @@ class SurfaceAnnotationWidget(QWidget):
         candidate_points = layer.data[0][candidate_vertices]
         _,intersection_coords = napari.utils.geometry.find_nearest_triangle_intersection(event.position, event.view_direction, candidate_points[None, :, :])
 
-        self.tree = spatial.KDTree(self.surface_layer_select.value.data[0])
+        self.tree = spatial.KDTree(self._surface_layer_select.value.data[0])
         indices = self.tree.query_ball_point(intersection_coords, r=10)
 
         original_values = layer.data[2]
@@ -212,7 +212,7 @@ class SurfaceAnnotationWidget(QWidget):
 
             indices = self.tree.query_ball_point(intersection_coords, r=radius)
             new_values = copy.copy(original_values)
-            new_values[indices] = self.annotation_label_select_spinbox.value()
+            new_values[indices] = self._annotation_label_select.value()
 
             # get data, replace values and write back
             data = list(layer.data)
@@ -253,12 +253,12 @@ class SurfaceAnnotationWidget(QWidget):
             #_, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
             #layer.data[2] = original_values
             new_values = copy.copy(original_values)
-            new_values[indices] = self.annotation_label_select_spinbox.value()
+            new_values[indices] = self._annotation_label_select.value()
 
             # get data, replace values and write back
             data = list(layer.data)
             data[2] = new_values
-            self.viewer.layers[layer.name].data = data
+            self._viewer.layers[layer.name].data = data
 
             yield
             # the yield statement allows the mouse UI to keep working while
