@@ -54,7 +54,7 @@ class SurfaceAnnotationWidget(QWidget):
         self.button_geodesic_radius.setCheckable(True)
         self.tool_select_group.addButton(self.button_geodesic_radius)
 
-        self.button_erase = QPushButton('Erase annotations')
+        self.button_erase = QPushButton('Erase annotations (set all to 1)')
 
         # annotation configuration
         self.annotation_label_select_spinbox = QSpinBox()
@@ -73,7 +73,7 @@ class SurfaceAnnotationWidget(QWidget):
         if use_pygeodesic:
             self.layout().addWidget(self.button_geodesic_radius)
 
-        self.layout().addWidget(QLabel("Annotation label (1 == not annotated)"))
+        self.layout().addWidget(QLabel("Annotation label"))
         self.layout().addWidget(self.annotation_label_select_spinbox)
         self.layout().addWidget(self.button_erase)
 
@@ -102,14 +102,14 @@ class SurfaceAnnotationWidget(QWidget):
 
         self.viewer.camera.interactive = button == self.button_off
 
-        if button == self.button_single_face:
-            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_on_drag)
+        button_function = {
+            self.button_single_face: self._paint_face_on_drag,
+            self.button_radius:self._paint_face_by_euclidean_distance,
+            self.button_geodesic_radius:self._paint_face_by_geodesic_distance
+        }
 
-        if button == self.button_radius:
-            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_euclidean_distance)
-
-        if button == self.button_geodesic_radius:
-            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_geodesic_distance)
+        if button in button_function.keys():
+            self.surface_layer_select.value.mouse_drag_callbacks.append(button_function[button])
 
         self.currently_selected_button = button
 
