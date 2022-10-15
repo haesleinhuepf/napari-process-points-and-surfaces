@@ -53,7 +53,7 @@ After measurements and annotations were done, you can save the annotation in the
 To visualize measurements on the surface, just double-click on the table column headers. This also allows to visualize 
 measurements and annotations side-by-side.
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/measurement_visualization.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/measurement_visualization.gif)
 
 ## Installation
 
