@@ -28,6 +28,33 @@ There you also learn how this screenshot is made:
 
 ![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot2.png)
 
+### Surface measurements and annotations
+
+Using the menu `Tools > Measurement > Surface quality table (vedo, nppas)` you can derived quantiative measurements of
+the vertices in a given surface layer. 
+
+![img_1.png](docs/surface_measurements.png)
+
+To differentiate regions when analyzing those measurements it is recommended to use the menu `Tools > Surfaces > Annotate surface manually (nppas)`
+after measurements have been made. This tool allows you to draw annotation label values on the surface. 
+It is recommended to do activate a colorful colormap such as `hsv` before starting to draw annotations. 
+Furthermore, set the maximum of the contrast limit range to the number of regions you want to annotate + 1.
+Annotations can be drawn as freehand lines and circles.
+
+![img.png](docs/surface_annotation.png)
+
+After measurements and annotations were done, you can save the annotation in the same measurement table using the menu
+`Tools > Measurement > Surface quality/annotation to table (nppas)`
+
+![img.png](docs/surface_annotation_in_table.png)
+
+### Measurement visualization
+
+To visualize measurements on the surface, just double-click on the table column headers. This also allows to visualize 
+measurements and annotations side-by-side.
+
+![img.png](docs/measurement_visualization.png)
+
 ## Installation
 
 You can install `napari-process-points-and-surfaces` via [pip]:
