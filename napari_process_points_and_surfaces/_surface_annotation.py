@@ -11,7 +11,7 @@ try:
 except:
     pass
 
-from qtpy.QtWidgets import QWidget, QVBoxLayout, QPushButton, QButtonGroup, QSpinBox
+from qtpy.QtWidgets import QWidget, QVBoxLayout, QPushButton, QButtonGroup, QSpinBox, QLabel
 from qtpy.QtCore import QEvent, QObject
 
 from magicgui.widgets import create_widget
@@ -58,19 +58,24 @@ class SurfaceAnnotationWidget(QWidget):
         self.tool_select_group.addButton(self.button_geodesic_radius)
 
         # annotation configuration
-        self.label_select_spinbox = QSpinBox()
-        self.label_select_spinbox.setValue(2)
+        self.annotation_label_select_spinbox = QSpinBox()
+        self.annotation_label_select_spinbox.setValue(2)
 
         # configure layout
         self.setLayout(QVBoxLayout())
-
+        self.layout().addWidget(QLabel("Surface layer to draw on"))
         self.layout().addWidget(self.surface_layer_select.native, 0)
+
+
+        self.layout().addWidget(QLabel("Drawing mode"))
         self.layout().addWidget(self.button_off)
         self.layout().addWidget(self.button_single_face)
         self.layout().addWidget(self.button_radius)
         if use_pygeodesic:
             self.layout().addWidget(self.button_geodesic_radius)
-        self.layout().addWidget(self.label_select_spinbox)
+
+        self.layout().addWidget(QLabel("Annotation label (1 == not annotated)"))
+        self.layout().addWidget(self.annotation_label_select_spinbox)
         self.layout().addWidget(self.button_erase)
 
         self.tool_select_group.buttonClicked.connect(self.on_push_button)
@@ -139,7 +144,7 @@ class SurfaceAnnotationWidget(QWidget):
         return visual
 
 
-    def paint_face(self, surface_layer, face_index: int, label: int = 0):
+    def paint_face(self, surface_layer:"napari.layer.Surface", face_index: int, annotation_label: int = 0):
         """
         Paint a face according to its index in the list of faces with a label.
 
@@ -157,7 +162,7 @@ class SurfaceAnnotationWidget(QWidget):
         indeces_of_triangle_points = data[1][face_index]
 
         values = data[2]
-        values[indeces_of_triangle_points] = label
+        values[indeces_of_triangle_points] = annotation_label
 
         surface_visual = self.get_napari_visual(self.viewer)
         meshdata = surface_visual.node._meshdata
@@ -167,18 +172,19 @@ class SurfaceAnnotationWidget(QWidget):
         surface_visual.node.set_data(meshdata=meshdata)
 
     def _paint_face_on_drag(self, layer, event):
+        print("MOD", event.modifiers)
         if "Alt" not in event.modifiers:
             return
 
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-        self.paint_face(layer, triangle_index, self.label_select_spinbox.value())
+        self.paint_face(layer, triangle_index, self.annotation_label_select_spinbox.value())
 
         yield
         layer.interactive = False
 
         while event.type == 'mouse_move':
             _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-            self.paint_face(layer, triangle_index, self.label_select_spinbox.value())
+            self.paint_face(layer, triangle_index, self.annotation_label_select_spinbox.value())
             yield
         layer.interactive = True
 
@@ -206,7 +212,7 @@ class SurfaceAnnotationWidget(QWidget):
 
             indices = self.tree.query_ball_point(intersection_coords, r=radius)
             new_values = copy.copy(original_values)
-            new_values[indices] = self.label_select_spinbox.value()
+            new_values[indices] = self.annotation_label_select_spinbox.value()
 
             # get data, replace values and write back
             data = list(layer.data)
@@ -247,7 +253,7 @@ class SurfaceAnnotationWidget(QWidget):
             #_, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
             #layer.data[2] = original_values
             new_values = copy.copy(original_values)
-            new_values[indices] = self.label_select_spinbox.value()
+            new_values[indices] = self.annotation_label_select_spinbox.value()
 
             # get data, replace values and write back
             data = list(layer.data)
