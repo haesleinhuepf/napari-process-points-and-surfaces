@@ -171,6 +171,12 @@ class SurfaceAnnotationWidget(QWidget):
         meshdata.set_vertex_values(values)
 
         surface_visual.node.set_data(meshdata=meshdata)
+        self._update_contrast_limits(surface_layer, annotation_label)
+
+    def _update_contrast_limits(self, surface_layer, annotation_label):
+        """update contrast limits in case they exceed current setting"""
+        if annotation_label > surface_layer.contrast_limits[1]:
+            surface_layer.contrast_limits = [surface_layer.contrast_limits[0], annotation_label]
 
     def _paint_face_on_drag(self, layer, event):
         #if "Alt" not in event.modifiers:
@@ -218,6 +224,7 @@ class SurfaceAnnotationWidget(QWidget):
             data = list(layer.data)
             data[2] = new_values
             layer.data = data
+            self._update_contrast_limits(layer, self._annotation_label_select.value())
 
             yield
         layer.interactive = True
@@ -258,7 +265,8 @@ class SurfaceAnnotationWidget(QWidget):
             # get data, replace values and write back
             data = list(layer.data)
             data[2] = new_values
-            self._viewer.layers[layer.name].data = data
+            layer.data = data
+            self._update_contrast_limits(layer, self._annotation_label_select.value())
 
             yield
             # the yield statement allows the mouse UI to keep working while
