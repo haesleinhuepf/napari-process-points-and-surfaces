@@ -42,20 +42,19 @@ class SurfaceAnnotationWidget(QWidget):
         self.button_off.setChecked(True)
         self.tool_select_group.addButton(self.button_off)
 
-        self.button_single_face = QPushButton("Paint Single Face")
+        self.button_single_face = QPushButton("Freehand drawing")
         self.button_single_face.setCheckable(True)
         self.tool_select_group.addButton(self.button_single_face)
 
-        self.button_radius = QPushButton("Radius")
+        self.button_radius = QPushButton("Draw circle")
         self.button_radius.setCheckable(True)
         self.tool_select_group.addButton(self.button_radius)
 
         self.button_geodesic_radius = QPushButton("Geodesic radius")
         self.button_geodesic_radius.setCheckable(True)
+        self.tool_select_group.addButton(self.button_geodesic_radius)
 
         self.button_erase = QPushButton('Erase annotations')
-
-        self.tool_select_group.addButton(self.button_geodesic_radius)
 
         # annotation configuration
         self.annotation_label_select_spinbox = QSpinBox()
@@ -78,14 +77,14 @@ class SurfaceAnnotationWidget(QWidget):
         self.layout().addWidget(self.annotation_label_select_spinbox)
         self.layout().addWidget(self.button_erase)
 
-        self.tool_select_group.buttonClicked.connect(self.on_push_button)
+        # connect events
+        self.tool_select_group.buttonClicked.connect(self._on_push_button)
         self.button_erase.clicked.connect(self._on_erase_button)
         self.installEventFilter(self)
 
         self.currently_selected_button = None
 
-    def on_push_button(self, button):
-
+    def _on_push_button(self, button):
         # make sure that the surface layer in the dropdown is selected in the
         # layer list when a button is clicked.
         self.viewer.layers.selection.active = self.surface_layer_select.value
@@ -100,6 +99,8 @@ class SurfaceAnnotationWidget(QWidget):
             self.surface_layer_select.value.mouse_drag_callbacks = []
             self.button_off.setChecked(True)
             button = self.button_off
+
+        self.viewer.camera.interactive = button == self.button_off
 
         if button == self.button_single_face:
             self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_on_drag)
@@ -172,9 +173,8 @@ class SurfaceAnnotationWidget(QWidget):
         surface_visual.node.set_data(meshdata=meshdata)
 
     def _paint_face_on_drag(self, layer, event):
-        print("MOD", event.modifiers)
-        if "Alt" not in event.modifiers:
-            return
+        #if "Alt" not in event.modifiers:
+        #    return
 
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
         self.paint_face(layer, triangle_index, self.annotation_label_select_spinbox.value())
@@ -189,8 +189,8 @@ class SurfaceAnnotationWidget(QWidget):
         layer.interactive = True
 
     def _paint_face_by_euclidean_distance(self, layer, event):
-        if "Alt" not in event.modifiers:
-            return
+        #if "Alt" not in event.modifiers:
+        #    return
 
         click_origin = event.position
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
@@ -223,8 +223,8 @@ class SurfaceAnnotationWidget(QWidget):
         layer.interactive = True
 
     def _paint_face_by_geodesic_distance(self, layer, event):
-        if "Alt" not in event.modifiers:
-            return
+        #if "Alt" not in event.modifiers:
+        #    return
 
         click_origin = event.position
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
