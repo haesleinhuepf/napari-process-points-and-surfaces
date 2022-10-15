@@ -33,10 +33,6 @@ class SurfaceAnnotationWidget(QWidget):
         # select layer
         self.surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
 
-
-        self.annotation_name = create_widget(annotation=str, label="Annotation name")
-        self.annotation_name.value = "annotation"
-
         # select tool
         self.tool_select_group = QButtonGroup()
         self.tool_select_group.setExclusive(True)
@@ -69,7 +65,6 @@ class SurfaceAnnotationWidget(QWidget):
         self.setLayout(QVBoxLayout())
 
         self.layout().addWidget(self.surface_layer_select.native, 0)
-        self.layout().addWidget(self.annotation_name.native)
         self.layout().addWidget(self.button_off)
         self.layout().addWidget(self.button_single_face)
         self.layout().addWidget(self.button_radius)
@@ -170,11 +165,6 @@ class SurfaceAnnotationWidget(QWidget):
         meshdata.set_vertex_values(values)
 
         surface_visual.node.set_data(meshdata=meshdata)
-
-        if hasattr(surface_layer, "properties"):
-            surface_layer.properties[self.annotation_name] = values
-        if hasattr(surface_layer, "features"):
-            surface_layer.features[self.annotation_name] = values
 
     def _paint_face_on_drag(self, layer, event):
         if "Alt" not in event.modifiers:
