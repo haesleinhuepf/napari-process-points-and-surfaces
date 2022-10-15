@@ -159,10 +159,10 @@ class SurfaceAnnotationWidget(QWidget):
 
         """
         data = list(surface_layer.data)
-        indeces_of_triangle_points = data[1][face_index]
+        indices_of_triangle_points = data[1][face_index]
 
         values = data[2]
-        values[indeces_of_triangle_points] = annotation_label
+        values[indices_of_triangle_points] = annotation_label
 
         surface_visual = self.get_napari_visual(self.viewer)
         meshdata = surface_visual.node._meshdata
