@@ -23,26 +23,28 @@ from napari_tools_menu import register_dock_widget
 
 @register_dock_widget(menu = "Surfaces > Annotate surface manually (nppas)")
 class SurfaceAnnotationWidget(QWidget):
-    """Comprehensive stress analysis of droplet points layer."""
+    """A widget for annotating surface"""
 
     def __init__(self, napari_viewer):
         super().__init__()
 
-        # self.selected_vertices = []
-        # # if "start_end_points" not in napari_viewer.layers :
-        # #     self.points_layer = napari_viewer.add_points(np.empty((0,3)), ndim=3, name="start_end_points")
-        # # else:
-        # #     self.points_layer = napari_viewer.layers["start_end_points"]
-
         self.viewer = napari_viewer
 
-        # add input dropdowns to plugin
+        # select layer
         self.surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
+
+
         self.annotation_name = create_widget(annotation=str, label="Annotation name")
         self.annotation_name.value = "annotation"
 
+        # select tool
         self.tool_select_group = QButtonGroup()
         self.tool_select_group.setExclusive(True)
+
+        self.button_off = QPushButton("Off")
+        self.button_off.setCheckable(True)
+        self.button_off.setChecked(True)
+        self.tool_select_group.addButton(self.button_off)
 
         self.button_single_face = QPushButton("Paint Single Face")
         self.button_single_face.setCheckable(True)
@@ -52,20 +54,23 @@ class SurfaceAnnotationWidget(QWidget):
         self.button_radius.setCheckable(True)
         self.tool_select_group.addButton(self.button_radius)
 
-        self.button_geodesic_radius = QPushButton("geodesic Radius")
+        self.button_geodesic_radius = QPushButton("Geodesic radius")
         self.button_geodesic_radius.setCheckable(True)
 
         self.button_erase = QPushButton('Erase annotations')
 
         self.tool_select_group.addButton(self.button_geodesic_radius)
 
+        # annotation configuration
         self.label_select_spinbox = QSpinBox()
         self.label_select_spinbox.setValue(2)
 
+        # configure layout
         self.setLayout(QVBoxLayout())
 
         self.layout().addWidget(self.surface_layer_select.native, 0)
         self.layout().addWidget(self.annotation_name.native)
+        self.layout().addWidget(self.button_off)
         self.layout().addWidget(self.button_single_face)
         self.layout().addWidget(self.button_radius)
         if use_pygeodesic:
@@ -99,7 +104,7 @@ class SurfaceAnnotationWidget(QWidget):
             self.currently_selected_button = button
 
         if button == self.button_radius:
-            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_eucledean_distance)
+            self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_euclidean_distance)
             self.currently_selected_button = button
 
         if button == self.button_geodesic_radius:
@@ -107,7 +112,7 @@ class SurfaceAnnotationWidget(QWidget):
             self.currently_selected_button = button
 
     def _on_erase_button(self):
-        """Replace the values of a surface with zeroes."""
+        """Replace the values of a surface with ones. This marks all vertices as un-annotated."""
         data = list(self.surface_layer_select.value.data)
         data[2] = np.ones_like(data[2])
         self.surface_layer_select.value.data = data
@@ -158,7 +163,7 @@ class SurfaceAnnotationWidget(QWidget):
         values = data[2]
         values[indeces_of_triangle_points] = label
 
-        surface_visual = self.get_napari_visual(self.viewer, surface_layer)
+        surface_visual = self.get_napari_visual(self.viewer)
         meshdata = surface_visual.node._meshdata
 
         meshdata.set_vertex_values(values)
@@ -186,9 +191,7 @@ class SurfaceAnnotationWidget(QWidget):
             yield
         layer.interactive = True
 
-
-
-    def _paint_face_by_eucledean_distance(self, layer, event):
+    def _paint_face_by_euclidean_distance(self, layer, event):
         if "Alt" not in event.modifiers:
             return
 
