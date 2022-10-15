@@ -22,7 +22,7 @@ from scipy import spatial
 from napari_tools_menu import register_dock_widget
 
 @register_dock_widget(menu = "Surfaces > Annotate surface manually (nppas)")
-class surface_annotator(QWidget):
+class SurfaceAnnotationWidget(QWidget):
     """Comprehensive stress analysis of droplet points layer."""
 
     def __init__(self, napari_viewer):
