@@ -82,7 +82,7 @@ class SurfaceAnnotationWidget(QWidget):
         self._button_erase.clicked.connect(self._on_erase_button)
         self.installEventFilter(self)
 
-        self.currently_selected_button = None
+        self._currently_selected_button = None
 
     def _on_push_button(self, button):
         # make sure that the surface layer in the dropdown is selected in the
@@ -94,13 +94,11 @@ class SurfaceAnnotationWidget(QWidget):
             self._surface_layer_select.value.mouse_drag_callbacks.pop(0)
 
         # if a button is just de-activated
-        if button == self.currently_selected_button or button == self._button_off:
+        if button == self._currently_selected_button or button == self._button_off:
             button.setChecked(False)
             self._surface_layer_select.value.mouse_drag_callbacks = []
             self._button_off.setChecked(True)
             button = self._button_off
-
-        self._viewer.camera.interactive = button == self._button_off
 
         button_function = {
             self._button_single_face: self._paint_face_on_drag,
@@ -111,7 +109,11 @@ class SurfaceAnnotationWidget(QWidget):
         if button in button_function.keys():
             self._surface_layer_select.value.mouse_drag_callbacks.append(button_function[button])
 
-        self.currently_selected_button = button
+        self._currently_selected_button = button
+        self._update_mouse_handling()
+
+    def _update_mouse_handling(self):
+        self._viewer.camera.interactive = self._currently_selected_button == self._button_off
 
     def _on_erase_button(self):
         """Replace the values of a surface with ones. This marks all vertices as un-annotated."""
@@ -193,6 +195,7 @@ class SurfaceAnnotationWidget(QWidget):
             self._paint_face(layer, triangle_index, self._annotation_label_select.value())
             yield
         layer.interactive = True
+        self._update_mouse_handling()
 
     def _paint_face_by_euclidean_distance(self, layer, event):
         #if "Alt" not in event.modifiers:
@@ -228,6 +231,7 @@ class SurfaceAnnotationWidget(QWidget):
 
             yield
         layer.interactive = True
+        self._update_mouse_handling()
 
     def _paint_face_by_geodesic_distance(self, layer, event):
         #if "Alt" not in event.modifiers:
@@ -273,3 +277,4 @@ class SurfaceAnnotationWidget(QWidget):
             # this loop is executed repeatedly
             # yield
         layer.interactive = True
+        self._update_mouse_handling()
