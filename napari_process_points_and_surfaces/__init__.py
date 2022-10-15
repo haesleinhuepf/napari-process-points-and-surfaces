@@ -19,7 +19,7 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
-    return surface_annotator
+    return SurfaceAnnotationWidget
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
