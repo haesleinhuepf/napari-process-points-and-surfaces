@@ -10,7 +10,7 @@ from napari_tools_menu import register_function, register_action
 import numpy as np
 import napari
 
-from ._surface_annotation import surface_annotator
+from ._surface_annotation import SurfaceAnnotationWidget
 
 from napari_time_slicer import time_slicer
 from ._quantification import add_quality, Quality, add_curvature_scalars,\
