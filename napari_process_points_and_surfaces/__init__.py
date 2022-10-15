@@ -1,5 +1,5 @@
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 __common_alias__ = "nppas"
 
 from napari.types import SurfaceData, PointsData
@@ -10,9 +10,16 @@ from napari_tools_menu import register_function, register_action
 import numpy as np
 import napari
 
+from ._surface_annotation_widget import SurfaceAnnotationWidget
+
 from napari_time_slicer import time_slicer
 from ._quantification import add_quality, Quality, add_curvature_scalars,\
-    Curvature, add_spherefitted_curvature, surface_quality_table
+    Curvature, add_spherefitted_curvature, surface_quality_table, \
+    surface_quality_to_properties
+
+@napari_hook_implementation
+def napari_experimental_provide_dock_widget():
+    return SurfaceAnnotationWidget
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
@@ -58,7 +65,7 @@ def _vedo_ellipsoid() -> SurfaceData:
 def example_data_knot(viewer:napari.viewer):
     viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
 
-@register_action(menu = "Surfaces > Example data: Standford bunng (nppas)")
+@register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
 def example_data_standford_bunny(viewer:napari.viewer):
     viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
 

@@ -96,7 +96,7 @@ def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napar
         result = add_quality(surface, quality)
         values = result[2]
         if len(table.keys()) == 0:
-            table["triangle_index"] = list(range(len(values)))
+            table["vertex_index"] = list(range(len(values)))
         table[str(quality)] = values
 
     if napari_viewer is not None:
@@ -145,7 +145,7 @@ def surface_quality_to_properties(surface: SurfaceData,
     values = surface[2]
 
     if len(table.keys()) == 0:
-        table["triangle_index"] = list(range(len(values)))
+        table["vertex_index"] = list(range(len(values)))
     table[column_name] = values
 
     table = pandas.DataFrame(table)
