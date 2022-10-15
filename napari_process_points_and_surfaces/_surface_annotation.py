@@ -91,25 +91,26 @@ class SurfaceAnnotationWidget(QWidget):
         self.viewer.layers.selection.active = self.surface_layer_select.value
 
         # remove previous callbacks
-        if len(self.surface_layer_select.value.mouse_drag_callbacks) > 0:
+        while len(self.surface_layer_select.value.mouse_drag_callbacks) > 0:
             self.surface_layer_select.value.mouse_drag_callbacks.pop(0)
 
         # if a button is just de-activated
-        if button == self.currently_selected_button:
+        if button == self.currently_selected_button or button == self.button_off:
             button.setChecked(False)
             self.surface_layer_select.value.mouse_drag_callbacks = []
+            self.button_off.setChecked(True)
+            button = self.button_off
 
         if button == self.button_single_face:
             self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_on_drag)
-            self.currently_selected_button = button
 
         if button == self.button_radius:
             self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_euclidean_distance)
-            self.currently_selected_button = button
 
         if button == self.button_geodesic_radius:
             self.surface_layer_select.value.mouse_drag_callbacks.append(self._paint_face_by_geodesic_distance)
-            self.currently_selected_button = button
+
+        self.currently_selected_button = button
 
     def _on_erase_button(self):
         """Replace the values of a surface with ones. This marks all vertices as un-annotated."""
