@@ -19,7 +19,8 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     Curvature, add_spherefitted_curvature, surface_quality_table, \
     surface_quality_to_properties
 
-from ._vedo import vedo_convex_hull, vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop
+from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
+                   vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop, vedo_sample_points_from_surface
 
 from ._utils import isotropic_scale_surface
 
@@ -283,7 +284,7 @@ def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> 
     return centroids
 
 
-@register_function(menu="Points > Create points from surface sampling uniformly (open3d, nppas)")
+# @register_function(menu="Points > Create points from surface sampling uniformly (open3d, nppas)")
 def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None) -> PointsData:
     """Sample points uniformly
 
@@ -296,6 +297,8 @@ def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, vi
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
     """
+    warnings.warn("nppas.sample_points_uniformly() is deprecated. Use nppas.vedo_sample_points_from_surface() instead.", DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     point_cloud = mesh_in.sample_points_uniformly(number_of_points=number_of_points)
 

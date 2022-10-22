@@ -7,11 +7,23 @@ def to_vedo_mesh(surface):
     import vedo
     return vedo.mesh.Mesh((surface[0], surface[1]))
 
+
+def to_vedo_points(surface):
+    _hide_vtk_warnings()
+    import vedo
+    return vedo.pointcloud.Points((surface[0], surface[1]))
+
+
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
         return (vedo_mesh.points(), np.asarray(vedo_mesh.faces()))
     else:
         return (vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values)
+
+
+def to_napari_points_data(vedo_points):
+    return vedo_points.points()
+
 
 def _hide_vtk_warnings():
     from vtkmodules.vtkCommonCore import vtkObject
@@ -75,10 +87,32 @@ def vedo_subdivide_loop(surface:"napari.types.SurfaceData", number_of_iterations
 
     See Also
     --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-subdivision
+    ..[0] hhttps://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
     """
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations)
     return to_napari_surface_data(mesh_out)
 
 
+
+@register_function(menu="Points > Create points from surface (vedo, nppas)")
+def vedo_sample_points_from_surface(surface:"napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+    """Sample points from a surface
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    fraction:float
+        the smaller the distance, the more points
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.subsample
+    """
+
+    mesh_in = to_vedo_mesh(surface)
+
+    point_cloud = mesh_in.subsample(fraction=distance_fraction)
+
+    result = to_napari_points_data(point_cloud)
+    return result
