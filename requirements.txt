@@ -4,7 +4,7 @@
 
 napari
 scikit-image
-vedo
+vedo>=2022.4.1
 vtk
 libnetcdf!=4.8.1
 napari-tools-menu>=0.1.14
