@@ -19,7 +19,7 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     Curvature, add_spherefitted_curvature, surface_quality_table, \
     surface_quality_to_properties
 
-from ._vedo import vedo_convex_hull, vedo_example_ellipsoid, vedo_mesh_smooth
+from ._vedo import vedo_convex_hull, vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop
 
 from ._utils import isotropic_scale_surface
 
@@ -247,7 +247,7 @@ def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles:
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Subdivide loop (open3d, nppas)")
+# @register_function(menu="Surfaces > Subdivide loop (open3d, nppas)")
 def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
     """Make a mesh more detailed by subdividing in a loop.
     If iterations are high, this can take very long.
@@ -261,6 +261,8 @@ def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> Surfac
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-subdivision
     """
+    warnings.warn("nppas.subdivide_loop() is deprecated. Use nppas.vedo_subdivide_loop() instead.", DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.subdivide_loop(number_of_iterations=number_of_iterations)
     return to_surface(mesh_out)

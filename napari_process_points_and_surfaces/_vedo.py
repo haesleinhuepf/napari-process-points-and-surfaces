@@ -60,3 +60,25 @@ def vedo_mesh_smooth(surface: "napari.types.SurfaceData",
                         boundary=boundary)
 
     return to_napari_surface_data(smooth_mesh)
+
+
+
+@register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
+def vedo_subdivide_loop(surface:"napari.types.SurfaceData", number_of_iterations: int = 1) -> "napari.types.SurfaceData":
+    """Make a mesh more detailed by subdividing in a loop.
+    If iterations are high, this can take very long.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-subdivision
+    """
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.subdivide(number_of_iterations)
+    return to_napari_surface_data(mesh_out)
+
+
