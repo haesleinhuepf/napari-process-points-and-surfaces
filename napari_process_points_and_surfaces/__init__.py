@@ -20,8 +20,8 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     surface_quality_to_properties
 
 from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
-                   vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop, vedo_sample_points_from_surface, \
-                   vedo_subsample_points, vedo_points_to_convex_hull_surface
+                   vedo_example_ellipsoid, vedo_smooth_mesh, vedo_subdivide_loop, vedo_sample_points_from_surface, \
+                   vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes
 
 from ._utils import isotropic_scale_surface
 
@@ -157,7 +157,7 @@ def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> 
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Average-filter
     """
-    warnings.warn("nppas.filter_smooth_simple() is deprecated. Use nppas.vedo_mesh_smooth() instead.", DeprecationWarning)
+    warnings.warn("nppas.filter_smooth_simple() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_simple(number_of_iterations=number_of_iterations)
@@ -177,7 +177,7 @@ def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) 
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Laplacian
     """
-    warnings.warn("nppas.filter_smooth_laplacian() is deprecated. Use nppas.vedo_mesh_smooth() instead.", DeprecationWarning)
+    warnings.warn("nppas.filter_smooth_laplacian() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_laplacian(number_of_iterations=number_of_iterations)
@@ -198,7 +198,7 @@ def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> 
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Taubin-filter
     ..[1] G. Taubin: Curve and surface smoothing without shrinkage, ICCV, 1995.
     """
-    warnings.warn("nppas.filter_smooth_taubin() is deprecated. Use nppas.vedo_mesh_smooth() instead.", DeprecationWarning)
+    warnings.warn("nppas.filter_smooth_taubin() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_taubin(number_of_iterations=number_of_iterations)
