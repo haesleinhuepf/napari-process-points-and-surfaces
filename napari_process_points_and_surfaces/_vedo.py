@@ -32,14 +32,22 @@ def _hide_vtk_warnings():
 
 @register_function(menu="Surfaces > Convex hull (vedo, nppas)")
 def vedo_convex_hull(surface:"napari.types.SurfaceData") -> "napari.types.SurfaceData":
+    """Determine the convex hull of a surface
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/shapes.html#vedo.shapes.ConvexHull
+    """
     mesh = to_vedo_mesh(surface)
 
     import vedo
     convex_hull_mesh = vedo.shapes.ConvexHull(mesh)
 
     return to_napari_surface_data(convex_hull_mesh)
-
-
 
 
 @register_function(menu="Surfaces > Smooth (vedo, nppas)")
@@ -68,7 +76,6 @@ def vedo_smooth_mesh(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(smooth_mesh)
 
 
-
 @register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
 def vedo_subdivide_loop(surface:"napari.types.SurfaceData", number_of_iterations: int = 1) -> "napari.types.SurfaceData":
     """Make a mesh more detailed by subdividing in a loop.
@@ -81,12 +88,11 @@ def vedo_subdivide_loop(surface:"napari.types.SurfaceData", number_of_iterations
 
     See Also
     --------
-    ..[0] hhttps://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
     """
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations)
     return to_napari_surface_data(mesh_out)
-
 
 
 @register_function(menu="Points > Create points from surface (vedo, nppas)")
@@ -110,7 +116,6 @@ def vedo_sample_points_from_surface(surface:"napari.types.SurfaceData", distance
 
     result = to_napari_points_data(point_cloud)
     return result
-
 
 
 @register_function(menu="Points > Subsample points (vedo, nppas)")
@@ -146,7 +151,7 @@ def vedo_points_to_convex_hull_surface(points_data:"napari.types.PointsData") ->
 
     See Also
     --------
-    ..[0] hhttps://vedo.embl.es/autodocs/content/vedo/shapes.html#vedo.shapes.ConvexHull
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/shapes.html#vedo.shapes.ConvexHull
     """
     import vedo
 
@@ -154,7 +159,6 @@ def vedo_points_to_convex_hull_surface(points_data:"napari.types.PointsData") ->
     mesh_out = vedo.shapes.ConvexHull(point_cloud)
 
     return to_napari_surface_data(mesh_out)
-
 
 
 @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
