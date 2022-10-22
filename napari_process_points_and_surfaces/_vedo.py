@@ -140,3 +140,34 @@ def vedo_subsample_points(points_data:"napari.types.PointsData", distance_fracti
 
     result = to_napari_points_data(point_cloud)
     return result
+
+
+@register_function(menu="Surfaces > Convex hull of points (vedo, nppas)")
+def vedo_points_to_convex_hull_surface(points_data:"napari.types.PointsData") -> "napari.types.SurfaceData":
+    """Determine the convex hull surface of a list of points
+
+    Parameters
+    ----------
+    points_data:napari.types.PointsData
+
+    See Also
+    --------
+    ..[0] hhttps://vedo.embl.es/autodocs/content/vedo/shapes.html#vedo.shapes.ConvexHull
+    """
+    import vedo
+
+    point_cloud = to_vedo_points(points_data)
+    mesh_out = vedo.shapes.ConvexHull(point_cloud)
+
+    return to_napari_surface_data(mesh_out)
+
+
+
+
+
+
+
+
+
+
+

@@ -21,7 +21,7 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
 
 from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
                    vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop, vedo_sample_points_from_surface, \
-                   vedo_subsample_points
+                   vedo_subsample_points, vedo_points_to_convex_hull_surface
 
 from ._utils import isotropic_scale_surface
 
@@ -421,7 +421,7 @@ def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
     return binary_image
 
 
-@register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
+# @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
 def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
     """Determine the convex hull surface of a list of points
 
@@ -433,6 +433,7 @@ def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Convex-hull
     """
+    warnings.warn("nppas.points_to_convex_hull_surface() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.")
 
     point_cloud = to_point_cloud(points_data)
     mesh_out, _ = point_cloud.compute_convex_hull()
