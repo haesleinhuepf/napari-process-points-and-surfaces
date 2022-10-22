@@ -4,9 +4,8 @@
 
 napari
 scikit-image
-open3d
-ipyvtklink
 vedo
+vtk
 napari-tools-menu>=0.1.14
 napari-time-slicer>=0.4.5
 napari-workflows>=0.2.3

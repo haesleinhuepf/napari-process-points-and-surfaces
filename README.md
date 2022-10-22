@@ -57,9 +57,10 @@ measurements and annotations side-by-side.
 
 ## Installation
 
-You can install `napari-process-points-and-surfaces` via [pip]:
+You can install `napari-process-points-and-surfaces` via mamba/conda and pip:
 
 ```
+mamba install vedo vtk libnetcdf=4.7.4 -c conda-forge
 pip install napari-process-points-and-surfaces
 ```
 
@@ -69,6 +70,7 @@ There are other napari plugins with similar / overlapping functionality
 * [pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
 * [morphometrics](https://www.napari-hub.org/plugins/morphometrics)  
 * [napari-pyclesperanto-assistant](https://www.napari-hub.org/plugins/napari-pyclesperanto-assistant)
+* [napari-stress](https://www.napari-hub.org/plugins/napari-stress)
 
 ## Contributing
 

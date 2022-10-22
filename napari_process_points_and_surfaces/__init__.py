@@ -2,6 +2,8 @@
 __version__ = "0.3.3"
 __common_alias__ = "nppas"
 
+import warnings
+
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, ImageData
 
@@ -16,6 +18,11 @@ from napari_time_slicer import time_slicer
 from ._quantification import add_quality, Quality, add_curvature_scalars,\
     Curvature, add_spherefitted_curvature, surface_quality_table, \
     surface_quality_to_properties
+
+from ._vedo import vedo_convex_hull, vedo_example_ellipsoid
+
+from ._utils import isotropic_scale_surface
+
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
@@ -57,6 +64,7 @@ def _standford_bunny() -> SurfaceData:
     return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 100)
 
 def _vedo_ellipsoid() -> SurfaceData:
+    warnings.warn("nppas._vedo_ellipsoid() is deprecated. Use nppas._vedo._vedo_ellipsoid() instead")
     import vedo
     shape = vedo.shapes.Ellipsoid()
     return isotropic_scale_surface((shape.points(), np.asarray(shape.faces())), 10)
@@ -69,8 +77,9 @@ def example_data_knot(viewer:napari.viewer):
 def example_data_standford_bunny(viewer:napari.viewer):
     viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
 
-@register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
+# @register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
 def example_data_vedo_ellipsoid(viewer:napari.viewer):
+    warnings.warn("nppas.example_data_vedo_ellipsoid() is deprecated. Use nppas.vedo_example_ellipsoid() instead")
     viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
 
 # todo: this doesn't work with surfaces:
@@ -122,10 +131,11 @@ def to_surface(mesh):
     return (vertices, faces, values)
 
 
-@register_function(menu="Surfaces > Convex hull (open3d, nppas)")
+# @register_function(menu="Surfaces > Convex hull (open3d, nppas)")
 def convex_hull(surface:SurfaceData) -> SurfaceData:
     """Produce the convex hull surface around a surface
     """
+    warnings.warn("nppas.convex_hull() is deprecated. Use nppas.vedo_convex_hull() instead.", DeprecationWarning)
     mesh = to_mesh(surface)
 
     new_mesh, _ = mesh.compute_convex_hull()
@@ -521,22 +531,4 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
 
     return (mesh.points(), np.asarray(mesh.faces()))
 
-@register_function(menu = "Surfaces > Scale surface (isotropic, nppas)",
-                   scale_factor={'min':0.01, 'max':100000})
-def isotropic_scale_surface(surface:SurfaceData, scale_factor:float = 1) -> SurfaceData:
-    """
-    Scales a surface with a given factor.
-
-    Parameters
-    ----------
-    surface
-    scale_factor
-
-    Returns
-    -------
-    surface
-    """
-    result = list(surface)
-    result[0] = result[0] * scale_factor
-    return tuple(result)
 
