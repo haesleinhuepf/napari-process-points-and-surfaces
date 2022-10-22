@@ -21,12 +21,12 @@ The Standford Bunny example dataset has been taken from the [The Stanford 3D Sca
 
 For processing meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/demo.ipynb). There you also learn how this screenshot is made:
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot1.png)
 
 For performing quantitative measurements of meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/quality_measurements.ipynb). 
 There you also learn how this screenshot is made:
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot2.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot4.png)
 
 ### Surface measurements and annotations
 
