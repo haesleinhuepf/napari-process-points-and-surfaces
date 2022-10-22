@@ -35,3 +35,28 @@ def _vedo_ellipsoid() -> "napari.types.SurfaceData":
 @register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
 def vedo_example_ellipsoid(viewer:"napari.viewer"):
     viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
+
+@register_function(menu="Surfaces > Smooth (vedo, nppas)")
+def vedo_mesh_smooth(surface: "napari.types.SurfaceData",
+                     number_of_iterations: int = 15,
+                     pass_band: float = 0.1,
+                     edge_angle: float = 15,
+                     feature_angle: float = 60,
+                     boundary: bool = False
+                     ) -> "napari.types.SurfaceData":
+    """Smooth a surface
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.smooth
+    """
+
+    mesh = to_vedo_mesh(surface)
+
+    smooth_mesh = mesh.smooth( niter=number_of_iterations,
+                        pass_band=pass_band,
+                        edge_angle=edge_angle,
+                        feature_angle=feature_angle,
+                        boundary=boundary)
+
+    return to_napari_surface_data(smooth_mesh)

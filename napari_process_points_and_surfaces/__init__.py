@@ -19,7 +19,7 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     Curvature, add_spherefitted_curvature, surface_quality_table, \
     surface_quality_to_properties
 
-from ._vedo import vedo_convex_hull, vedo_example_ellipsoid
+from ._vedo import vedo_convex_hull, vedo_example_ellipsoid, vedo_mesh_smooth
 
 from ._utils import isotropic_scale_surface
 
@@ -142,7 +142,7 @@ def convex_hull(surface:SurfaceData) -> SurfaceData:
     return to_surface(new_mesh)
 
 
-@register_function(menu="Surfaces > Smoothing (simple, open3d, nppas)")
+# @register_function(menu="Surfaces > Smoothing (simple, open3d, nppas)")
 def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
     """Smooth a surface using an average filter
 
@@ -155,12 +155,14 @@ def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> 
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Average-filter
     """
+    warnings.warn("nppas.filter_smooth_simple() is deprecated. Use nppas.vedo_mesh_smooth() instead.", DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_simple(number_of_iterations=number_of_iterations)
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Smoothing (Laplacian, open3d, nppas)")
+# @register_function(menu="Surfaces > Smoothing (Laplacian, open3d, nppas)")
 def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
     """Smooth a surface using the Laplacian method
 
@@ -173,12 +175,14 @@ def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) 
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Laplacian
     """
+    warnings.warn("nppas.filter_smooth_laplacian() is deprecated. Use nppas.vedo_mesh_smooth() instead.", DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_laplacian(number_of_iterations=number_of_iterations)
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Smoothing (Taubin et al 1995., open3d, nppas)")
+# @register_function(menu="Surfaces > Smoothing (Taubin et al 1995., open3d, nppas)")
 def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
     """Smooth a surface using Taubin's method
 
@@ -192,6 +196,8 @@ def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> 
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Taubin-filter
     ..[1] G. Taubin: Curve and surface smoothing without shrinkage, ICCV, 1995.
     """
+    warnings.warn("nppas.filter_smooth_taubin() is deprecated. Use nppas.vedo_mesh_smooth() instead.", DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_taubin(number_of_iterations=number_of_iterations)
     return to_surface(mesh_out)
