@@ -39,14 +39,8 @@ def vedo_convex_hull(surface:"napari.types.SurfaceData") -> "napari.types.Surfac
 
     return to_napari_surface_data(convex_hull_mesh)
 
-def _vedo_ellipsoid() -> "napari.types.SurfaceData":
-    import vedo
-    shape = vedo.shapes.Ellipsoid()
-    return isotropic_scale_surface((shape.points(), np.asarray(shape.faces())), 10)
 
-@register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
-def vedo_example_ellipsoid(viewer:"napari.viewer"):
-    viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
+
 
 @register_function(menu="Surfaces > Smooth (vedo, nppas)")
 def vedo_smooth_mesh(surface: "napari.types.SurfaceData",
@@ -182,6 +176,7 @@ def vedo_fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100
     mesh.fill_holes(size=size_limit)
 
     return to_napari_surface_data(mesh)
+
 
 
 

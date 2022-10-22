@@ -20,8 +20,9 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     surface_quality_to_properties
 
 from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
-                   vedo_example_ellipsoid, vedo_smooth_mesh, vedo_subdivide_loop, vedo_sample_points_from_surface, \
+                   vedo_smooth_mesh, vedo_subdivide_loop, vedo_sample_points_from_surface, \
                    vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes
+
 
 from ._utils import isotropic_scale_surface
 
@@ -53,6 +54,19 @@ def napari_experimental_provide_function():
             add_curvature_scalars,
             add_spherefitted_curvature]
 
+def _vedo_stanford_bunny_layerdatatuple():
+    return [(_vedo_stanford_bunny(), {}, "surface")]
+
+def _vedo_ellipsoid_layerdatatuple():
+    return [(_vedo_ellipsoid(), {}, "surface")]
+
+@napari_hook_implementation
+def napari_provide_sample_data():
+    return {
+        "Standford bunny (nppas)": _vedo_stanford_bunny_layerdatatuple,
+        "Ellipsoid (nppas)": _vedo_ellipsoid_layerdatatuple
+    }
+
 def _knot_mesh() -> SurfaceData:
     import open3d
     from pathlib import Path
@@ -65,18 +79,29 @@ def _standford_bunny() -> SurfaceData:
     data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
     return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 100)
 
-def _vedo_ellipsoid() -> SurfaceData:
-    warnings.warn("nppas._vedo_ellipsoid() is deprecated. Use nppas._vedo._vedo_ellipsoid() instead")
-    import vedo
-    shape = vedo.shapes.Ellipsoid()
-    return isotropic_scale_surface((shape.points(), np.asarray(shape.faces())), 10)
 
-@register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
+def _vedo_ellipsoid() -> "napari.types.SurfaceData":
+    import vedo
+    shape = vedo.shapes.Ellipsoid().scale(10)
+    return (shape.points(), np.asarray(shape.faces()))
+
+
+def _vedo_stanford_bunny() -> "napari.types.SurfaceData":
+    import vedo
+    from pathlib import Path
+    data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
+    return isotropic_scale_surface(to_napari_surface_data(vedo.Mesh(data)), 100)
+
+
+# @register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
 def example_data_knot(viewer:napari.viewer):
+    warnings.warn("nppas.example_data_knot() is deprecated. ")
     viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
 
-@register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
+
+# @register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
 def example_data_standford_bunny(viewer:napari.viewer):
+    warnings.warn("nppas.example_data_standford_bunny() is deprecated. Use nppas._vedo_stanford_bunny() instead")
     viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
 
 # @register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
@@ -84,12 +109,6 @@ def example_data_vedo_ellipsoid(viewer:napari.viewer):
     warnings.warn("nppas.example_data_vedo_ellipsoid() is deprecated. Use nppas.vedo_example_ellipsoid() instead")
     viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
 
-# todo: this doesn't work with surfaces:
-#@napari_hook_implementation
-#def napari_provide_sample_data():
-#    return {
-#        "KnotMesh": _knot_mesh,
-#    }
 
 def to_vector_d(data):
     import open3d
