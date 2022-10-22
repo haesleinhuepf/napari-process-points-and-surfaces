@@ -6,6 +6,7 @@ napari
 scikit-image
 vedo
 vtk
+libnetcdf!=4.8.1
 napari-tools-menu>=0.1.14
 napari-time-slicer>=0.4.5
 napari-workflows>=0.2.3
