@@ -433,7 +433,7 @@ def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Convex-hull
     """
-    warnings.warn("nppas.points_to_convex_hull_surface() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.")
+    warnings.warn("nppas.points_to_convex_hull_surface() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
 
     point_cloud = to_point_cloud(points_data)
     mesh_out, _ = point_cloud.compute_convex_hull()
@@ -441,7 +441,7 @@ def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Create surface from points (alpha-shape, open3d, nppas)")
+# @register_function(menu="Surfaces > Create surface from points (alpha-shape, open3d, nppas)")
 def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5) -> SurfaceData:
     """Turn point into a surface using alpha shapes
 
@@ -454,13 +454,15 @@ def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5
     --------
     ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Alpha-shapes
     """
+    warnings.warn("nppas.surface_from_point_cloud_alpha_shape() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+
     import open3d
     pcd = to_point_cloud(points_data)
     mesh = open3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, alpha)
     return to_surface(mesh)
 
 
-@register_function(menu="Surfaces > Create surface from points (ball-pivoting, open3d, nppas)")
+# @register_function(menu="Surfaces > Create surface from points (ball-pivoting, open3d, nppas)")
 def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float = 5, delta_radius=0) -> SurfaceData:
     """Turn point into a surface using ball pivoting
 
@@ -478,6 +480,8 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
     ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Ball-pivoting
     ..[1] http://www.open3d.org/docs/0.7.0/tutorial/Basic/pointcloud.html#point-cloud
     """
+    warnings.warn("nppas.surface_from_point_cloud_ball_pivoting() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+
     import open3d
     pcd = to_point_cloud(points_data)
 
