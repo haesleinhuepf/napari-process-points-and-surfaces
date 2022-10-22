@@ -203,7 +203,7 @@ def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> 
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Simplify using vertex clustering (open3d, nppas)")
+# @register_function(menu="Surfaces > Simplify using vertex clustering (open3d, nppas)")
 def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> SurfaceData:
     """Simplify a surface using vertex clustering
 
@@ -216,6 +216,7 @@ def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> Su
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Vertex-clustering
     """
+    warnings.warn("nppas.simplify_vertex_clustering() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
     import open3d
     mesh_in = to_mesh(surface)
 
@@ -226,7 +227,7 @@ def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> Su
     return to_surface(mesh_out)
 
 
-@register_function(menu="Surfaces > Simplify using quadratic decimation (open3d, nppas)")
+# @register_function(menu="Surfaces > Simplify using quadratic decimation (open3d, nppas)")
 def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles: int = 500) -> SurfaceData:
     """Simplify a surface using quadratic decimation
 
@@ -239,6 +240,8 @@ def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles:
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-decimation
     """
+    warnings.warn("nppas.simplify_quadric_decimation() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.simplify_quadric_decimation(target_number_of_triangles=target_number_of_triangles)
     return to_surface(mesh_out)
