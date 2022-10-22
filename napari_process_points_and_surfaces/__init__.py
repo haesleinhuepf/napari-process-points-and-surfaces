@@ -535,7 +535,7 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 
     return label_to_surface(labels, label)
 
-@register_function(menu="Surfaces > Fill holes (vedo, nppas)")
+# @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
 def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     """
     Fill holes in a surface up to a specified size.
@@ -550,10 +550,14 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
     """
+    warnings.warn(
+        "nppas.fill_holes() is deprecated. Use nppas.vedo_fill_holes() instead.",
+        DeprecationWarning)
+
     import vedo
 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.fillHoles(size=size_limit)
+    mesh.fill_holes(size=size_limit)
 
     return (mesh.points(), np.asarray(mesh.faces()))
 

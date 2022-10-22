@@ -163,6 +163,26 @@ def vedo_points_to_convex_hull_surface(points_data:"napari.types.PointsData") ->
 
 
 
+@register_function(menu="Surfaces > Fill holes (vedo, nppas)")
+def vedo_fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100) -> "napari.types.SurfaceData":
+    """
+    Fill holes in a surface up to a specified size.
+
+    Parameters
+    ----------
+    surface : napari.layers.Surface
+    size_limit : float, optional
+        Size limit to hole-filling. The default is 100.
+
+    See also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
+    """
+    mesh = to_vedo_mesh((surface[0], surface[1]))
+    mesh.fill_holes(size=size_limit)
+
+    return to_napari_surface_data(mesh)
+
 
 
 
