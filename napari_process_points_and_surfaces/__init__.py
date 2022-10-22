@@ -20,7 +20,8 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     surface_quality_to_properties
 
 from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
-                   vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop, vedo_sample_points_from_surface
+                   vedo_example_ellipsoid, vedo_mesh_smooth, vedo_subdivide_loop, vedo_sample_points_from_surface, \
+                   vedo_subsample_points
 
 from ._utils import isotropic_scale_surface
 
@@ -330,13 +331,16 @@ def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500,
     return result
 
 
-@register_function(menu="Points > Down-sample (open3d, nppas)")
+# @register_function(menu="Points > Down-sample (open3d, nppas)")
 def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napari.Viewer=None) -> PointsData:
     """Removes points from a point cloud so that the remaining points lie within a grid of
     defined voxel size.
 
     http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Voxel-downsampling
     """
+    warnings.warn(
+        "nppas.voxel_down_sample() is deprecated. Use nppas.vedo_sample_points() instead.",
+        DeprecationWarning)
 
     point_cloud = to_point_cloud(points_data)
     new_point_cloud = point_cloud.voxel_down_sample(voxel_size)

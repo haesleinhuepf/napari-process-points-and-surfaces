@@ -8,10 +8,10 @@ def to_vedo_mesh(surface):
     return vedo.mesh.Mesh((surface[0], surface[1]))
 
 
-def to_vedo_points(surface):
+def to_vedo_points(points_data):
     _hide_vtk_warnings()
     import vedo
-    return vedo.pointcloud.Points((surface[0], surface[1]))
+    return vedo.pointcloud.Points(points_data)
 
 
 def to_napari_surface_data(vedo_mesh, values=None):
@@ -102,7 +102,7 @@ def vedo_sample_points_from_surface(surface:"napari.types.SurfaceData", distance
     Parameters
     ----------
     surface:napari.types.SurfaceData
-    fraction:float
+    distance_fraction:float
         the smaller the distance, the more points
 
     See Also
@@ -111,6 +111,30 @@ def vedo_sample_points_from_surface(surface:"napari.types.SurfaceData", distance
     """
 
     mesh_in = to_vedo_mesh(surface)
+
+    point_cloud = mesh_in.subsample(fraction=distance_fraction)
+
+    result = to_napari_points_data(point_cloud)
+    return result
+
+
+
+@register_function(menu="Points > Subsample points (vedo, nppas)")
+def vedo_subsample_points(points_data:"napari.types.PointsData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+    """Subsample points
+
+    Parameters
+    ----------
+    points_data:napari.types.PointsData
+    distance_fraction:float
+        the smaller the distance, the more points
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.subsample
+    """
+
+    mesh_in = to_vedo_points(points_data)
 
     point_cloud = mesh_in.subsample(fraction=distance_fraction)
 
