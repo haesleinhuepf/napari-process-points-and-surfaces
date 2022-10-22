@@ -306,7 +306,7 @@ def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, vi
     return result
 
 
-@register_function(menu="Points > Create points from surface using Poisson disk sampling (open3d, nppas)")
+# @register_function(menu="Points > Create points from surface using Poisson disk sampling (open3d, nppas)")
 def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None) -> PointsData:
     """Sample a list of points from a surface using the Poisson disk algorithm
 
@@ -320,6 +320,9 @@ def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500,
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
     """
+    warnings.warn("nppas.sample_points_poisson_disk() is deprecated. Use nppas.vedo_sample_points_from_surface() instead.",
+                  DeprecationWarning)
+
     mesh_in = to_mesh(surface)
     point_cloud = mesh_in.sample_points_poisson_disk(number_of_points=number_of_points, init_factor=init_factor)
 
