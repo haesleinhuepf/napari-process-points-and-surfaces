@@ -57,9 +57,11 @@ measurements and annotations side-by-side.
 
 ## Installation
 
-You can install `napari-process-points-and-surfaces` via [pip]:
+You can install `napari-process-points-and-surfaces` via [pip] and conda:
 
 ```
+conda create -n nppas-env -c conda-forge -c open3d-admin python=3.9 open3d napari
+conda activate nppas-env
 pip install napari-process-points-and-surfaces
 ```
 
