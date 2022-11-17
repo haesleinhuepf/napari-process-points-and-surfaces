@@ -68,7 +68,7 @@ def test_curvature():
     add_curvature_scalars(surface_data, Curvature.Maximum_Curvature)
     add_curvature_scalars(surface_data, Curvature.Minimum_Curvature)
 
-    add_spherefitted_curvature(surface_data, radius=1)
+    add_spherefitted_curvature(surface_data, radius=4)
 
 def test_surface_to_binary_volume():
     import numpy as np
