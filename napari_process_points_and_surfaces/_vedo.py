@@ -96,7 +96,8 @@ def vedo_subdivide(surface:"napari.types.SurfaceData",
     ----------
     surface:napari.types.SurfaceData
     number_of_iterations:int
-
+    method: int
+        Loop(0), Linear(1), Adaptive(2), Butterfly(3)
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
