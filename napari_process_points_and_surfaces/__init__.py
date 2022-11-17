@@ -517,7 +517,7 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     import vedo
 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.fillHoles(size=size_limit)
+    mesh.fill_holes(size=size_limit)
 
     return (mesh.points(), np.asarray(mesh.faces()))
 
