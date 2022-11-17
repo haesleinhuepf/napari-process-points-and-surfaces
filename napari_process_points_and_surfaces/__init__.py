@@ -181,12 +181,15 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
     label_id: int
     """
     from skimage.measure import marching_cubes
+    from ._vedo import vedo_remove_duplicate_vertices
 
     binary = np.asarray(labels == label_id)
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
 
-    return (vertices, faces, values)
+    surface = vedo_remove_duplicate_vertices((vertices, faces))
+
+    return surface
 
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
@@ -492,7 +495,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
     new_point_cloud = point_cloud.voxel_down_sample(voxel_size)
 
     result = to_numpy(new_point_cloud.points)
-    return resul
+    return result
 
 
 # @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
