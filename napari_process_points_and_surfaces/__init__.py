@@ -21,7 +21,8 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
 
 from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
                    vedo_smooth_mesh, vedo_subdivide_loop, vedo_sample_points_from_surface, \
-                   vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes
+                   vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes, \
+                   vedo_remove_duplicate_vertices
 
 
 from ._utils import isotropic_scale_surface
@@ -187,9 +188,7 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
 
-    surface = vedo_remove_duplicate_vertices((vertices, faces))
-
-    return surface
+    return (vertices, faces, values)
 
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
