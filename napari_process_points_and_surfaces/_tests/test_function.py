@@ -19,6 +19,7 @@ def test_something():
             points_to_convex_hull_surface,\
             surface_from_point_cloud_alpha_shape,\
             surface_from_point_cloud_ball_pivoting,\
+            all_labels_to_surface,\
             label_to_surface,\
             largest_label_to_surface,\
             add_quality,\
@@ -31,6 +32,7 @@ def test_something():
     from skimage.measure import label
     labels = label(nuclei > 20000)
 
+    surface = all_labels_to_surface(labels)
     surface = label_to_surface(labels, 3)
 
     surface = largest_label_to_surface(labels)
