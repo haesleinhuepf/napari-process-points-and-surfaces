@@ -85,6 +85,107 @@ class subdivision_methods(Enum):
     butterfly = 3
 
 @register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
+def vedo_subdivide_loop(surface:"napari.types.SurfaceData",
+                        number_of_iterations: int = 1
+                        ) -> "napari.types.SurfaceData":
+    """
+    Make a mesh more detailed by subdividing in a loop.
+
+    This increases the number of faces on the surface simply by subdividing
+    each triangle into four new triangles.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[1] https://vtk.org/doc/nightly/html/classvtkLoopSubdivisionFilter.html
+    """
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.subdivide(number_of_iterations, method=0)
+    return to_napari_surface_data(mesh_out)
+
+@register_function(menu="Surfaces > Subdivide linear (vedo, nppas)")
+def vedo_subdivide_linear(surface:"napari.types.SurfaceData",
+                        number_of_iterations: int = 1
+                        ) -> "napari.types.SurfaceData":
+    """
+    Make a mesh more detailed by linear subdivision.
+
+    The position of the created triangles is determined by  a
+    linear interpolation method and is thus slower than the
+    loop suubdivision algorithm.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[1] https://vtk.org/doc/nightly/html/classvtkLinearSubdivisionFilter.html
+    """
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.subdivide(number_of_iterations, method=1)
+    return to_napari_surface_data(mesh_out)
+     
+@register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
+def vedo_subdivide_adaptive(surface:"napari.types.SurfaceData",
+                            number_of_iterations: int = 1,
+                            maximum_edge_length: float = 0.
+                            ) -> "napari.types.SurfaceData":
+    """
+    Make a mesh more detailed by adaptive subdivision.
+
+    Each triangle is split into a set of new triangles based
+    on a given maximum edge length or triangle area. If the 
+    `maximum_edge_length` parameter is set to 0, then the 
+    parameter will be estimated automatically.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[1] https://vtk.org/doc/nightly/html/classvtkAdaptiveSubdivisionFilter.html
+    """
+    mesh_in = to_vedo_mesh(surface)
+    
+    if maximum_edge_length == 0:
+        maximum_edge_length = mesh_in.diagonal_size() / np.sqrt(mesh_in._data.GetNumberOfPoints()) / number_of_iterations
+    
+    mesh_out = mesh_in.subdivide(number_of_iterations, method=2, mel=maximum_edge_length)
+    return to_napari_surface_data(mesh_out)
+
+@register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
+def vedo_subdivide_butterfly(surface:"napari.types.SurfaceData",
+                        number_of_iterations: int = 1
+                        ) -> "napari.types.SurfaceData":
+    """
+    Make a mesh more detailed by adaptive subdivision.
+
+    Each triangle is split into a set of new triangles based
+    on an 8-point butterfly scheme.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[1] https://vtk.org/doc/nightly/html/classvtkButterflySubdivisionFilter.html
+    ..[2] Zorin et al. "Interpolating Subdivisions for Meshes with Arbitrary Topology," Computer Graphics Proceedings, Annual Conference Series, 1996, ACM SIGGRAPH, pp.189-192
+    """   
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.subdivide(number_of_iterations, method=3)
+    return to_napari_surface_data(mesh_out)
+
+@register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
 def vedo_subdivide(surface:"napari.types.SurfaceData",
                    number_of_iterations: int = 1,
                    method: subdivision_methods = subdivision_methods.adaptive
