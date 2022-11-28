@@ -492,7 +492,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
     new_point_cloud = point_cloud.voxel_down_sample(voxel_size)
 
     result = to_numpy(new_point_cloud.points)
-    return resul
+    return result
 
 
 # @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
