@@ -182,7 +182,6 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
     label_id: int
     """
     from skimage.measure import marching_cubes
-    from ._vedo import vedo_remove_duplicate_vertices
 
     binary = np.asarray(labels == label_id)
 
