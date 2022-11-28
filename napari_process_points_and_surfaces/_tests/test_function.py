@@ -53,6 +53,39 @@ def test_something():
     surface_from_point_cloud_alpha_shape(points)
     add_quality(surface, Quality.SKEW)
 
+def test_something2():
+    from .._vedo import (to_vedo_mesh,
+                         to_vedo_points,
+                         to_napari_surface_data,
+                         to_napari_points_data,
+                         vedo_smooth_mesh,
+                         vedo_subdivide_loop,
+                         vedo_sample_points_from_surface,
+                         vedo_subsample_points,
+                         vedo_points_to_convex_hull_surface,
+                         vedo_convex_hull,
+                         vedo_fill_holes
+                         )
+    from napari_process_points_and_surfaces import (
+        _vedo_stanford_bunny_layerdatatuple
+    )
+
+    surface = _vedo_stanford_bunny_layerdatatuple()[0][0]
+
+    vedo_mesh = to_vedo_mesh(surface)
+    surface = to_napari_surface_data(vedo_mesh)
+
+    vedo_points = to_vedo_points(surface[0])
+    napari_points = to_napari_points_data(vedo_points)
+
+    vedo_smooth_mesh(surface)
+    vedo_subdivide_loop(surface)
+    vedo_sample_points_from_surface(surface)
+    vedo_subsample_points(napari_points)
+    vedo_points_to_convex_hull_surface(napari_points)
+    vedo_convex_hull(surface)
+    vedo_fill_holes(surface)
+
 def test_curvature():
     from napari_process_points_and_surfaces import add_curvature_scalars,\
         Curvature,\
