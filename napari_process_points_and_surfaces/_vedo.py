@@ -116,7 +116,7 @@ def vedo_subdivide_linear(surface:"napari.types.SurfaceData",
 
     The position of the created triangles is determined by a
     linear interpolation method and is thus slower than the
-    loop suubdivision algorithm.
+    loop subdivision algorithm.
 
     Parameters
     ----------
