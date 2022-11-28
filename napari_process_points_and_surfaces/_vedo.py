@@ -98,6 +98,7 @@ def vedo_subdivide_loop(surface:"napari.types.SurfaceData",
     ----------
     surface:napari.types.SurfaceData
     number_of_iterations:int
+    
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
