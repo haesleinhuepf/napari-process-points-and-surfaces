@@ -3,6 +3,7 @@ import numpy as np
 from ._utils import isotropic_scale_surface
 from enum import Enum
 
+
 def to_vedo_mesh(surface):
     _hide_vtk_warnings()
     import vedo
@@ -32,7 +33,7 @@ def _hide_vtk_warnings():
 
 
 @register_function(menu="Surfaces > Convex hull (vedo, nppas)")
-def vedo_convex_hull(surface:"napari.types.SurfaceData") -> "napari.types.SurfaceData":
+def vedo_convex_hull(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """Determine the convex hull of a surface
 
     Parameters
@@ -68,11 +69,11 @@ def vedo_smooth_mesh(surface: "napari.types.SurfaceData",
 
     mesh = to_vedo_mesh(surface)
 
-    smooth_mesh = mesh.smooth( niter=number_of_iterations,
-                        pass_band=pass_band,
-                        edge_angle=edge_angle,
-                        feature_angle=feature_angle,
-                        boundary=boundary)
+    smooth_mesh = mesh.smooth(niter=number_of_iterations,
+                              pass_band=pass_band,
+                              edge_angle=edge_angle,
+                              feature_angle=feature_angle,
+                              boundary=boundary)
 
     return to_napari_surface_data(smooth_mesh)
 
@@ -84,8 +85,9 @@ class subdivision_methods(Enum):
     adaptive = 2
     butterfly = 3
 
+
 @register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
-def vedo_subdivide_loop(surface:"napari.types.SurfaceData",
+def vedo_subdivide_loop(surface: "napari.types.SurfaceData",
                         number_of_iterations: int = 1
                         ) -> "napari.types.SurfaceData":
     """
@@ -98,7 +100,7 @@ def vedo_subdivide_loop(surface:"napari.types.SurfaceData",
     ----------
     surface:napari.types.SurfaceData
     number_of_iterations:int
-    
+
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
@@ -108,10 +110,11 @@ def vedo_subdivide_loop(surface:"napari.types.SurfaceData",
     mesh_out = mesh_in.subdivide(number_of_iterations, method=0)
     return to_napari_surface_data(mesh_out)
 
+
 @register_function(menu="Surfaces > Subdivide linear (vedo, nppas)")
-def vedo_subdivide_linear(surface:"napari.types.SurfaceData",
-                        number_of_iterations: int = 1
-                        ) -> "napari.types.SurfaceData":
+def vedo_subdivide_linear(surface: "napari.types.SurfaceData",
+                          number_of_iterations: int = 1
+                          ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by linear subdivision.
 
@@ -123,7 +126,7 @@ def vedo_subdivide_linear(surface:"napari.types.SurfaceData",
     ----------
     surface:napari.types.SurfaceData
     number_of_iterations:int
-    
+
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
@@ -132,9 +135,10 @@ def vedo_subdivide_linear(surface:"napari.types.SurfaceData",
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=1)
     return to_napari_surface_data(mesh_out)
-     
+
+
 @register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
-def vedo_subdivide_adaptive(surface:"napari.types.SurfaceData",
+def vedo_subdivide_adaptive(surface: "napari.types.SurfaceData",
                             number_of_iterations: int = 1,
                             maximum_edge_length: float = 0.
                             ) -> "napari.types.SurfaceData":
@@ -150,24 +154,27 @@ def vedo_subdivide_adaptive(surface:"napari.types.SurfaceData",
     ----------
     surface:napari.types.SurfaceData
     number_of_iterations:int
-    
+
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkAdaptiveSubdivisionFilter.html
     """
     mesh_in = to_vedo_mesh(surface)
-    
+
     if maximum_edge_length == 0:
-        maximum_edge_length = mesh_in.diagonal_size() / np.sqrt(mesh_in._data.GetNumberOfPoints()) / number_of_iterations
-    
-    mesh_out = mesh_in.subdivide(number_of_iterations, method=2, mel=maximum_edge_length)
+        maximum_edge_length = mesh_in.diagonal_size(
+        ) / np.sqrt(mesh_in._data.GetNumberOfPoints()) / number_of_iterations
+
+    mesh_out = mesh_in.subdivide(
+        number_of_iterations, method=2, mel=maximum_edge_length)
     return to_napari_surface_data(mesh_out)
 
+
 @register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
-def vedo_subdivide_butterfly(surface:"napari.types.SurfaceData",
-                        number_of_iterations: int = 1
-                        ) -> "napari.types.SurfaceData":
+def vedo_subdivide_butterfly(surface: "napari.types.SurfaceData",
+                             number_of_iterations: int = 1
+                             ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by adaptive subdivision.
 
@@ -178,19 +185,20 @@ def vedo_subdivide_butterfly(surface:"napari.types.SurfaceData",
     ----------
     surface:napari.types.SurfaceData
     number_of_iterations:int
-    
+
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkButterflySubdivisionFilter.html
     ..[2] Zorin et al. "Interpolating Subdivisions for Meshes with Arbitrary Topology," Computer Graphics Proceedings, Annual Conference Series, 1996, ACM SIGGRAPH, pp.189-192
-    """   
+    """
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=3)
     return to_napari_surface_data(mesh_out)
 
+
 @register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
-def vedo_subdivide(surface:"napari.types.SurfaceData",
+def vedo_subdivide(surface: "napari.types.SurfaceData",
                    number_of_iterations: int = 1,
                    method: subdivision_methods = subdivision_methods.adaptive
                    ) -> "napari.types.SurfaceData":
@@ -215,7 +223,7 @@ def vedo_subdivide(surface:"napari.types.SurfaceData",
 
 
 @register_function(menu="Points > Create points from surface (vedo, nppas)")
-def vedo_sample_points_from_surface(surface:"napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+def vedo_sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
     """Sample points from a surface
 
     Parameters
@@ -238,7 +246,7 @@ def vedo_sample_points_from_surface(surface:"napari.types.SurfaceData", distance
 
 
 @register_function(menu="Points > Subsample points (vedo, nppas)")
-def vedo_subsample_points(points_data:"napari.types.PointsData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+def vedo_subsample_points(points_data: "napari.types.PointsData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
     """Subsample points
 
     Parameters
@@ -261,7 +269,7 @@ def vedo_subsample_points(points_data:"napari.types.PointsData", distance_fracti
 
 
 @register_function(menu="Surfaces > Convex hull of points (vedo, nppas)")
-def vedo_points_to_convex_hull_surface(points_data:"napari.types.PointsData") -> "napari.types.SurfaceData":
+def vedo_points_to_convex_hull_surface(points_data: "napari.types.PointsData") -> "napari.types.SurfaceData":
     """Determine the convex hull surface of a list of points
 
     Parameters
@@ -299,13 +307,3 @@ def vedo_fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100
     mesh.fill_holes(size=size_limit)
 
     return to_napari_surface_data(mesh)
-
-
-
-
-
-
-
-
-
-
