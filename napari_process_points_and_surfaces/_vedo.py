@@ -1,7 +1,6 @@
 from napari_tools_menu import register_function, register_action
 import numpy as np
 from ._utils import isotropic_scale_surface
-from enum import Enum
 
 
 def to_vedo_mesh(surface):
@@ -76,14 +75,6 @@ def vedo_smooth_mesh(surface: "napari.types.SurfaceData",
                               boundary=boundary)
 
     return to_napari_surface_data(smooth_mesh)
-
-
-class subdivision_methods(Enum):
-    """Available subdivision methods"""
-    loop = 0
-    linear = 1
-    adaptive = 2
-    butterfly = 3
 
 
 @register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
@@ -194,31 +185,6 @@ def vedo_subdivide_butterfly(surface: "napari.types.SurfaceData",
     """
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=3)
-    return to_napari_surface_data(mesh_out)
-
-
-@register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
-def vedo_subdivide(surface: "napari.types.SurfaceData",
-                   number_of_iterations: int = 1,
-                   method: subdivision_methods = subdivision_methods.adaptive
-                   ) -> "napari.types.SurfaceData":
-    """Make a mesh more detailed by subdividing in a loop.
-    If iterations are high, this can take very long.
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_iterations:int
-    method: int
-        Loop(0), Linear(1), Adaptive(2), Butterfly(3)
-    See Also
-    --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
-    """
-    if isinstance(method, subdivision_methods):
-        method = method.value
-    mesh_in = to_vedo_mesh(surface)
-    mesh_out = mesh_in.subdivide(number_of_iterations, method=method)
     return to_napari_surface_data(mesh_out)
 
 
