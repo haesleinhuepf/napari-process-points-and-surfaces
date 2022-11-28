@@ -60,6 +60,9 @@ def test_something2():
                          to_napari_points_data,
                          vedo_smooth_mesh,
                          vedo_subdivide_loop,
+                         vedo_subdivide_linear,
+                         vedo_subdivide_adaptive,
+                         vedo_subdivide_butterfly,
                          vedo_sample_points_from_surface,
                          vedo_subsample_points,
                          vedo_points_to_convex_hull_surface,
@@ -80,6 +83,9 @@ def test_something2():
 
     vedo_smooth_mesh(surface)
     vedo_subdivide_loop(surface)
+    vedo_subdivide_adaptive(surface)
+    vedo_subdivide_linear(surface)
+    vedo_subdivide_butterfly(surface)
     vedo_sample_points_from_surface(surface)
     vedo_subsample_points(napari_points)
     vedo_points_to_convex_hull_surface(napari_points)
