@@ -185,6 +185,10 @@ class SurfaceAnnotationWidget(QWidget):
         #    return
 
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
+        if triangle_index is None:
+            # if the click did not intersect the mesh, don't do anything
+            return
+        
         self._paint_face(layer, triangle_index, self._annotation_label_select.value())
 
         yield
@@ -192,6 +196,10 @@ class SurfaceAnnotationWidget(QWidget):
 
         while event.type == 'mouse_move':
             _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
+            if triangle_index is None:
+                # if the click did not intersect the mesh, don't do anything
+                return
+            
             self._paint_face(layer, triangle_index, self._annotation_label_select.value())
             yield
         layer.interactive = True
@@ -203,7 +211,11 @@ class SurfaceAnnotationWidget(QWidget):
 
         click_origin = event.position
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-
+        if triangle_index is None:
+            # if the click did not intersect the mesh, don't do anything
+            return
+        
+        
         candidate_vertices = layer.data[1][triangle_index]
         candidate_points = layer.data[0][candidate_vertices]
         _,intersection_coords = napari.utils.geometry.find_nearest_triangle_intersection(event.position, event.view_direction, candidate_points[None, :, :])
@@ -239,7 +251,11 @@ class SurfaceAnnotationWidget(QWidget):
 
         click_origin = event.position
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
-
+        if triangle_index is None:
+            # if the click did not intersect the mesh, don't do anything
+            return
+        
+        
         candidate_vertices = layer.data[1][triangle_index]
         candidate_points = layer.data[0][candidate_vertices]
         _,intersection_coords = napari.utils.geometry.find_nearest_triangle_intersection(event.position, event.view_direction, candidate_points[None, :, :])

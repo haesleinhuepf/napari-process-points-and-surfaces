@@ -238,10 +238,10 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
     residues = np.zeros(mesh.N())
     for idx in range(mesh.N()):
         
-        patch = vedo.pointcloud.Points(mesh.closestPoint(mesh.points()[idx], radius=radius))
+        patch = vedo.pointcloud.Points(mesh.closest_point(mesh.points()[idx], radius=radius))
         
         try:
-            s = vedo.pointcloud.fitSphere(patch)
+            s = vedo.pointcloud.fit_sphere(patch)
             curvature[idx] = 1/(s.radius)**2
             residues[idx] = s.residue
         except Exception:

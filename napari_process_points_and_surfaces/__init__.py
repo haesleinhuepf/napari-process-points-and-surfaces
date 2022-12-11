@@ -189,6 +189,34 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
 
     return (vertices, faces, values)
 
+@register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
+@time_slicer
+def all_labels_to_surface(labels: LabelsData) -> SurfaceData:
+    """
+    Turn a set of labels into a surface using the marching cubes algorithm
+
+    Parameters
+    ----------
+    labels_data:napari.types.LabelsData
+    """
+    import vedo
+    from skimage.measure import marching_cubes
+
+    # convert to numpy in case it's not (clesperanto, dask, ...)
+    labels = np.asarray(labels)
+
+    # Create a surface for every label
+    mesh_list = []
+    for label in np.unique(labels)[:-1]:
+        verts, faces, normals, values = marching_cubes(labels==label)
+        mesh = vedo.mesh.Mesh((verts, faces))
+        mesh_list.append(mesh)
+    
+    # merge the meshes; label is stored in `mesh.pointdata['OriginalMeshID']`
+    mesh = vedo.merge(mesh_list, flag=True)
+
+    return (mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
+
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
 @time_slicer
