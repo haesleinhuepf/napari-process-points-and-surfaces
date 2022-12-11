@@ -201,6 +201,9 @@ def all_labels_to_surface(labels: LabelsData) -> SurfaceData:
     import vedo
     from skimage.measure import marching_cubes
 
+    # convert to numpy in case it's not (clesperanto, dask, ...)
+    labels = np.asarray(labels)
+
     # Create a surface for every label
     mesh_list = []
     for label in np.unique(labels)[:-1]:
