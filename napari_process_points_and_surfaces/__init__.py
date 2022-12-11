@@ -2,6 +2,8 @@
 __version__ = "0.3.3"
 __common_alias__ = "nppas"
 
+import warnings
+
 from napari.types import SurfaceData, PointsData
 from napari.types import LabelsData, ImageData
 
@@ -17,9 +19,18 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
     Curvature, add_spherefitted_curvature, surface_quality_table, \
     surface_quality_to_properties
 
+from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
+                   vedo_smooth_mesh, vedo_subdivide_loop, vedo_sample_points_from_surface, \
+                   vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes
+
+
+from ._utils import isotropic_scale_surface
+
+
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
     return SurfaceAnnotationWidget
+
 
 @napari_hook_implementation
 def napari_experimental_provide_function():
@@ -44,208 +55,31 @@ def napari_experimental_provide_function():
             add_curvature_scalars,
             add_spherefitted_curvature]
 
-def _knot_mesh() -> SurfaceData:
-    import open3d
-    from pathlib import Path
-    data = str(Path(__file__).parent / "data" / "knot.ply")
-    return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 0.1)
+def _vedo_stanford_bunny_layerdatatuple():
+    return [(_vedo_stanford_bunny(), {}, "surface")]
 
-def _standford_bunny() -> SurfaceData:
-    import open3d
+def _vedo_ellipsoid_layerdatatuple():
+    return [(_vedo_ellipsoid(), {}, "surface")]
+
+@napari_hook_implementation
+def napari_provide_sample_data():
+    return {
+        "Standford bunny (nppas)": _vedo_stanford_bunny_layerdatatuple,
+        "Ellipsoid (nppas)": _vedo_ellipsoid_layerdatatuple
+    }
+
+
+def _vedo_ellipsoid() -> "napari.types.SurfaceData":
+    import vedo
+    shape = vedo.shapes.Ellipsoid().scale(10)
+    return (shape.points(), np.asarray(shape.faces()))
+
+
+def _vedo_stanford_bunny() -> "napari.types.SurfaceData":
+    import vedo
     from pathlib import Path
     data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
-    return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 100)
-
-def _vedo_ellipsoid() -> SurfaceData:
-    import vedo
-    shape = vedo.shapes.Ellipsoid()
-    return isotropic_scale_surface((shape.points(), np.asarray(shape.faces())), 10)
-
-@register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
-def example_data_knot(viewer:napari.viewer):
-    viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
-
-@register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
-def example_data_standford_bunny(viewer:napari.viewer):
-    viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
-
-@register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
-def example_data_vedo_ellipsoid(viewer:napari.viewer):
-    viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
-
-# todo: this doesn't work with surfaces:
-#@napari_hook_implementation
-#def napari_provide_sample_data():
-#    return {
-#        "KnotMesh": _knot_mesh,
-#    }
-
-def to_vector_d(data):
-    import open3d
-    return open3d.utility.Vector3dVector(data)
-
-
-def to_vector_i(data):
-    import open3d
-    return open3d.utility.Vector3iVector(data)
-
-
-def to_vector_double(data):
-    import open3d
-    return open3d.utility.DoubleVector(data)
-
-
-def to_numpy(data):
-    return np.asarray(data)
-
-
-def to_mesh(data):
-    import open3d
-    return open3d.geometry.TriangleMesh(to_vector_d(data[0]), to_vector_i(data[1]))
-
-
-def to_point_cloud(data):
-    """
-    http://www.open3d.org/docs/0.9.0/tutorial/Basic/working_with_numpy.html#from-numpy-to-open3d-pointcloud
-    """
-    import open3d
-    pcd = open3d.geometry.PointCloud()
-    pcd.points = to_vector_d(data)
-    return pcd
-
-
-def to_surface(mesh):
-    vertices = to_numpy(mesh.vertices)
-    faces = to_numpy(mesh.triangles)
-    values = np.ones((vertices.shape[0]))
-
-    return (vertices, faces, values)
-
-
-@register_function(menu="Surfaces > Convex hull (open3d, nppas)")
-def convex_hull(surface:SurfaceData) -> SurfaceData:
-    """Produce the convex hull surface around a surface
-    """
-    mesh = to_mesh(surface)
-
-    new_mesh, _ = mesh.compute_convex_hull()
-    return to_surface(new_mesh)
-
-
-@register_function(menu="Surfaces > Smoothing (simple, open3d, nppas)")
-def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
-    """Smooth a surface using an average filter
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_iterations:int
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Average-filter
-    """
-    mesh_in = to_mesh(surface)
-    mesh_out = mesh_in.filter_smooth_simple(number_of_iterations=number_of_iterations)
-    return to_surface(mesh_out)
-
-
-@register_function(menu="Surfaces > Smoothing (Laplacian, open3d, nppas)")
-def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
-    """Smooth a surface using the Laplacian method
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_iterations:int
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Laplacian
-    """
-    mesh_in = to_mesh(surface)
-    mesh_out = mesh_in.filter_smooth_laplacian(number_of_iterations=number_of_iterations)
-    return to_surface(mesh_out)
-
-
-@register_function(menu="Surfaces > Smoothing (Taubin et al 1995., open3d, nppas)")
-def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
-    """Smooth a surface using Taubin's method
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_iterations:int
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Taubin-filter
-    ..[1] G. Taubin: Curve and surface smoothing without shrinkage, ICCV, 1995.
-    """
-    mesh_in = to_mesh(surface)
-    mesh_out = mesh_in.filter_smooth_taubin(number_of_iterations=number_of_iterations)
-    return to_surface(mesh_out)
-
-
-@register_function(menu="Surfaces > Simplify using vertex clustering (open3d, nppas)")
-def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> SurfaceData:
-    """Simplify a surface using vertex clustering
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    voxel_size:float
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Vertex-clustering
-    """
-    import open3d
-    mesh_in = to_mesh(surface)
-
-    mesh_out = mesh_in.simplify_vertex_clustering(
-        voxel_size=voxel_size,
-        contraction=open3d.geometry.SimplificationContraction.Average
-    )
-    return to_surface(mesh_out)
-
-
-@register_function(menu="Surfaces > Simplify using quadratic decimation (open3d, nppas)")
-def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles: int = 500) -> SurfaceData:
-    """Simplify a surface using quadratic decimation
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    target_number_of_triangles:int
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-decimation
-    """
-    mesh_in = to_mesh(surface)
-    mesh_out = mesh_in.simplify_quadric_decimation(target_number_of_triangles=target_number_of_triangles)
-    return to_surface(mesh_out)
-
-
-@register_function(menu="Surfaces > Subdivide loop (open3d, nppas)")
-def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
-    """Make a mesh more detailed by subdividing in a loop.
-    If iterations are high, this can take very long.
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_iterations:int
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-subdivision
-    """
-    mesh_in = to_mesh(surface)
-    mesh_out = mesh_in.subdivide_loop(number_of_iterations=number_of_iterations)
-    return to_surface(mesh_out)
-
+    return isotropic_scale_surface(to_napari_surface_data(vedo.Mesh(data)), 100)
 
 @register_function(menu="Points > Create points from labels centroids (nppas)")
 def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> PointsData:
@@ -260,62 +94,6 @@ def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> 
     statistics = regionprops(labels_data)
     centroids = [s.centroid for s in statistics]
     return centroids
-
-
-@register_function(menu="Points > Create points from surface sampling uniformly (open3d, nppas)")
-def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None) -> PointsData:
-    """Sample points uniformly
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_points:int
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
-    """
-    mesh_in = to_mesh(surface)
-    point_cloud = mesh_in.sample_points_uniformly(number_of_points=number_of_points)
-
-    result = to_numpy(point_cloud.points)
-    return result
-
-
-@register_function(menu="Points > Create points from surface using Poisson disk sampling (open3d, nppas)")
-def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None) -> PointsData:
-    """Sample a list of points from a surface using the Poisson disk algorithm
-
-    Parameters
-    ----------
-    surface:napari.types.SurfaceData
-    number_of_points:int
-    init_factor:float
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
-    """
-    mesh_in = to_mesh(surface)
-    point_cloud = mesh_in.sample_points_poisson_disk(number_of_points=number_of_points, init_factor=init_factor)
-
-    result = to_numpy(point_cloud.points)
-    return result
-
-
-@register_function(menu="Points > Down-sample (open3d, nppas)")
-def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napari.Viewer=None) -> PointsData:
-    """Removes points from a point cloud so that the remaining points lie within a grid of
-    defined voxel size.
-
-    http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Voxel-downsampling
-    """
-
-    point_cloud = to_point_cloud(points_data)
-    new_point_cloud = point_cloud.voxel_down_sample(voxel_size)
-
-    result = to_numpy(new_point_cloud.points)
-    return result
 
 
 @register_function(menu="Points > Points to labels (nppas)")
@@ -345,6 +123,7 @@ def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer
             break
 
     return labels_stack
+
 
 @register_function(menu="Surfaces > Surface to binary volumne (nppas)")
 @register_function(menu="Segmentation / binarization > Create binary volume from surface (nppas)")
@@ -388,76 +167,6 @@ def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
                 boundaries_l[2] : boundaries_r[2]] = my_mesh.binarize().tonumpy()
 
     return binary_image
-
-
-@register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
-def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
-    """Determine the convex hull surface of a list of points
-
-    Parameters
-    ----------
-    points_data:napari.types.PointsData
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Convex-hull
-    """
-
-    point_cloud = to_point_cloud(points_data)
-    mesh_out, _ = point_cloud.compute_convex_hull()
-
-    return to_surface(mesh_out)
-
-
-@register_function(menu="Surfaces > Create surface from points (alpha-shape, open3d, nppas)")
-def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5) -> SurfaceData:
-    """Turn point into a surface using alpha shapes
-
-    Parameters
-    ----------
-    points_data:napari.types.PointsData
-    alpha:float
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Alpha-shapes
-    """
-    import open3d
-    pcd = to_point_cloud(points_data)
-    mesh = open3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, alpha)
-    return to_surface(mesh)
-
-
-@register_function(menu="Surfaces > Create surface from points (ball-pivoting, open3d, nppas)")
-def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float = 5, delta_radius=0) -> SurfaceData:
-    """Turn point into a surface using ball pivoting
-
-    Parameters
-    ----------
-    points_data:napari.types.PointsData
-    radius:float
-        ball radius
-    delta_radius:float, optional
-        if specified, radii = [radius - delta_radius, radius, radius + delta_radius] will
-        be used as ball radii
-
-    See Also
-    --------
-    ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Ball-pivoting
-    ..[1] http://www.open3d.org/docs/0.7.0/tutorial/Basic/pointcloud.html#point-cloud
-    """
-    import open3d
-    pcd = to_point_cloud(points_data)
-
-    pcd.estimate_normals(search_param=open3d.geometry.KDTreeSearchParamHybrid(radius=0.1,
-                                                                              max_nn=30))
-    if delta_radius == 0:
-        radii = [radius]
-    else:
-        radii = [radius - delta_radius, radius, radius + delta_radius]
-
-    mesh = open3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, to_vector_double(radii))
-    return to_surface(mesh)
 
 
 @register_function(menu="Surfaces > Create surface from any label (marching cubes, scikit-image, nppas)")
@@ -524,7 +233,369 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 
     return label_to_surface(labels, label)
 
-@register_function(menu="Surfaces > Fill holes (vedo, nppas)")
+
+##################################################################################
+# Deprecated functions
+
+def _knot_mesh() -> SurfaceData:
+    warnings.warn("nppas._knot_mesh() is deprecated. ")
+    import open3d
+    from pathlib import Path
+    data = str(Path(__file__).parent / "data" / "knot.ply")
+    return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 0.1)
+
+def _standford_bunny() -> SurfaceData:
+    warnings.warn("nppas._standford_bunny() is deprecated. Use nppas._vedo_stanford_bunny() instead")
+    import open3d
+    from pathlib import Path
+    data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
+    return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 100)
+
+
+
+# @register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
+def example_data_knot(viewer:napari.viewer):
+    warnings.warn("nppas.example_data_knot() is deprecated. ")
+    viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
+
+
+# @register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
+def example_data_standford_bunny(viewer:napari.viewer):
+    warnings.warn("nppas.example_data_standford_bunny() is deprecated. Use nppas._vedo_stanford_bunny() instead")
+    viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
+
+# @register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
+def example_data_vedo_ellipsoid(viewer:napari.viewer):
+    warnings.warn("nppas.example_data_vedo_ellipsoid() is deprecated. Use nppas.vedo_example_ellipsoid() instead")
+    viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
+
+
+def to_vector_d(data):
+    warnings.warn("nppas.to_vector_d() is deprecated.", DeprecationWarning)
+    import open3d
+    return open3d.utility.Vector3dVector(data)
+
+
+def to_vector_i(data):
+    warnings.warn("nppas.to_vector_i() is deprecated.", DeprecationWarning)
+    import open3d
+    return open3d.utility.Vector3iVector(data)
+
+
+def to_vector_double(data):
+    warnings.warn("nppas.to_vector_double() is deprecated.", DeprecationWarning)
+    import open3d
+    return open3d.utility.DoubleVector(data)
+
+
+def to_numpy(data):
+    warnings.warn("nppas.to_numpy() is deprecated. Use np.asarray() instead.", DeprecationWarning)
+    return np.asarray(data)
+
+
+def to_mesh(data):
+    warnings.warn("nppas.to_mesh() is deprecated. Use nppas.to_vedo_mesh() instead.", DeprecationWarning)
+    import open3d
+    return open3d.geometry.TriangleMesh(to_vector_d(data[0]), to_vector_i(data[1]))
+
+
+def to_point_cloud(data):
+    """
+    http://www.open3d.org/docs/0.9.0/tutorial/Basic/working_with_numpy.html#from-numpy-to-open3d-pointcloud
+    """
+    warnings.warn("nppas.to_point_cloud() is deprecated. Use nppas.to_napari_points_data() instead.", DeprecationWarning)
+    import open3d
+    pcd = open3d.geometry.PointCloud()
+    pcd.points = to_vector_d(data)
+    return pcd
+
+
+def to_surface(mesh):
+    warnings.warn("nppas.to_surface() is deprecated. Use nppas.to_napari_surface_data() instead.", DeprecationWarning)
+    vertices = to_numpy(mesh.vertices)
+    faces = to_numpy(mesh.triangles)
+    values = np.ones((vertices.shape[0]))
+
+    return (vertices, faces, values)
+
+
+# @register_function(menu="Surfaces > Convex hull (open3d, nppas)")
+def convex_hull(surface:SurfaceData) -> SurfaceData:
+    """Produce the convex hull surface around a surface
+    """
+    warnings.warn("nppas.convex_hull() is deprecated. Use nppas.vedo_convex_hull() instead.", DeprecationWarning)
+    mesh = to_mesh(surface)
+
+    new_mesh, _ = mesh.compute_convex_hull()
+    return to_surface(new_mesh)
+
+
+# @register_function(menu="Surfaces > Smoothing (simple, open3d, nppas)")
+def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+    """Smooth a surface using an average filter
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Average-filter
+    """
+    warnings.warn("nppas.filter_smooth_simple() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    mesh_out = mesh_in.filter_smooth_simple(number_of_iterations=number_of_iterations)
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Surfaces > Smoothing (Laplacian, open3d, nppas)")
+def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+    """Smooth a surface using the Laplacian method
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Laplacian
+    """
+    warnings.warn("nppas.filter_smooth_laplacian() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    mesh_out = mesh_in.filter_smooth_laplacian(number_of_iterations=number_of_iterations)
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Surfaces > Smoothing (Taubin et al 1995., open3d, nppas)")
+def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+    """Smooth a surface using Taubin's method
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Taubin-filter
+    ..[1] G. Taubin: Curve and surface smoothing without shrinkage, ICCV, 1995.
+    """
+    warnings.warn("nppas.filter_smooth_taubin() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    mesh_out = mesh_in.filter_smooth_taubin(number_of_iterations=number_of_iterations)
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Surfaces > Simplify using vertex clustering (open3d, nppas)")
+def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> SurfaceData:
+    """Simplify a surface using vertex clustering
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    voxel_size:float
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Vertex-clustering
+    """
+    warnings.warn("nppas.simplify_vertex_clustering() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
+    import open3d
+    mesh_in = to_mesh(surface)
+
+    mesh_out = mesh_in.simplify_vertex_clustering(
+        voxel_size=voxel_size,
+        contraction=open3d.geometry.SimplificationContraction.Average
+    )
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Surfaces > Simplify using quadratic decimation (open3d, nppas)")
+def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles: int = 500) -> SurfaceData:
+    """Simplify a surface using quadratic decimation
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    target_number_of_triangles:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-decimation
+    """
+    warnings.warn("nppas.simplify_quadric_decimation() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    mesh_out = mesh_in.simplify_quadric_decimation(target_number_of_triangles=target_number_of_triangles)
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Surfaces > Subdivide loop (open3d, nppas)")
+def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+    """Make a mesh more detailed by subdividing in a loop.
+    If iterations are high, this can take very long.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-subdivision
+    """
+    warnings.warn("nppas.subdivide_loop() is deprecated. Use nppas.vedo_subdivide_loop() instead.", DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    mesh_out = mesh_in.subdivide_loop(number_of_iterations=number_of_iterations)
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Points > Create points from surface sampling uniformly (open3d, nppas)")
+def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None) -> PointsData:
+    """Sample points uniformly
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_points:int
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
+    """
+    warnings.warn("nppas.sample_points_uniformly() is deprecated. Use nppas.vedo_sample_points_from_surface() instead.", DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    point_cloud = mesh_in.sample_points_uniformly(number_of_points=number_of_points)
+
+    result = to_numpy(point_cloud.points)
+    return result
+
+
+# @register_function(menu="Points > Create points from surface using Poisson disk sampling (open3d, nppas)")
+def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None) -> PointsData:
+    """Sample a list of points from a surface using the Poisson disk algorithm
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_points:int
+    init_factor:float
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
+    """
+    warnings.warn("nppas.sample_points_poisson_disk() is deprecated. Use nppas.vedo_sample_points_from_surface() instead.",
+                  DeprecationWarning)
+
+    mesh_in = to_mesh(surface)
+    point_cloud = mesh_in.sample_points_poisson_disk(number_of_points=number_of_points, init_factor=init_factor)
+
+    result = to_numpy(point_cloud.points)
+    return result
+
+
+# @register_function(menu="Points > Down-sample (open3d, nppas)")
+def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napari.Viewer=None) -> PointsData:
+    """Removes points from a point cloud so that the remaining points lie within a grid of
+    defined voxel size.
+
+    http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Voxel-downsampling
+    """
+    warnings.warn(
+        "nppas.voxel_down_sample() is deprecated. Use nppas.vedo_sample_points() instead.",
+        DeprecationWarning)
+
+    point_cloud = to_point_cloud(points_data)
+    new_point_cloud = point_cloud.voxel_down_sample(voxel_size)
+
+    result = to_numpy(new_point_cloud.points)
+    return result
+
+
+# @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
+def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
+    """Determine the convex hull surface of a list of points
+
+    Parameters
+    ----------
+    points_data:napari.types.PointsData
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Convex-hull
+    """
+    warnings.warn("nppas.points_to_convex_hull_surface() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+
+    point_cloud = to_point_cloud(points_data)
+    mesh_out, _ = point_cloud.compute_convex_hull()
+
+    return to_surface(mesh_out)
+
+
+# @register_function(menu="Surfaces > Create surface from points (alpha-shape, open3d, nppas)")
+def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5) -> SurfaceData:
+    """Turn point into a surface using alpha shapes
+
+    Parameters
+    ----------
+    points_data:napari.types.PointsData
+    alpha:float
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Alpha-shapes
+    """
+    warnings.warn("nppas.surface_from_point_cloud_alpha_shape() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+
+    import open3d
+    pcd = to_point_cloud(points_data)
+    mesh = open3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(pcd, alpha)
+    return to_surface(mesh)
+
+
+# @register_function(menu="Surfaces > Create surface from points (ball-pivoting, open3d, nppas)")
+def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float = 5, delta_radius=0) -> SurfaceData:
+    """Turn point into a surface using ball pivoting
+
+    Parameters
+    ----------
+    points_data:napari.types.PointsData
+    radius:float
+        ball radius
+    delta_radius:float, optional
+        if specified, radii = [radius - delta_radius, radius, radius + delta_radius] will
+        be used as ball radii
+
+    See Also
+    --------
+    ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Ball-pivoting
+    ..[1] http://www.open3d.org/docs/0.7.0/tutorial/Basic/pointcloud.html#point-cloud
+    """
+    warnings.warn("nppas.surface_from_point_cloud_ball_pivoting() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+
+    import open3d
+    pcd = to_point_cloud(points_data)
+
+    pcd.estimate_normals(search_param=open3d.geometry.KDTreeSearchParamHybrid(radius=0.1,
+                                                                              max_nn=30))
+    if delta_radius == 0:
+        radii = [radius]
+    else:
+        radii = [radius - delta_radius, radius, radius + delta_radius]
+
+    mesh = open3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(pcd, to_vector_double(radii))
+    return to_surface(mesh)
+
+
+# @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
 def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     """
     Fill holes in a surface up to a specified size.
@@ -539,29 +610,15 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
     """
+    warnings.warn(
+        "nppas.fill_holes() is deprecated. Use nppas.vedo_fill_holes() instead.",
+        DeprecationWarning)
+
     import vedo
 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    mesh.fillHoles(size=size_limit)
+    mesh.fill_holes(size=size_limit)
 
     return (mesh.points(), np.asarray(mesh.faces()))
 
-@register_function(menu = "Surfaces > Scale surface (isotropic, nppas)",
-                   scale_factor={'min':0.01, 'max':100000})
-def isotropic_scale_surface(surface:SurfaceData, scale_factor:float = 1) -> SurfaceData:
-    """
-    Scales a surface with a given factor.
-
-    Parameters
-    ----------
-    surface
-    scale_factor
-
-    Returns
-    -------
-    surface
-    """
-    result = list(surface)
-    result[0] = result[0] * scale_factor
-    return tuple(result)
 

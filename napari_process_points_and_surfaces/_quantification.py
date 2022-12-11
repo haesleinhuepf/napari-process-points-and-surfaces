@@ -55,12 +55,12 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
     import vedo
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     if isinstance(quality_id, int):
-        mesh.addQuality(quality_id)
+        mesh.compute_quality(quality_id)
     else:
-        mesh.addQuality(quality_id.value)
+        mesh.compute_quality(quality_id.value)
 
     #print(mesh.celldata.keys())
-    mesh2 = mesh.mapCellsToPoints()
+    mesh2 = mesh.map_cells_to_points()
     #print(mesh2.pointdata.keys())
 
     vertices = np.asarray(mesh2.points())
@@ -238,10 +238,10 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
     residues = np.zeros(mesh.N())
     for idx in range(mesh.N()):
         
-        patch = vedo.pointcloud.Points(mesh.closestPoint(mesh.points()[idx], radius=radius))
+        patch = vedo.pointcloud.Points(mesh.closest_point(mesh.points()[idx], radius=radius))
         
         try:
-            s = vedo.pointcloud.fitSphere(patch)
+            s = vedo.pointcloud.fit_sphere(patch)
             curvature[idx] = 1/(s.radius)**2
             residues[idx] = s.residue
         except Exception:
