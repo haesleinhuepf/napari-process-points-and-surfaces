@@ -21,7 +21,8 @@ from ._quantification import add_quality, Quality, add_curvature_scalars,\
 
 from ._vedo import to_vedo_mesh, to_vedo_points, to_napari_surface_data, to_napari_points_data,\
                    vedo_smooth_mesh, vedo_subdivide_loop, vedo_sample_points_from_surface, \
-                   vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes
+                   vedo_subsample_points, vedo_points_to_convex_hull_surface, vedo_convex_hull, vedo_fill_holes, \
+                   vedo_remove_duplicate_vertices
 
 
 from ._utils import isotropic_scale_surface
