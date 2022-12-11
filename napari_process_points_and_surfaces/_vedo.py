@@ -50,6 +50,21 @@ def vedo_convex_hull(surface: "napari.types.SurfaceData") -> "napari.types.Surfa
 
     return to_napari_surface_data(convex_hull_mesh)
 
+@register_function(menu="Surfaces > Remove duplicate vertices (vedo, nppas)")
+def vedo_remove_duplicate_vertices(surface: "napari.types.SurfaceData"):
+    """
+    Clean a surface mesh (i.e., remove duplicate faces & vertices).
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.clean
+    
+    """
+    mesh = to_vedo_mesh(surface)
+    clean_mesh = mesh.clean()
+
+    return to_napari_surface_data(clean_mesh)
+
 
 @register_function(menu="Surfaces > Smooth (vedo, nppas)")
 def vedo_smooth_mesh(surface: "napari.types.SurfaceData",

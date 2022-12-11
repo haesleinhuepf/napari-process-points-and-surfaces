@@ -32,8 +32,9 @@ from ._vedo import (to_vedo_mesh,
                     vedo_subsample_points,
                     vedo_points_to_convex_hull_surface,
                     vedo_convex_hull,
-                    vedo_fill_holes)
-
+                    vedo_fill_holes,
+                    vedo_remove_duplicate_vertices
+                    )
 
 from ._utils import isotropic_scale_surface
 
@@ -198,6 +199,34 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
     vertices, faces, normals, values = marching_cubes(binary, 0)
 
     return (vertices, faces, values)
+
+@register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
+@time_slicer
+def all_labels_to_surface(labels: LabelsData) -> SurfaceData:
+    """
+    Turn a set of labels into a surface using the marching cubes algorithm
+
+    Parameters
+    ----------
+    labels_data:napari.types.LabelsData
+    """
+    import vedo
+    from skimage.measure import marching_cubes
+
+    # convert to numpy in case it's not (clesperanto, dask, ...)
+    labels = np.asarray(labels)
+
+    # Create a surface for every label
+    mesh_list = []
+    for label in np.unique(labels)[:-1]:
+        verts, faces, normals, values = marching_cubes(labels==label)
+        mesh = vedo.mesh.Mesh((verts, faces))
+        mesh_list.append(mesh)
+    
+    # merge the meshes; label is stored in `mesh.pointdata['OriginalMeshID']`
+    mesh = vedo.merge(mesh_list, flag=True)
+
+    return (mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
 
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
@@ -503,7 +532,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
     new_point_cloud = point_cloud.voxel_down_sample(voxel_size)
 
     result = to_numpy(new_point_cloud.points)
-    return resul
+    return result
 
 
 # @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
