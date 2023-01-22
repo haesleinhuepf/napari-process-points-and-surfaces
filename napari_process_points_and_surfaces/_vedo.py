@@ -1,7 +1,5 @@
-from napari_tools_menu import register_function, register_action
+from napari_tools_menu import register_function
 import numpy as np
-from ._utils import isotropic_scale_surface
-
 
 def to_vedo_mesh(surface):
     _hide_vtk_warnings()

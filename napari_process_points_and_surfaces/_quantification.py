@@ -1,13 +1,8 @@
-import warnings
-
-from napari.types import SurfaceData, PointsData
-from napari.types import LabelsData, LayerDataTuple
-
+from napari.types import LayerDataTuple
 from napari_tools_menu import register_function, register_dock_widget
 import numpy as np
 from typing import List
 from magicgui import magic_factory
-from napari_tools_menu import register_function
 
 
 from enum import Enum
@@ -51,7 +46,7 @@ class Curvature(Enum):
     Minimum_Curvature = 3
 
 @register_function(menu="Measurement > Surface quality (vedo, nppas)")
-def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -> SurfaceData:
+def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quality.MIN_ANGLE) -> "napari.types.SurfaceData":
     import vedo
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     if isinstance(quality_id, int):
@@ -73,10 +68,10 @@ def add_quality(surface: SurfaceData, quality_id: Quality = Quality.MIN_ANGLE) -
 # @register_function(menu="Measurement > Surface quality table (vedo, nppas)", quality=dict(widget_type='Select', choices=Quality))
 @register_dock_widget(menu="Measurement > Surface quality table (vedo, nppas)")
 @magic_factory(qualities=dict(widget_type='Select', choices=Quality))
-def _surface_quality_table(surface: SurfaceData, qualities:Quality = [Quality.AREA, Quality.MIN_ANGLE, Quality.MAX_ANGLE, Quality.ASPECT_RATIO], napari_viewer:"napari.Viewer" = None):
+def _surface_quality_table(surface: "napari.types.SurfaceData", qualities:Quality = [Quality.AREA, Quality.MIN_ANGLE, Quality.MAX_ANGLE, Quality.ASPECT_RATIO], napari_viewer:"napari.Viewer" = None):
     return surface_quality_table(surface, qualities, napari_viewer)
 
-def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napari.Viewer" = None):
+def surface_quality_table(surface: "napari.types.SurfaceData", qualities, napari_viewer: "napari.Viewer" = None):
     """Produces a table of specified measurements and adds it to the napari viewer (if given)
 
     Parameters
@@ -116,7 +111,7 @@ def surface_quality_table(surface: SurfaceData, qualities, napari_viewer: "napar
 
 
 @register_function(menu="Measurement > Surface quality/annotation to table (nppas)")
-def surface_quality_to_properties(surface: SurfaceData,
+def surface_quality_to_properties(surface: "napari.types.SurfaceData",
                                   napari_viewer: "napari.Viewer",
                                   column_name: str = "annotation"):
     """Reads from an existing surface data/layer if values are present and stores the
@@ -124,7 +119,7 @@ def surface_quality_to_properties(surface: SurfaceData,
 
     Parameters
     ----------
-    surface: SurfaceData
+    surface: "napari.types.SurfaceData"
     napari_viewer: napari.Viewer
     column_name: str
 
@@ -162,9 +157,9 @@ def surface_quality_to_properties(surface: SurfaceData,
 
 
 @register_function(menu="Measurement > Surface curvature (vedo, nppas)")
-def add_curvature_scalars(surface: SurfaceData,
+def add_curvature_scalars(surface: "napari.types.SurfaceData",
                           curvature_id: Curvature = Curvature.Gauss_Curvature,
-                          ) -> SurfaceData:
+                          ) -> "napari.types.SurfaceData":
     """
     Determine the surface curvature using vedo built-in functions.
     
@@ -173,14 +168,14 @@ def add_curvature_scalars(surface: SurfaceData,
 
     Parameters
     ----------
-    surface : SurfaceData
+    surface : "napari.types.SurfaceData"
         3-Tuple of (points, faces, values)
     curvature_id : Union[Curvature, int] optional
         Method to be used: 0-gaussian, 1-mean, 2-max, 3-min curvature. The
         default is 0 (gaussian).
     Returns
     -------
-    SurfaceData
+    "napari.types.SurfaceData"
         3-tuple consisting of (points, faces, values)
         
     See also
@@ -201,7 +196,7 @@ def add_curvature_scalars(surface: SurfaceData,
     return (mesh.points(), np.asarray(mesh.faces()), values)
 
 @register_function(menu="Measurement > Surface curvature (sphere-fitted, nppas)")
-def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> List[LayerDataTuple]:
+def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[LayerDataTuple]:
     """
     Determine surface curvature by fitting a sphere to every vertex.
     
@@ -211,7 +206,7 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
 
     Parameters
     ----------
-    surface : SurfaceData
+    surface : "napari.types.SurfaceData"
         3-Tuple of (points, faces, values)
     radius : float, optional
         Radius within which other points of the surface will be considered
