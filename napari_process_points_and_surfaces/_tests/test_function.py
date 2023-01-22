@@ -60,16 +60,16 @@ def test_something2():
                          to_vedo_points,
                          to_napari_surface_data,
                          to_napari_points_data,
-                         vedo_smooth_mesh,
-                         vedo_subdivide_loop,
-                         vedo_subdivide_linear,
-                         vedo_subdivide_adaptive,
-                         vedo_subdivide_butterfly,
-                         vedo_sample_points_from_surface,
-                         vedo_subsample_points,
-                         vedo_points_to_convex_hull_surface,
-                         vedo_convex_hull,
-                         vedo_fill_holes
+                         smooth_surface,
+                         subdivide_loop_vedo,
+                         subdivide_linear,
+                         subdivide_adaptive,
+                         subdivide_butterfly,
+                         sample_points_from_surface,
+                         subsample_points,
+                         create_convex_hull_from_surface,
+                         create_convex_hull_from_points,
+                         fill_holes_in_surface
                          )
     from napari_process_points_and_surfaces import (
         _vedo_stanford_bunny_layerdatatuple
@@ -83,16 +83,16 @@ def test_something2():
     vedo_points = to_vedo_points(surface[0])
     napari_points = to_napari_points_data(vedo_points)
 
-    vedo_smooth_mesh(surface)
-    vedo_subdivide_loop(surface)
-    vedo_subdivide_adaptive(surface)
-    vedo_subdivide_linear(surface)
-    vedo_subdivide_butterfly(surface)
-    vedo_sample_points_from_surface(surface)
-    vedo_subsample_points(napari_points)
-    vedo_points_to_convex_hull_surface(napari_points)
-    vedo_convex_hull(surface)
-    vedo_fill_holes(surface)
+    smooth_surface(surface)
+    subdivide_loop_vedo(surface)
+    subdivide_adaptive(surface)
+    subdivide_linear(surface)
+    subdivide_butterfly(surface)
+    sample_points_from_surface(surface)
+    subsample_points(napari_points)
+    create_convex_hull_from_points(napari_points)
+    create_convex_hull_from_surface(surface)
+    fill_holes_in_surface(surface)
 
 def test_curvature():
     from napari_process_points_and_surfaces import add_curvature_scalars,\

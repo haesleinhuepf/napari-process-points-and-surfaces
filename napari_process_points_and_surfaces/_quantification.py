@@ -195,7 +195,7 @@ def add_curvature_scalars(surface: SurfaceData,
     else:
         used_method = curvature_id.value
     
-    mesh.addCurvatureScalars(method=used_method)
+    mesh.compute_curvature(method=used_method)
     values = mesh.pointdata[curvature_id.name]
     
     return (mesh.points(), np.asarray(mesh.faces()), values)
@@ -234,9 +234,9 @@ def add_spherefitted_curvature(surface: SurfaceData, radius: float = 1.0) -> Lis
     
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     
-    curvature = np.zeros(mesh.N())
-    residues = np.zeros(mesh.N())
-    for idx in range(mesh.N()):
+    curvature = np.zeros(mesh.npoints)
+    residues = np.zeros(mesh.npoints)
+    for idx in range(mesh.npoints):
         
         patch = vedo.pointcloud.Points(mesh.closest_point(mesh.points()[idx], radius=radius))
         
