@@ -32,7 +32,7 @@ def _hide_vtk_warnings():
 
 
 @register_function(menu="Surfaces > Convex hull (vedo, nppas)")
-def vedo_convex_hull(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+def create_convex_hull_from_surface(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """Determine the convex hull of a surface
 
     Parameters
@@ -51,7 +51,7 @@ def vedo_convex_hull(surface: "napari.types.SurfaceData") -> "napari.types.Surfa
     return to_napari_surface_data(convex_hull_mesh)
 
 @register_function(menu="Surfaces > Remove duplicate vertices (vedo, nppas)")
-def vedo_remove_duplicate_vertices(surface: "napari.types.SurfaceData"):
+def remove_duplicate_vertices(surface: "napari.types.SurfaceData"):
     """
     Clean a surface mesh (i.e., remove duplicate faces & vertices).
 
@@ -67,13 +67,13 @@ def vedo_remove_duplicate_vertices(surface: "napari.types.SurfaceData"):
 
 
 @register_function(menu="Surfaces > Smooth (vedo, nppas)")
-def vedo_smooth_mesh(surface: "napari.types.SurfaceData",
-                     number_of_iterations: int = 15,
-                     pass_band: float = 0.1,
-                     edge_angle: float = 15,
-                     feature_angle: float = 60,
-                     boundary: bool = False
-                     ) -> "napari.types.SurfaceData":
+def smooth_surface(surface: "napari.types.SurfaceData",
+                   number_of_iterations: int = 15,
+                   pass_band: float = 0.1,
+                   edge_angle: float = 15,
+                   feature_angle: float = 60,
+                   boundary: bool = False
+                   ) -> "napari.types.SurfaceData":
     """Smooth a surface
 
     See Also
@@ -93,7 +93,7 @@ def vedo_smooth_mesh(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
-def vedo_subdivide_loop(surface: "napari.types.SurfaceData",
+def subdivide_loop_vedo(surface: "napari.types.SurfaceData",
                         number_of_iterations: int = 1
                         ) -> "napari.types.SurfaceData":
     """
@@ -118,9 +118,9 @@ def vedo_subdivide_loop(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Surfaces > Subdivide linear (vedo, nppas)")
-def vedo_subdivide_linear(surface: "napari.types.SurfaceData",
-                          number_of_iterations: int = 1
-                          ) -> "napari.types.SurfaceData":
+def subdivide_linear(surface: "napari.types.SurfaceData",
+                     number_of_iterations: int = 1
+                     ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by linear subdivision.
 
@@ -144,10 +144,10 @@ def vedo_subdivide_linear(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
-def vedo_subdivide_adaptive(surface: "napari.types.SurfaceData",
-                            number_of_iterations: int = 1,
-                            maximum_edge_length: float = 0.
-                            ) -> "napari.types.SurfaceData":
+def subdivide_adaptive(surface: "napari.types.SurfaceData",
+                       number_of_iterations: int = 1,
+                       maximum_edge_length: float = 0.
+                       ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by adaptive subdivision.
 
@@ -178,9 +178,9 @@ def vedo_subdivide_adaptive(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
-def vedo_subdivide_butterfly(surface: "napari.types.SurfaceData",
-                             number_of_iterations: int = 1
-                             ) -> "napari.types.SurfaceData":
+def subdivide_butterfly(surface: "napari.types.SurfaceData",
+                        number_of_iterations: int = 1
+                        ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by adaptive subdivision.
 
@@ -204,7 +204,7 @@ def vedo_subdivide_butterfly(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Points > Create points from surface (vedo, nppas)")
-def vedo_sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
     """Sample points from a surface
 
     Parameters
@@ -227,7 +227,7 @@ def vedo_sample_points_from_surface(surface: "napari.types.SurfaceData", distanc
 
 
 @register_function(menu="Points > Subsample points (vedo, nppas)")
-def vedo_subsample_points(points_data: "napari.types.PointsData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+def subsample_points(points_data: "napari.types.PointsData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
     """Subsample points
 
     Parameters
@@ -250,7 +250,7 @@ def vedo_subsample_points(points_data: "napari.types.PointsData", distance_fract
 
 
 @register_function(menu="Surfaces > Convex hull of points (vedo, nppas)")
-def vedo_points_to_convex_hull_surface(points_data: "napari.types.PointsData") -> "napari.types.SurfaceData":
+def create_convex_hull_from_points(points_data: "napari.types.PointsData") -> "napari.types.SurfaceData":
     """Determine the convex hull surface of a list of points
 
     Parameters
@@ -270,7 +270,7 @@ def vedo_points_to_convex_hull_surface(points_data: "napari.types.PointsData") -
 
 
 @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
-def vedo_fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100) -> "napari.types.SurfaceData":
+def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float = 100) -> "napari.types.SurfaceData":
     """
     Fill holes in a surface up to a specified size.
 

@@ -23,17 +23,17 @@ from ._vedo import (to_vedo_mesh,
                     to_vedo_points,
                     to_napari_surface_data,
                     to_napari_points_data,
-                    vedo_smooth_mesh,
-                    vedo_subdivide_loop,
-                    vedo_subdivide_linear,
-                    vedo_subdivide_adaptive,
-                    vedo_subdivide_butterfly,
-                    vedo_sample_points_from_surface,
-                    vedo_subsample_points,
-                    vedo_points_to_convex_hull_surface,
-                    vedo_convex_hull,
-                    vedo_fill_holes,
-                    vedo_remove_duplicate_vertices
+                    smooth_surface,
+                    subdivide_loop_vedo,
+                    subdivide_linear,
+                    subdivide_adaptive,
+                    subdivide_butterfly,
+                    sample_points_from_surface,
+                    subsample_points,
+                    create_convex_hull_from_points,
+                    create_convex_hull_from_surface,
+                    fill_holes_in_surface,
+                    remove_duplicate_vertices
                     )
 
 from ._utils import isotropic_scale_surface
@@ -338,7 +338,7 @@ def to_surface(mesh):
 def convex_hull(surface:SurfaceData) -> SurfaceData:
     """Produce the convex hull surface around a surface
     """
-    warnings.warn("nppas.convex_hull() is deprecated. Use nppas.vedo_convex_hull() instead.", DeprecationWarning)
+    warnings.warn("nppas.convex_hull() is deprecated. Use nppas.convex_hull_from_surface() instead.", DeprecationWarning)
     mesh = to_mesh(surface)
 
     new_mesh, _ = mesh.compute_convex_hull()
@@ -358,7 +358,7 @@ def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> 
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Average-filter
     """
-    warnings.warn("nppas.filter_smooth_simple() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
+    warnings.warn("nppas.filter_smooth_simple() is deprecated. Use nppas.smooth_surface() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_simple(number_of_iterations=number_of_iterations)
@@ -378,7 +378,7 @@ def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) 
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Laplacian
     """
-    warnings.warn("nppas.filter_smooth_laplacian() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
+    warnings.warn("nppas.filter_smooth_laplacian() is deprecated. Use nppas.smooth_surface() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_laplacian(number_of_iterations=number_of_iterations)
@@ -399,7 +399,7 @@ def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> 
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Taubin-filter
     ..[1] G. Taubin: Curve and surface smoothing without shrinkage, ICCV, 1995.
     """
-    warnings.warn("nppas.filter_smooth_taubin() is deprecated. Use nppas.vedo_smooth_mesh() instead.", DeprecationWarning)
+    warnings.warn("nppas.filter_smooth_taubin() is deprecated. Use nppas.smooth_surface() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.filter_smooth_taubin(number_of_iterations=number_of_iterations)
@@ -464,7 +464,7 @@ def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> Surfac
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-subdivision
     """
-    warnings.warn("nppas.subdivide_loop() is deprecated. Use nppas.vedo_subdivide_loop() instead.", DeprecationWarning)
+    warnings.warn("nppas.subdivide_loop() is deprecated. Use nppas.subdivide_loop_vedo() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.subdivide_loop(number_of_iterations=number_of_iterations)
@@ -484,7 +484,7 @@ def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, vi
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
     """
-    warnings.warn("nppas.sample_points_uniformly() is deprecated. Use nppas.vedo_sample_points_from_surface() instead.", DeprecationWarning)
+    warnings.warn("nppas.sample_points_uniformly() is deprecated. Use nppas.sample_points_from_surface() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     point_cloud = mesh_in.sample_points_uniformly(number_of_points=number_of_points)
@@ -507,7 +507,7 @@ def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500,
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Sampling
     """
-    warnings.warn("nppas.sample_points_poisson_disk() is deprecated. Use nppas.vedo_sample_points_from_surface() instead.",
+    warnings.warn("nppas.sample_points_poisson_disk() is deprecated. Use nppas.sample_points_from_surface() instead.",
                   DeprecationWarning)
 
     mesh_in = to_mesh(surface)
@@ -525,7 +525,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
     http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Voxel-downsampling
     """
     warnings.warn(
-        "nppas.voxel_down_sample() is deprecated. Use nppas.vedo_sample_points() instead.",
+        "nppas.voxel_down_sample() is deprecated. Use nppas.subsample_points() instead.",
         DeprecationWarning)
 
     point_cloud = to_point_cloud(points_data)
@@ -547,7 +547,7 @@ def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/pointcloud.html#Convex-hull
     """
-    warnings.warn("nppas.points_to_convex_hull_surface() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+    warnings.warn("nppas.points_to_convex_hull_surface() is deprecated. Use nppas.create_convex_hull_from_points() instead.", DeprecationWarning)
 
     point_cloud = to_point_cloud(points_data)
     mesh_out, _ = point_cloud.compute_convex_hull()
@@ -568,7 +568,7 @@ def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5
     --------
     ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Alpha-shapes
     """
-    warnings.warn("nppas.surface_from_point_cloud_alpha_shape() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+    warnings.warn("nppas.surface_from_point_cloud_alpha_shape() is deprecated. Use nppas.create_convex_hull_from_points() instead.", DeprecationWarning)
 
     import open3d
     pcd = to_point_cloud(points_data)
@@ -594,7 +594,7 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
     ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Ball-pivoting
     ..[1] http://www.open3d.org/docs/0.7.0/tutorial/Basic/pointcloud.html#point-cloud
     """
-    warnings.warn("nppas.surface_from_point_cloud_ball_pivoting() is deprecated. Use nppas.vedo_points_to_convex_hull_surface() instead.", DeprecationWarning)
+    warnings.warn("nppas.surface_from_point_cloud_ball_pivoting() is deprecated. Use nppas.create_convex_hull_from_points() instead.", DeprecationWarning)
 
     import open3d
     pcd = to_point_cloud(points_data)
@@ -626,7 +626,7 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
     ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
     """
     warnings.warn(
-        "nppas.fill_holes() is deprecated. Use nppas.vedo_fill_holes() instead.",
+        "nppas.fill_holes() is deprecated. Use nppas.fill_holes_in_surface() instead.",
         DeprecationWarning)
 
     import vedo
