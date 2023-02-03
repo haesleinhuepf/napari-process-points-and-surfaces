@@ -452,7 +452,7 @@ def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> Su
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Vertex-clustering
     """
-    warnings.warn("nppas.simplify_vertex_clustering() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
+    warnings.warn("nppas.simplify_vertex_clustering() is deprecated. Use nppas.decimate_quadric() or nppas.decimate_pro() instead.", DeprecationWarning)
     if not _check_open3d():
         return
 
@@ -479,7 +479,7 @@ def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles:
     --------
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Mesh-decimation
     """
-    warnings.warn("nppas.simplify_quadric_decimation() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
+    warnings.warn("nppas.simplify_quadric_decimation() is deprecated. Use nppas.decimate_quadric() instead.", DeprecationWarning)
 
     mesh_in = to_mesh(surface)
     mesh_out = mesh_in.simplify_quadric_decimation(target_number_of_triangles=target_number_of_triangles)
