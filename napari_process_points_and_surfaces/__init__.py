@@ -67,6 +67,16 @@ def napari_experimental_provide_function():
             add_curvature_scalars,
             add_spherefitted_curvature]
 
+
+def add_curvature(*args, **kwargs):
+    warnings.warn("nppas.add_curvature is deprecated. Use add_curvature_scalars instead!")
+    return add_curvature_scalars(*args, **kwargs)
+
+def spherefitted_curvature(*args, **kwargs):
+    warnings.warn("nppas.spherefitted_curvature is deprecated. Use add_spherefitted_curvature instead!")
+    return add_spherefitted_curvature(*args, **kwargs)
+
+
 def _vedo_stanford_bunny_layerdatatuple():
     return [(_vedo_stanford_bunny(), {}, "surface")]
 
@@ -254,6 +264,9 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 
 def _knot_mesh() -> SurfaceData:
     warnings.warn("nppas._knot_mesh() is deprecated. ")
+    if not _check_open3d():
+        return
+
     import open3d
     from pathlib import Path
     data = str(Path(__file__).parent / "data" / "knot.ply")
@@ -261,6 +274,9 @@ def _knot_mesh() -> SurfaceData:
 
 def _standford_bunny() -> SurfaceData:
     warnings.warn("nppas._standford_bunny() is deprecated. Use nppas._vedo_stanford_bunny() instead")
+    if not _check_open3d():
+        return
+
     import open3d
     from pathlib import Path
     data = str(Path(__file__).parent / "data" / "bun_zipper.ply")
@@ -287,18 +303,27 @@ def example_data_vedo_ellipsoid(viewer:napari.viewer):
 
 def to_vector_d(data):
     warnings.warn("nppas.to_vector_d() is deprecated.", DeprecationWarning)
+    if not _check_open3d():
+        return
+
     import open3d
     return open3d.utility.Vector3dVector(data)
 
 
 def to_vector_i(data):
     warnings.warn("nppas.to_vector_i() is deprecated.", DeprecationWarning)
+    if not _check_open3d():
+        return
+
     import open3d
     return open3d.utility.Vector3iVector(data)
 
 
 def to_vector_double(data):
     warnings.warn("nppas.to_vector_double() is deprecated.", DeprecationWarning)
+    if not _check_open3d():
+        return
+
     import open3d
     return open3d.utility.DoubleVector(data)
 
@@ -310,6 +335,9 @@ def to_numpy(data):
 
 def to_mesh(data):
     warnings.warn("nppas.to_mesh() is deprecated. Use nppas.to_vedo_mesh() instead.", DeprecationWarning)
+    if not _check_open3d():
+        return
+
     import open3d
     return open3d.geometry.TriangleMesh(to_vector_d(data[0]), to_vector_i(data[1]))
 
@@ -319,6 +347,9 @@ def to_point_cloud(data):
     http://www.open3d.org/docs/0.9.0/tutorial/Basic/working_with_numpy.html#from-numpy-to-open3d-pointcloud
     """
     warnings.warn("nppas.to_point_cloud() is deprecated. Use nppas.to_napari_points_data() instead.", DeprecationWarning)
+    if not _check_open3d():
+        return
+
     import open3d
     pcd = open3d.geometry.PointCloud()
     pcd.points = to_vector_d(data)
@@ -420,6 +451,9 @@ def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> Su
     ..[0] http://www.open3d.org/docs/0.12.0/tutorial/geometry/mesh.html#Vertex-clustering
     """
     warnings.warn("nppas.simplify_vertex_clustering() is deprecated. Open an issue if you are using this function and/or if you know a good replacement https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues.", DeprecationWarning)
+    if not _check_open3d():
+        return
+
     import open3d
     mesh_in = to_mesh(surface)
 
@@ -569,6 +603,8 @@ def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5
     ..[0] http://www.open3d.org/docs/latest/tutorial/Advanced/surface_reconstruction.html#Alpha-shapes
     """
     warnings.warn("nppas.surface_from_point_cloud_alpha_shape() is deprecated. Use nppas.create_convex_hull_from_points() instead.", DeprecationWarning)
+    if not _check_open3d():
+        return
 
     import open3d
     pcd = to_point_cloud(points_data)
@@ -595,6 +631,8 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
     ..[1] http://www.open3d.org/docs/0.7.0/tutorial/Basic/pointcloud.html#point-cloud
     """
     warnings.warn("nppas.surface_from_point_cloud_ball_pivoting() is deprecated. Use nppas.create_convex_hull_from_points() instead.", DeprecationWarning)
+    if not _check_open3d():
+        return
 
     import open3d
     pcd = to_point_cloud(points_data)
@@ -636,4 +674,8 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
 
     return (mesh.points(), np.asarray(mesh.faces()))
 
-
+def _check_open3d():
+    try:
+        import open3d
+    except:
+        warnings.warn("Open3D is not installed. Follow the instructions here: http://www.open3d.org/docs/release/introduction.html#python-quick-start")
