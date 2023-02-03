@@ -33,7 +33,9 @@ from ._vedo import (to_vedo_mesh,
                     create_convex_hull_from_points,
                     create_convex_hull_from_surface,
                     fill_holes_in_surface,
-                    remove_duplicate_vertices
+                    remove_duplicate_vertices,
+                    decimate_quadric,
+                    decimate_pro,
                     )
 
 from ._utils import isotropic_scale_surface
