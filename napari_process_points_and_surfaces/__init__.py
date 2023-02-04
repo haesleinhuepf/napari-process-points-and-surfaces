@@ -239,7 +239,8 @@ def all_labels_to_surface(labels: LabelsData) -> SurfaceData:
     # merge the meshes; label is stored in `mesh.pointdata['OriginalMeshID']`
     mesh = vedo.merge(mesh_list, flag=True)
 
-    return (mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
+    return to_napari_surface_data(mesh)
+    #(mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
 
 # alias
 marching_cubes = all_labels_to_surface
