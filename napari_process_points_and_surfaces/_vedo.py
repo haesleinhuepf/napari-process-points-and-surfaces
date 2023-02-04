@@ -13,11 +13,26 @@ def to_vedo_points(points_data):
     return vedo.pointcloud.Points(points_data)
 
 
+# Adapted from https://jfine-python-classes.readthedocs.io/en/latest/subclass-tuple.html
+class Surface(tuple):
+    """
+    The nppas.Surface class subclasses tuple and is thus compatible with napari.types.SurfaceData.
+    It extends tuple with surface visualizations in Jupyter Notebooks.
+
+    For more options when viewing Surfaces see nppas.show() and vedo.Plotter
+    """
+    def __new__(self, x):
+        return tuple.__new__(Surface, x)
+
+    def _repr_html_(self):
+        show(self)
+
+
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
-        return (vedo_mesh.points(), np.asarray(vedo_mesh.faces()))
+        return Surface((vedo_mesh.points(), np.asarray(vedo_mesh.faces())))
     else:
-        return (vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values)
+        return Surface((vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values))
 
 
 def to_napari_points_data(vedo_points):
