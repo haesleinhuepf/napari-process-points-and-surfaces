@@ -366,7 +366,7 @@ def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0):
     """
 
     from vedo import Plotter
-    mesh = nppas.to_vedo_mesh((surface[0], surface[1]))
+    mesh = to_vedo_mesh((surface[0], surface[1]))
 
     plt = Plotter()
     plt.show(mesh, zoom=zoom, azimuth=azimuth, elevation=elevation)
