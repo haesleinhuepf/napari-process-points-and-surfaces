@@ -344,3 +344,29 @@ def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float
     mesh.fill_holes(size=size_limit)
 
     return to_napari_surface_data(mesh)
+
+
+def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0):
+    """
+    Visualizes a surface mesh, e.g. in Jupyter Notebooks.
+
+    Parameters
+    ----------
+    zoom: float, optional
+        > 1: Zoom in
+        < 1: Zoom out
+    azimuth: float, optional
+        angle in degrees for turning the view direction
+    elevation: float, optional
+        angle in degrees for turning the view direction
+
+    See also
+    --------
+    https://vedo.embl.es/autodocs/content/vedo/vedo/plotter.html#Plotter
+    """
+
+    from vedo import Plotter
+    mesh = nppas.to_vedo_mesh((surface[0], surface[1]))
+
+    plt = Plotter()
+    plt.show(mesh, zoom=zoom, azimuth=azimuth, elevation=elevation)

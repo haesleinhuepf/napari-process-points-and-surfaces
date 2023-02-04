@@ -36,6 +36,7 @@ from ._vedo import (to_vedo_mesh,
                     remove_duplicate_vertices,
                     decimate_quadric,
                     decimate_pro,
+                    show,
                     )
 
 from ._utils import isotropic_scale_surface
