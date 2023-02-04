@@ -240,6 +240,8 @@ def all_labels_to_surface(labels: LabelsData) -> SurfaceData:
 
     return (mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
 
+# alias
+marching_cubes = all_labels_to_surface
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
 @time_slicer
