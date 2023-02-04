@@ -1,3 +1,5 @@
+import warnings
+
 from napari.types import LayerDataTuple
 from napari_tools_menu import register_function, register_dock_widget
 import numpy as np
@@ -38,25 +40,48 @@ class Quality(Enum):
     ASPECT_GAMMA = 27
     AREA = 28
     ASPECT_BETA = 29
-    
+
+    GAUSS_CURVATURE = 1001
+    MEAN_CURVATURE = 1002
+    MAXIMUM_CURVATURE = 1003
+    MINIMUM_CURVATURE = 1004
+
+    SPHERE_FITTED_CURVATURE_1PERCENT = 2001
+    SPHERE_FITTED_CURVATURE_2PERCENT = 2002
+    SPHERE_FITTED_CURVATURE_5PERCENT = 2005
+    SPHERE_FITTED_CURVATURE_10PERCENT = 2010
+    SPHERE_FITTED_CURVATURE_25PERCENT = 2025
+    SPHERE_FITTED_CURVATURE_50PERCENT = 2050
+
+
 class Curvature(Enum):
     Gauss_Curvature = 0
     Mean_Curvature = 1
     Maximum_Curvature = 2
     Minimum_Curvature = 3
 
-@register_function(menu="Measurement > Surface quality (vedo, nppas)")
+
+@register_function(menu="Measurement maps > Surface quality (vedo, nppas)")
 def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quality.MIN_ANGLE) -> "napari.types.SurfaceData":
+    from ._vedo import to_vedo_mesh
     import vedo
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    if isinstance(quality_id, int):
-        mesh.compute_quality(quality_id)
-    else:
-        mesh.compute_quality(quality_id.value)
+    if not isinstance(quality_id, int):
+        quality_id = quality_id.value
 
-    #print(mesh.celldata.keys())
-    mesh2 = mesh.map_cells_to_points()
-    #print(mesh2.pointdata.keys())
+    if quality_id < 1000:
+        mesh.compute_quality(quality_id)
+        mesh2 = mesh.map_cells_to_points()
+    elif quality_id < 2000:
+        curvature_id = quality_id - 1000
+        mesh.compute_curvature(method=curvature_id)
+        mesh2 = mesh.map_cells_to_points()
+    elif quality_id < 3000:
+        percent = quality_id - 2000
+        fraction = percent / 100
+        radius = mesh.average_size() * fraction
+        layer_data_tuple = add_spherefitted_curvature(surface, radius)
+        mesh2 = to_vedo_mesh(layer_data_tuple[0])
 
     vertices = np.asarray(mesh2.points())
     faces = np.asarray(mesh2.faces())
@@ -66,7 +91,7 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
 
 
 # @register_function(menu="Measurement > Surface quality table (vedo, nppas)", quality=dict(widget_type='Select', choices=Quality))
-@register_dock_widget(menu="Measurement > Surface quality table (vedo, nppas)")
+@register_dock_widget(menu="Measurement tables > Surface quality table (vedo, nppas)")
 @magic_factory(qualities=dict(widget_type='Select', choices=Quality))
 def _surface_quality_table(surface: "napari.types.SurfaceData", qualities:Quality = [Quality.AREA, Quality.MIN_ANGLE, Quality.MAX_ANGLE, Quality.ASPECT_RATIO], napari_viewer:"napari.Viewer" = None):
     return surface_quality_table(surface, qualities, napari_viewer)
@@ -88,8 +113,14 @@ def surface_quality_table(surface: "napari.types.SurfaceData", qualities, napari
 
     table = {}
     for quality in qualities:
-        result = add_quality(surface, quality)
-        values = result[2]
+        print("Measuring", quality)
+        try:
+            result = add_quality(surface, quality)
+            values = result[2]
+        except ValueError as e:
+            warnings.warn(e)
+            values = [np.nan] * len(surface[0])
+
         if len(table.keys()) == 0:
             table["vertex_index"] = list(range(len(values)))
         table[str(quality)] = values
@@ -156,7 +187,7 @@ def surface_quality_to_properties(surface: "napari.types.SurfaceData",
     add_table(surface_layer, napari_viewer)
 
 
-@register_function(menu="Measurement > Surface curvature (vedo, nppas)")
+@register_function(menu="Measurement maps > Surface curvature (vedo, nppas)")
 def add_curvature_scalars(surface: "napari.types.SurfaceData",
                           curvature_id: Curvature = Curvature.Gauss_Curvature,
                           ) -> "napari.types.SurfaceData":
@@ -195,14 +226,14 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     
     return (mesh.points(), np.asarray(mesh.faces()), values)
 
-@register_function(menu="Measurement > Surface curvature (sphere-fitted, nppas)")
+@register_function(menu="Measurement maps > Surface curvature (sphere-fitted, nppas)")
 def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[LayerDataTuple]:
     """
     Determine surface curvature by fitting a sphere to every vertex.
     
     This function iterates over all verteces in a surface, retrieves all points
     in a neighborhood defined by `radius` and fits a sphere to the retrieved
-    points. The ocal curvature is then defined as 1/radius**2.
+    points. The local curvature is then defined as 1/radius**2.
 
     Parameters
     ----------
