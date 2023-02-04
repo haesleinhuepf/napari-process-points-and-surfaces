@@ -113,7 +113,7 @@ def surface_quality_table(surface: "napari.types.SurfaceData", qualities, napari
 
     table = {}
     for quality in qualities:
-        print("Measuring", quality)
+        # print("Measuring", quality)
         try:
             result = add_quality(surface, quality)
             values = result[2]
@@ -286,3 +286,26 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
     layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), properties_residues_layer, 'surface')
         
     return [layer1, layer2]
+
+
+def set_vertex_values(surface: "napari.types.SurfaceData", values) -> "napari.types.SurfaceData":
+    """
+    Replace values of a surface with a given list of values
+
+    Parameters
+    ----------
+    surface: napari.types.SurfaceData
+        tuple of (Vertices, Faces, Values), values are optional
+    values: list
+        list of new values. Must have the same length as vertices
+
+    Returns
+    -------
+    napari.types.SurfaceData
+    """
+    num_vertices = len(surface[0])
+    num_values = len(values)
+    if num_vertices != num_values:
+        raise ValueError(f"Number of vertices ({num_vertices}) and number of values ({num_values}) must be the same.")
+
+    return (surface[0], surface[1], values)
