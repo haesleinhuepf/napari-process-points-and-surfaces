@@ -201,6 +201,64 @@ def subdivide_butterfly(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(mesh_out)
 
 
+@register_function(menu="Surfaces > Decimate surface (quadric, vedo, nppas)")
+def decimate_quadric(surface: "napari.types.SurfaceData",
+                     fraction: float = 0.5,
+                     number_of_vertices: int = None
+                    ) -> "napari.types.SurfaceData":
+    """
+    Reduce numbers of vertices of a surface to a given fraction.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    fraction: float, optional
+        reduce the number of vertices in the surface to the given fraction (0...1, default 0.5)
+    number_of_vertices:int, optional
+        overwrites fraction in case specified
+
+    Returns
+    -------
+    SurfaceData
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/mesh.html#Mesh.decimate
+    """
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.decimate(method='quadric', fraction=fraction, n=number_of_vertices)
+    return to_napari_surface_data(mesh_out)
+
+
+@register_function(menu="Surfaces > Decimate surface (pro, vedo, nppas)")
+def decimate_pro(surface: "napari.types.SurfaceData",
+                     fraction: float = 0.5,
+                     number_of_vertices: int = None
+                    ) -> "napari.types.SurfaceData":
+    """
+    Reduce numbers of vertices of a surface to a given fraction.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    fraction: float, optional
+        reduce the number of vertices in the surface to the given fraction (0...1, default 0.5)
+    number_of_vertices:int, optional
+        overwrites fraction in case specified
+
+    Returns
+    -------
+    SurfaceData
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/mesh.html#Mesh.decimate
+    """
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.decimate(method='pro', fraction=fraction, n=number_of_vertices)
+    return to_napari_surface_data(mesh_out)
+
+
 @register_function(menu="Points > Create points from surface (vedo, nppas)")
 def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
     """Sample points from a surface
@@ -286,3 +344,29 @@ def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float
     mesh.fill_holes(size=size_limit)
 
     return to_napari_surface_data(mesh)
+
+
+def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0):
+    """
+    Visualizes a surface mesh, e.g. in Jupyter Notebooks.
+
+    Parameters
+    ----------
+    zoom: float, optional
+        > 1: Zoom in
+        < 1: Zoom out
+    azimuth: float, optional
+        angle in degrees for turning the view direction
+    elevation: float, optional
+        angle in degrees for turning the view direction
+
+    See also
+    --------
+    https://vedo.embl.es/autodocs/content/vedo/vedo/plotter.html#Plotter
+    """
+
+    from vedo import Plotter
+    mesh = to_vedo_mesh((surface[0], surface[1]))
+
+    plt = Plotter()
+    plt.show(mesh, zoom=zoom, azimuth=azimuth, elevation=elevation)
