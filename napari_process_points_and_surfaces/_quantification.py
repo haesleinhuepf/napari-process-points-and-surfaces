@@ -71,21 +71,27 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
 
     if quality_id < 1000:
         mesh.compute_quality(quality_id)
+
         mesh2 = mesh.map_cells_to_points()
+        values = np.asarray(mesh2.pointdata[mesh2.pointdata.keys()[0]])
     elif quality_id < 2000:
         curvature_id = quality_id - 1000
         mesh.compute_curvature(method=curvature_id)
+
         mesh2 = mesh.map_cells_to_points()
+        values = np.asarray(mesh2.pointdata[mesh2.pointdata.keys()[0]])
     elif quality_id < 3000:
         percent = quality_id - 2000
         fraction = percent / 100
         radius = mesh.average_size() * fraction
         layer_data_tuple = add_spherefitted_curvature(surface, radius)
-        mesh2 = to_vedo_mesh(layer_data_tuple[0])
+
+        surface2 = layer_data_tuple[0][0]
+        mesh2 = to_vedo_mesh(surface2)
+        values = surface2[2]
 
     vertices = np.asarray(mesh2.points())
     faces = np.asarray(mesh2.faces())
-    values = np.asarray(mesh2.pointdata[mesh2.pointdata.keys()[0]])
 
     return (vertices, faces, values)
 
@@ -114,12 +120,12 @@ def surface_quality_table(surface: "napari.types.SurfaceData", qualities, napari
     table = {}
     for quality in qualities:
         # print("Measuring", quality)
-        try:
-            result = add_quality(surface, quality)
-            values = result[2]
-        except ValueError as e:
-            warnings.warn(e)
-            values = [np.nan] * len(surface[0])
+        #try:
+        result = add_quality(surface, quality)
+        values = result[2]
+        #except ValueError as e:
+        #    warnings.warn(str(e))
+        #    values = [np.nan] * len(surface[0])
 
         if len(table.keys()) == 0:
             table["vertex_index"] = list(range(len(values)))
@@ -271,12 +277,12 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
             curvature[idx] = 1/(s.radius)**2
             residues[idx] = s.residue
         except Exception:
-            curvature[idx] = 0
-            residues[idx] = 0
+            curvature[idx] = np.nan
+            residues[idx] = np.nan
             
-    if 0 in curvature:
-        raise ValueError(f"The chosen curvature radius ({radius})"
-                          "was too small to calculate curvatures. Increase " 
+    if np.nan in curvature:
+        warnings.warn(f"The chosen curvature radius ({radius})"
+                          "was too small to calculate curvature in at least one point. Increase " 
                           "the radius to silence this error.")
         
     properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
@@ -284,7 +290,7 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
         
     layer1 = ((mesh.points(), np.asarray(mesh.faces()), curvature), properties_curvature_layer, 'surface')
     layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), properties_residues_layer, 'surface')
-        
+
     return [layer1, layer2]
 
 
