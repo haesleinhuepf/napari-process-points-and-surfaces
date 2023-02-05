@@ -48,6 +48,7 @@ class Curvature(Enum):
 @register_function(menu="Measurement > Surface quality (vedo, nppas)")
 def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quality.MIN_ANGLE) -> "napari.types.SurfaceData":
     import vedo
+    from ._vedo import SurfaceTuple
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     if isinstance(quality_id, int):
         mesh.compute_quality(quality_id)
@@ -62,7 +63,7 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
     faces = np.asarray(mesh2.faces())
     values = np.asarray(mesh2.pointdata[mesh2.pointdata.keys()[0]])
 
-    return (vertices, faces, values)
+    return SurfaceTuple((vertices, faces, values))
 
 
 # @register_function(menu="Measurement > Surface quality table (vedo, nppas)", quality=dict(widget_type='Select', choices=Quality))
@@ -193,7 +194,7 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     mesh.compute_curvature(method=used_method)
     values = mesh.pointdata[curvature_id.name]
     
-    return (mesh.points(), np.asarray(mesh.faces()), values)
+    return Surface((mesh.points(), np.asarray(mesh.faces()), values))
 
 @register_function(menu="Measurement > Surface curvature (sphere-fitted, nppas)")
 def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[LayerDataTuple]:
@@ -251,7 +252,7 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
     properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
     properties_residues_layer = {'name': 'fit residues', 'colormap': 'magma'}
         
-    layer1 = ((mesh.points(), np.asarray(mesh.faces()), curvature), properties_curvature_layer, 'surface')
-    layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), properties_residues_layer, 'surface')
+    layer1 = (Surface((mesh.points(), np.asarray(mesh.faces()), curvature)), properties_curvature_layer, 'surface')
+    layer2 = (Surface((mesh.points(), np.asarray(mesh.faces()), residues)), properties_residues_layer, 'surface')
         
     return [layer1, layer2]
