@@ -21,10 +21,10 @@ class SurfaceTuple(tuple):
     roll: float = 0
     cmap: str = 'viridis'
     """
-    The nppas.Surface class subclasses tuple and is thus compatible with napari.types.SurfaceData.
+    The nppas.SurfaceTuple class subclasses tuple and is thus compatible with napari.types.SurfaceData.
     It extends tuple with surface visualizations in Jupyter Notebooks.
 
-    For more options when viewing Surfaces see nppas.show() and vedo.Plotter
+    For more options when viewing Surfaces see nppas.show() and vedo.Plotter()
     """
     def __new__(self, x):
         return tuple.__new__(SurfaceTuple, x)
@@ -41,7 +41,7 @@ class SurfaceTuple(tuple):
 
         import vedo
 
-        self.library_name = "nppas Surface"
+        self.library_name = "nppas.SurfaceTuple"
         self.help_url = "https://github.com/haesleinhuepf/napari-process-points-and-surfaces"
 
         mesh: vedo.Mesh = to_vedo_mesh(self)
