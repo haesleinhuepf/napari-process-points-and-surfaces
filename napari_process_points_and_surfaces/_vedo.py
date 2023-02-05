@@ -14,7 +14,7 @@ def to_vedo_points(points_data):
 
 
 # Adapted from https://jfine-python-classes.readthedocs.io/en/latest/subclass-tuple.html
-class Surface(tuple):
+class SurfaceTuple(tuple):
     zoom: float = 1
     azimuth: float = 0
     elevation: float = 0
@@ -27,7 +27,7 @@ class Surface(tuple):
     For more options when viewing Surfaces see nppas.show() and vedo.Plotter
     """
     def __new__(self, x):
-        return tuple.__new__(Surface, x)
+        return tuple.__new__(SurfaceTuple, x)
 
     def _repr_html_(self):
         """HTML representation of the surface object for IPython.
@@ -117,9 +117,9 @@ class Surface(tuple):
 
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
-        return Surface((vedo_mesh.points(), np.asarray(vedo_mesh.faces())))
+        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces())))
     else:
-        return Surface((vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values))
+        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values))
 
 
 def to_napari_points_data(vedo_points):
