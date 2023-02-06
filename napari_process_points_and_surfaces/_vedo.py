@@ -49,7 +49,7 @@ def create_convex_hull_from_surface(surface: "napari.types.SurfaceData") -> "nap
     return to_napari_surface_data(convex_hull_mesh)
 
 @register_function(menu="Surfaces > Remove duplicate vertices (vedo, nppas)")
-def remove_duplicate_vertices(surface: "napari.types.SurfaceData"):
+def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """
     Clean a surface mesh (i.e., remove duplicate faces & vertices).
 
