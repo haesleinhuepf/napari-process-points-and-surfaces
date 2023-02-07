@@ -221,6 +221,7 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     Vedo curvature: https://vedo.embl.es/autodocs/content/vedo/mesh.html?highlight=curvature#vedo.mesh.Mesh.addCurvatureScalars
     """
     import vedo
+    from ._vedo import SurfaceTuple
 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))    
     if isinstance(curvature_id, int):
@@ -231,7 +232,7 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     mesh.compute_curvature(method=used_method)
     values = mesh.pointdata[curvature_id.name]
     
-    return Surface((mesh.points(), np.asarray(mesh.faces()), values))
+    return SurfaceTuple((mesh.points(), np.asarray(mesh.faces()), values))
 
 @register_function(menu="Measurement maps > Surface curvature (sphere-fitted, nppas)")
 def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[LayerDataTuple]:
@@ -264,6 +265,7 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
     Curvature: https://en.wikipedia.org/wiki/Gaussian_curvature
     """
     import vedo
+    from ._vedo import SurfaceTuple
     
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     
@@ -289,8 +291,8 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
     properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
     properties_residues_layer = {'name': 'fit residues', 'colormap': 'magma'}
         
-    layer1 = (Surface((mesh.points(), np.asarray(mesh.faces()), curvature)), properties_curvature_layer, 'surface')
-    layer2 = (Surface((mesh.points(), np.asarray(mesh.faces()), residues)), properties_residues_layer, 'surface')
+    layer1 = (SurfaceTuple((mesh.points(), np.asarray(mesh.faces()), curvature)), properties_curvature_layer, 'surface')
+    layer2 = (SurfaceTuple((mesh.points(), np.asarray(mesh.faces()), residues)), properties_residues_layer, 'surface')
         
     return [layer1, layer2]
 
@@ -310,9 +312,11 @@ def set_vertex_values(surface: "napari.types.SurfaceData", values) -> "napari.ty
     -------
     napari.types.SurfaceData
     """
+    from ._vedo import SurfaceTuple
+
     num_vertices = len(surface[0])
     num_values = len(values)
     if num_vertices != num_values:
         raise ValueError(f"Number of vertices ({num_vertices}) and number of values ({num_values}) must be the same.")
 
-    return (surface[0], surface[1], values)
+    return SurfaceTuple((surface[0], surface[1], values))
