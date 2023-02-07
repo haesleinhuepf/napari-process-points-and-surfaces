@@ -12,4 +12,5 @@ napari-workflows>=0.2.3
 napari-skimage-regionprops>=0.5.5
 pandas
 imageio!=2.22.1
+stackview>=0.5.2
 -e .

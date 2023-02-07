@@ -17,7 +17,7 @@ from ._surface_annotation_widget import SurfaceAnnotationWidget
 from napari_time_slicer import time_slicer
 from ._quantification import add_quality, Quality, add_curvature_scalars,\
     Curvature, add_spherefitted_curvature, surface_quality_table, \
-    surface_quality_to_properties
+    surface_quality_to_properties, set_vertex_values
 
 from ._vedo import (to_vedo_mesh,
                     to_vedo_points,
@@ -37,6 +37,7 @@ from ._vedo import (to_vedo_mesh,
                     decimate_quadric,
                     decimate_pro,
                     show,
+                    SurfaceTuple,
                     )
 
 from ._utils import isotropic_scale_surface
