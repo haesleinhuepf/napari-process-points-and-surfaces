@@ -47,7 +47,7 @@ class SurfaceTuple(tuple):
         mesh: vedo.Mesh = to_vedo_mesh(self)
 
         # Draw mesh
-        plotter = vedo.Plotter(offscreen=True, N=2)
+        plotter = vedo.Plotter(offscreen=True, shape="1|1000")
         if len(self) > 2:
             mesh.cmap(self.cmap, self[2])
         plotter.show(mesh,
