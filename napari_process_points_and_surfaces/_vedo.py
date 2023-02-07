@@ -448,7 +448,7 @@ def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float
     return to_napari_surface_data(mesh)
 
 
-def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0):
+def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0, cmap:str = 'viridis'):
     """
     Visualizes a surface mesh, e.g. in Jupyter Notebooks.
 
@@ -461,6 +461,8 @@ def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0):
         angle in degrees for turning the view direction
     elevation: float, optional
         angle in degrees for turning the view direction
+    cmap: str, optional
+        colormap for visualization of values
 
     See also
     --------
@@ -469,6 +471,8 @@ def show(surface, zoom: float = 1, azimuth: float = 0, elevation: float = 0):
 
     from vedo import Plotter
     mesh = to_vedo_mesh((surface[0], surface[1]))
+    if len(surface) > 2:
+        mesh.cmap(cmap, surface[2])
 
     plt = Plotter()
     plt.show(mesh, zoom=zoom, azimuth=azimuth, elevation=elevation)
