@@ -13,11 +13,113 @@ def to_vedo_points(points_data):
     return vedo.pointcloud.Points(points_data)
 
 
+# Adapted from https://jfine-python-classes.readthedocs.io/en/latest/subclass-tuple.html
+class SurfaceTuple(tuple):
+    zoom: float = 1
+    azimuth: float = 0
+    elevation: float = 0
+    roll: float = 0
+    cmap: str = 'viridis'
+    """
+    The nppas.SurfaceTuple class subclasses tuple and is thus compatible with napari.types.SurfaceData.
+    It extends tuple with surface visualizations in Jupyter Notebooks.
+
+    For more options when viewing Surfaces see nppas.show() and vedo.Plotter()
+    """
+    def __new__(self, x):
+        return tuple.__new__(SurfaceTuple, x)
+
+    def _repr_html_(self):
+        """HTML representation of the surface object for IPython.
+        Returns
+        -------
+        HTML text with the image and some properties.
+        """
+        import numpy as np
+        from stackview._static_view import _png_to_html, _plt_to_png
+        import matplotlib.pyplot as plt
+
+        import vedo
+
+        self.library_name = "nppas.SurfaceTuple"
+        self.help_url = "https://github.com/haesleinhuepf/napari-process-points-and-surfaces"
+
+        mesh: vedo.Mesh = to_vedo_mesh(self)
+
+        # Draw mesh
+        plotter = vedo.Plotter(offscreen=True, N=2)
+        if len(self) > 2:
+            mesh.cmap(self.cmap, self[2])
+        plotter.show(mesh,
+                     zoom=self.zoom,
+                     azimuth=self.azimuth,
+                     elevation=self.elevation,
+                     roll=self.roll)
+        np_rgb_image = plotter.screenshot(asarray=True)
+        plt.imshow(np_rgb_image)
+        # turn off axes
+        frame1 = plt.gca()
+        frame1.axes.xaxis.set_ticklabels([])
+        frame1.axes.yaxis.set_ticklabels([])
+        plt.tick_params(left=False, bottom=False)
+        image = _png_to_html(_plt_to_png())
+
+        # mesh statisitics
+        bounds = "<br/>".join([str(min_x) + "..." + str(max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
+        average_size = "{size:.3f}".format(size=mesh.average_size())
+        histogram = ""
+        min_max = ""
+
+        if len(self) > 2:
+            # make histogram of values
+            num_bins = 32
+            h, _ = np.histogram(self[2], bins=num_bins)
+
+            plt.figure(figsize=(1.8, 1.2))
+            plt.bar(range(0, len(h)), h)
+
+            # hide axis text
+            # https://stackoverflow.com/questions/2176424/hiding-axis-text-in-matplotlib-plots
+            # https://pythonguides.com/matplotlib-remove-tick-labels
+            frame1 = plt.gca()
+            frame1.axes.xaxis.set_ticklabels([])
+            frame1.axes.yaxis.set_ticklabels([])
+            plt.tick_params(left=False, bottom=False)
+
+            histogram = _png_to_html(_plt_to_png())
+
+            min_max = "<tr><td>min</td><td>" + str(self[2].min()) + "</td></tr>" + \
+                      "<tr><td>max</td><td>" + str(self[2].max()) + "</td></tr>"
+
+        help_text = "<b><a href=\"" + self.help_url + "\" target=\"_blank\">" + self.library_name + "</a></b><br/>"
+
+        all = [
+            "<table>",
+            "<tr>",
+            "<td>",
+            image,
+            "</td>",
+            "<td style=\"text-align: center; vertical-align: top;\">",
+            help_text,
+            "<table>",
+            "<tr><td>bounds (z/y/x)</td><td>" + str(bounds).replace(" ", "&nbsp;") + "</td></tr>",
+            "<tr><td>average size</td><td>" + str(average_size) + "</td></tr>",
+            min_max,
+            "</table>",
+            histogram,
+            "</td>",
+            "</tr>",
+            "</table>",
+        ]
+
+        return "\n".join(all)
+
+
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
-        return (vedo_mesh.points(), np.asarray(vedo_mesh.faces()))
+        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces())))
     else:
-        return (vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values)
+        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values))
 
 
 def to_napari_points_data(vedo_points):

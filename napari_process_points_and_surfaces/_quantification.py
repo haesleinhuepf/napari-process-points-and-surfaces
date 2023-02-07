@@ -65,6 +65,7 @@ class Curvature(Enum):
 def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quality.MIN_ANGLE) -> "napari.types.SurfaceData":
     from ._vedo import to_vedo_mesh
     import vedo
+    from ._vedo import SurfaceTuple
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     if not isinstance(quality_id, int):
         quality_id = quality_id.value
@@ -93,7 +94,7 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
     vertices = np.asarray(mesh2.points())
     faces = np.asarray(mesh2.faces())
 
-    return (vertices, faces, values)
+    return SurfaceTuple((vertices, faces, values))
 
 
 # @register_function(menu="Measurement > Surface quality table (vedo, nppas)", quality=dict(widget_type='Select', choices=Quality))
@@ -230,7 +231,7 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     mesh.compute_curvature(method=used_method)
     values = mesh.pointdata[curvature_id.name]
     
-    return (mesh.points(), np.asarray(mesh.faces()), values)
+    return Surface((mesh.points(), np.asarray(mesh.faces()), values))
 
 @register_function(menu="Measurement maps > Surface curvature (sphere-fitted, nppas)")
 def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[LayerDataTuple]:
@@ -288,9 +289,9 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
     properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
     properties_residues_layer = {'name': 'fit residues', 'colormap': 'magma'}
         
-    layer1 = ((mesh.points(), np.asarray(mesh.faces()), curvature), properties_curvature_layer, 'surface')
-    layer2 = ((mesh.points(), np.asarray(mesh.faces()), residues), properties_residues_layer, 'surface')
-
+    layer1 = (Surface((mesh.points(), np.asarray(mesh.faces()), curvature)), properties_curvature_layer, 'surface')
+    layer2 = (Surface((mesh.points(), np.asarray(mesh.faces()), residues)), properties_residues_layer, 'surface')
+        
     return [layer1, layer2]
 
 
