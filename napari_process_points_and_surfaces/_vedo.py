@@ -16,9 +16,9 @@ def to_vedo_points(points_data):
 # Adapted from https://jfine-python-classes.readthedocs.io/en/latest/subclass-tuple.html
 class SurfaceTuple(tuple):
     zoom: float = 1
-    azimuth: float = 0
+    azimuth: float = 90
     elevation: float = 0
-    roll: float = 0
+    roll: float = 180
     cmap: str = 'viridis'
     """
     The nppas.SurfaceTuple class subclasses tuple and is thus compatible with napari.types.SurfaceData.
