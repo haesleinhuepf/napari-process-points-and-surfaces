@@ -22,3 +22,26 @@ def test_create_surface():
 
         assert num_vertices == 384
         assert num_faces == 764
+
+def test_decimate():
+    import napari_process_points_and_surfaces as nppas
+    from functools import partial
+    surface = nppas._vedo_stanford_bunny()
+
+    num_vertices = len(surface[0])
+
+    decimator_function = [
+        partial(nppas.decimate_pro, fraction=0.1),
+        partial(nppas.decimate_quadric, fraction=0.1),
+        nppas.decimate_pro,
+        nppas.decimate_quadric,
+    ]
+
+    for func in decimator_function:
+        simplified_surface = func(surface)
+
+        assert num_vertices > len(simplified_surface[0])
+
+
+
+
