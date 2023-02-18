@@ -58,5 +58,18 @@ def test_create_convex_hull_from_surface():
     assert len(convex_hull[0]) < len(surface[0])
     assert len(convex_hull[1]) < len(surface[1])
 
+def test_remove_duplicate_vertices():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
 
+    # add a vertex
+    a_list = list(gastruloid[0])
+    a_list.append(gastruloid[0][0])
+    gastruloid = (a_list, gastruloid[1])
 
+    another_gastruloid = nppas.gastruloid()
+    len(gastruloid[0]) > len(another_gastruloid[0])
+
+    corrected_gastruloid = nppas.remove_duplicate_vertices(gastruloid)
+
+    len(corrected_gastruloid[0]) > len(another_gastruloid[0])
