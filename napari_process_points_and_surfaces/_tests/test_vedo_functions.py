@@ -43,5 +43,20 @@ def test_decimate():
         assert num_vertices > len(simplified_surface[0])
 
 
+def test_create_convex_hull_from_surface():
+    import napari_process_points_and_surfaces as nppas
+    import numpy as np
+
+    image = np.zeros((10, 10, 10))
+    image[1:9, 1:9, 1:9] = 1
+    image[:, 5:, 3:6] = 0
+
+    surface = nppas.marching_cubes(image)
+
+    convex_hull = nppas.create_convex_hull_from_surface(surface)
+
+    assert len(convex_hull[0]) < len(surface[0])
+    assert len(convex_hull[1]) < len(surface[1])
+
 
 
