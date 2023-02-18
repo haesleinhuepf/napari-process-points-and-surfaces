@@ -19,6 +19,7 @@ def test_something():
             points_to_convex_hull_surface,\
             surface_from_point_cloud_alpha_shape,\
             surface_from_point_cloud_ball_pivoting,\
+            all_labels_to_surface,\
             label_to_surface,\
             largest_label_to_surface,\
             add_quality,\
@@ -31,6 +32,7 @@ def test_something():
     from skimage.measure import label
     labels = label(nuclei > 20000)
 
+    surface = all_labels_to_surface(labels)
     surface = label_to_surface(labels, 3)
 
     surface = largest_label_to_surface(labels)
@@ -52,6 +54,45 @@ def test_something():
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
     add_quality(surface, Quality.SKEW)
+
+def test_something2():
+    from .._vedo import (to_vedo_mesh,
+                         to_vedo_points,
+                         to_napari_surface_data,
+                         to_napari_points_data,
+                         smooth_surface,
+                         subdivide_loop_vedo,
+                         subdivide_linear,
+                         subdivide_adaptive,
+                         subdivide_butterfly,
+                         sample_points_from_surface,
+                         subsample_points,
+                         create_convex_hull_from_surface,
+                         create_convex_hull_from_points,
+                         fill_holes_in_surface
+                         )
+    from napari_process_points_and_surfaces import (
+        _vedo_stanford_bunny_layerdatatuple
+    )
+
+    surface = _vedo_stanford_bunny_layerdatatuple()[0][0]
+
+    vedo_mesh = to_vedo_mesh(surface)
+    surface = to_napari_surface_data(vedo_mesh)
+
+    vedo_points = to_vedo_points(surface[0])
+    napari_points = to_napari_points_data(vedo_points)
+
+    smooth_surface(surface)
+    subdivide_loop_vedo(surface)
+    subdivide_adaptive(surface)
+    subdivide_linear(surface)
+    subdivide_butterfly(surface)
+    sample_points_from_surface(surface)
+    subsample_points(napari_points)
+    create_convex_hull_from_points(napari_points)
+    create_convex_hull_from_surface(surface)
+    fill_holes_in_surface(surface)
 
 def test_curvature():
     from napari_process_points_and_surfaces import add_curvature_scalars,\

@@ -8,7 +8,7 @@
 [![Development Status](https://img.shields.io/pypi/status/napari-process-points-and-surfaces.svg)](https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-process-points-and-surfaces)](https://napari-hub.org/plugins/napari-process-points-and-surfaces)
 
-Process and analyze surfaces using [open3d](http://www.open3d.org/) and [vedo](https://vedo.embl.es/) in [napari].
+Process and analyze surfaces using [vedo](https://vedo.embl.es/) in [napari].
 
 ## Usage
 
@@ -21,12 +21,12 @@ The Standford Bunny example dataset has been taken from the [The Stanford 3D Sca
 
 For processing meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/demo.ipynb). There you also learn how this screenshot is made:
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot1.png)
 
 For performing quantitative measurements of meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/quality_measurements.ipynb). 
 There you also learn how this screenshot is made:
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot2.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot4.png)
 
 ### Surface measurements and annotations
 
@@ -57,13 +57,20 @@ measurements and annotations side-by-side.
 
 ## Installation
 
-You can install `napari-process-points-and-surfaces` via [pip] and conda:
+You can install `napari-process-points-and-surfaces` via mamba/conda and pip:
 
 ```
-conda create -n nppas-env -c conda-forge -c open3d-admin python=3.9 open3d napari
-conda activate nppas-env
+mamba install vedo vtk libnetcdf=4.7.4 -c conda-forge
 pip install napari-process-points-and-surfaces
 ```
+
+f### Troubleshooting: Open3d installation
+
+Since version 0.4.0, `nppas` does no longer depend on [open3d](http://www.open3d.org/). 
+Some deprecated functions still use Open3d though. 
+Follow the installation instructions in the [open3d documentation](http://www.open3d.org/docs/release/getting_started.htm) to install it and keep using those functions.
+Also consider updating code and no longer using these deprecated functions. 
+See [release notes](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/releases/tag/0.4.0) for details.
 
 ## See also
 
@@ -71,6 +78,7 @@ There are other napari plugins with similar / overlapping functionality
 * [pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
 * [morphometrics](https://www.napari-hub.org/plugins/morphometrics)  
 * [napari-pyclesperanto-assistant](https://www.napari-hub.org/plugins/napari-pyclesperanto-assistant)
+* [napari-stress](https://www.napari-hub.org/plugins/napari-stress)
 
 ## Contributing
 
@@ -81,6 +89,11 @@ the coverage at least stays the same before you submit a pull request.
 
 Distributed under the terms of the [BSD-3] license,
 "napari-process-points-and-surfaces" is free and open source software
+
+## Acknowledgements
+
+Some code snippets and example data were taken from the [vedo](https://vedo.embl.es/) and [open3d](http://www.open3d.org/) 
+repositories and documentation. See [thirdparty licenses](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/tree/main/licenses_third_party) for licensing details.
 
 ## Issues
 

@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import napari
-import copy
 import numpy as np
 
 _use_pygeodesic = False
@@ -16,7 +12,6 @@ from qtpy.QtCore import QEvent, QObject
 
 from magicgui.widgets import create_widget
 
-from napari.layers import Surface
 from scipy import spatial
 
 from napari_tools_menu import register_dock_widget
@@ -27,11 +22,12 @@ class SurfaceAnnotationWidget(QWidget):
 
     def __init__(self, napari_viewer):
         super().__init__()
+        import napari
 
         self._viewer = napari_viewer
 
         # select layer
-        self._surface_layer_select = create_widget(annotation=Surface, label="Surface_layer")
+        self._surface_layer_select = create_widget(annotation=napari.layers.Surface, label="Surface_layer")
 
         # select tool
         self._tool_select_group = QButtonGroup()
@@ -208,6 +204,8 @@ class SurfaceAnnotationWidget(QWidget):
     def _paint_face_by_euclidean_distance(self, layer, event):
         #if "Alt" not in event.modifiers:
         #    return
+        import napari
+        import copy
 
         click_origin = event.position
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
@@ -248,6 +246,8 @@ class SurfaceAnnotationWidget(QWidget):
     def _paint_face_by_geodesic_distance(self, layer, event):
         #if "Alt" not in event.modifiers:
         #    return
+        import napari
+        import copy
 
         click_origin = event.position
         _, triangle_index = layer.get_value(event.position, view_direction=event.view_direction, dims_displayed=event.dims_displayed, world=True)
