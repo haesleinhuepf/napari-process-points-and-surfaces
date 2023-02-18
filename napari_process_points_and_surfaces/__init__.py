@@ -212,7 +212,8 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
 
-    return (vertices, faces, values)
+    return remove_duplicate_vertices(SurfaceTuple((vertices, faces, values)))
+
 
 @register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
 @time_slicer
