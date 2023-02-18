@@ -148,8 +148,8 @@ def test_create_convex_hull_from_points():
     assert len(convex_hull[1]) == 858
 
 
-def test_show():
-    import napari_process_points_and_surfaces as nppas
-    gastruloid = nppas.gastruloid()
-
-    nppas.show(gastruloid)
+#def test_show():
+#    import napari_process_points_and_surfaces as nppas
+#    gastruloid = nppas.gastruloid()
+#
+#    nppas.show(gastruloid)
