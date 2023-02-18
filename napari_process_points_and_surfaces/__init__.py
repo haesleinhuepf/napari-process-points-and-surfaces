@@ -11,6 +11,7 @@ from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
 import numpy as np
 import napari
+import stackview
 
 from ._surface_annotation_widget import SurfaceAnnotationWidget
 
@@ -137,6 +138,7 @@ def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> 
 
 @register_function(menu="Points > Points to labels (nppas)")
 @register_function(menu="Segmentation / labeling > Create labels from points (nppas)")
+@stackview.jupyter_displayable_output
 @time_slicer
 def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer:napari.Viewer=None) -> LabelsData:
     """Mark single pixels in a zero-value pixel image if there is a point in a given point list.
@@ -166,8 +168,9 @@ def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer
 
 @register_function(menu="Surfaces > Surface to binary volumne (nppas)")
 @register_function(menu="Segmentation / binarization > Create binary volume from surface (nppas)")
+@stackview.jupyter_displayable_output
 @time_slicer
-def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
+def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData = None,
                      viewer: napari.Viewer = None) -> LabelsData:
     """Render a closed surface as binary image with the same size as a specified image.
 
@@ -200,12 +203,15 @@ def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
     boundaries_r = np.max(vertices, axis=0).astype(int)
 
     # replace region within bounding box with binary image
-    binary_image = np.zeros_like(as_large_as_image)
-    binary_image[boundaries_l[0] : boundaries_r[0],
-                boundaries_l[1] : boundaries_r[1],
-                boundaries_l[2] : boundaries_r[2]] = my_mesh.binarize().tonumpy()
+    if as_large_as_image is not None:
+        binary_image = np.zeros_like(as_large_as_image, dtype=int)
+        binary_image[boundaries_l[0] : boundaries_r[0],
+                    boundaries_l[1] : boundaries_r[1],
+                    boundaries_l[2] : boundaries_r[2]] = my_mesh.binarize().tonumpy()
+    else:
+        binary_image = my_mesh.binarize().tonumpy().astype(int)
 
-    return binary_image
+    return np.asarray(binary_image > 0).astype(int)
 
 
 @register_function(menu="Surfaces > Create surface from any label (marching cubes, scikit-image, nppas)")
