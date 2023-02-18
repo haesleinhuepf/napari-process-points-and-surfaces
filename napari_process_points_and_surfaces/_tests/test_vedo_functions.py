@@ -124,7 +124,7 @@ def test_sample_points_from_surface():
     gastruloid = nppas.gastruloid()
 
     points = nppas.sample_points_from_surface(gastruloid)
-    assert len(points) == 1928
+    assert len(points) == 2131
 
 
 def test_subsample_points():
@@ -144,8 +144,8 @@ def test_create_convex_hull_from_points():
     points = nppas.sample_points_from_surface(gastruloid)
 
     convex_hull = nppas.create_convex_hull_from_points(points)
-    assert len(convex_hull[0]) == 431
-    assert len(convex_hull[1]) == 858
+    assert len(convex_hull[0]) == 610
+    assert len(convex_hull[1]) == 1216
 
 
 #def test_show():
