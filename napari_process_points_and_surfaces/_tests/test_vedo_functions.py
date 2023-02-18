@@ -127,4 +127,12 @@ def test_sample_points_from_surface():
     assert len(points) == 1928
 
 
+def test_subsample_points():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
 
+    points = nppas.sample_points_from_surface(gastruloid)
+
+    subsampled_points = nppas.subsample_points(points, distance_fraction=0.1)
+
+    assert len(points) > len(subsampled_points)
