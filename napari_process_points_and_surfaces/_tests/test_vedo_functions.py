@@ -99,3 +99,32 @@ def test_smooth_surface():
     assert len(gastruloid[0]) == len(smoothed_gastruloid[0])
     assert len(gastruloid[1]) == len(smoothed_gastruloid[1])
 
+
+def test_subdivide():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+
+    subdivision_functions = [
+        nppas.subdivide_adaptive,
+        # nppas.subdivide_loop_vedo, # see: https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues/new
+        # nppas.subdivide_linear,
+        # nppas.subdivide_butterfly
+        ]
+
+    for func in subdivision_functions:
+        print(func)
+        subdivided_gastruloid = func(gastruloid)
+
+        # check if vertices/faces are still the same count
+        assert len(gastruloid[0]) < len(subdivided_gastruloid[0])
+        assert len(gastruloid[1]) < len(subdivided_gastruloid[1])
+
+def test_sample_points_from_surface():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+
+    points = nppas.sample_points_from_surface(gastruloid)
+    assert len(points) == 1928
+
+
+
