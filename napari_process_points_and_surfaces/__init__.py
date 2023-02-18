@@ -75,7 +75,7 @@ def add_curvature(*args, **kwargs):
     return add_curvature_scalars(*args, **kwargs)
 
 def spherefitted_curvature(*args, **kwargs):
-    warnings.warn("nppas.spherefitted_curvature is deprecated. Use add_spherefitted_curvature instead!")
+    warnings.warn("nppas.spherefitted_curvature is deprecated. Use `add_quality(..., Quality.SPHERE_FITTED_CURVATURE_..._VOXEL)` instead!")
     return add_spherefitted_curvature(*args, **kwargs)
 
 
