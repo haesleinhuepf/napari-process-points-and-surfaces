@@ -68,11 +68,11 @@ def test_remove_duplicate_vertices():
     gastruloid = (a_list, gastruloid[1])
 
     another_gastruloid = nppas.gastruloid()
-    len(gastruloid[0]) > len(another_gastruloid[0])
+    assert len(gastruloid[0]) > len(another_gastruloid[0])
 
     corrected_gastruloid = nppas.remove_duplicate_vertices(gastruloid)
 
-    len(corrected_gastruloid[0]) > len(another_gastruloid[0])
+    assert len(corrected_gastruloid[0]) > len(another_gastruloid[0])
 
 def test_surface_to_binary_volume():
     import napari_process_points_and_surfaces as nppas
@@ -85,4 +85,4 @@ def test_surface_to_binary_volume():
     surface = nppas.marching_cubes(image)
     binary = nppas.surface_to_binary_volume(surface, image)
 
-    np.array_equal(binary, image)
+    assert np.array_equal(binary, image)
