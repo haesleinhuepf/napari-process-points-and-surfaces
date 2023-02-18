@@ -88,4 +88,14 @@ def test_surface_to_binary_volume():
     assert np.array_equal(binary, image)
 
 
+def test_smooth_surface():
+
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+
+    smoothed_gastruloid = nppas.smooth_surface(gastruloid)
+
+    # check if vertices/faces are still the same count
+    assert len(gastruloid[0]) == len(smoothed_gastruloid[0])
+    assert len(gastruloid[1]) == len(smoothed_gastruloid[1])
 
