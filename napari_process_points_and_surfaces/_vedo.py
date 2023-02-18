@@ -65,7 +65,7 @@ class SurfaceTuple(tuple):
         image = _png_to_html(_plt_to_png())
 
         # mesh statistics
-        bounds = "<br/>".join([str(min_x) + "..." + str(max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
+        bounds = "<br/>".join(["{min_x:.3f}...{max_x:.3f}".format(min_x=min_x, max_x=max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
         average_size = "{size:.3f}".format(size=mesh.average_size())
         center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.centerOfMass()])
         scale = ",".join(["{size:.3f}".format(size=x) for x in mesh.scale()])
