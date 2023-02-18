@@ -53,6 +53,28 @@ class Quality(Enum):
     SPHERE_FITTED_CURVATURE_25_PERCENT = 2025
     SPHERE_FITTED_CURVATURE_50_PERCENT = 2050
 
+    SPHERE_FITTED_CURVATURE_MICRO_VOXEL = 3046
+    SPHERE_FITTED_CURVATURE_MILLI_VOXEL = 3047
+    SPHERE_FITTED_CURVATURE_CENTI_VOXEL = 3048
+    SPHERE_FITTED_CURVATURE_DECI_VOXEL = 3049
+    SPHERE_FITTED_CURVATURE_VOXEL = 3050
+    SPHERE_FITTED_CURVATURE_DECA_VOXEL = 3051
+    SPHERE_FITTED_CURVATURE_HECTA_VOXEL = 3052
+    SPHERE_FITTED_CURVATURE_KILO_VOXEL = 3053
+    SPHERE_FITTED_CURVATURE_MEGA_VOXEL = 3054
+
+# https://en.wikipedia.org/wiki/Nano-
+ORDER_OF_MAGNITUDE = {
+    Quality.SPHERE_FITTED_CURVATURE_MICRO_VOXEL.value : 0.000001,
+    Quality.SPHERE_FITTED_CURVATURE_MILLI_VOXEL.value : 0.001,
+    Quality.SPHERE_FITTED_CURVATURE_CENTI_VOXEL.value : 0.01,
+    Quality.SPHERE_FITTED_CURVATURE_DECI_VOXEL.value  : 0.1,
+    Quality.SPHERE_FITTED_CURVATURE_VOXEL.value       : 1,
+    Quality.SPHERE_FITTED_CURVATURE_DECA_VOXEL.value  : 10,
+    Quality.SPHERE_FITTED_CURVATURE_HECTA_VOXEL.value : 100,
+    Quality.SPHERE_FITTED_CURVATURE_KILO_VOXEL.value  : 1000,
+    Quality.SPHERE_FITTED_CURVATURE_MEGA_VOXEL.value  : 1000000
+}
 
 class Curvature(Enum):
     Gauss_Curvature = 0
@@ -90,6 +112,15 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
         surface2 = layer_data_tuple[0][0]
         mesh2 = to_vedo_mesh(surface2)
         values = surface2[2]
+    elif quality_id < 4000:
+        radius = ORDER_OF_MAGNITUDE[quality_id]
+        layer_data_tuple = add_spherefitted_curvature(surface, radius)
+
+        surface2 = layer_data_tuple[0][0]
+        mesh2 = to_vedo_mesh(surface2)
+        values = surface2[2]
+    else:
+        raise NotImplementedError(f"Quality {quality_id} is not implemented.")
 
     vertices = np.asarray(mesh2.points())
     faces = np.asarray(mesh2.faces())

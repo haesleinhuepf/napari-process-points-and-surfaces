@@ -87,12 +87,25 @@ def _vedo_stanford_bunny_layerdatatuple():
 def _vedo_ellipsoid_layerdatatuple():
     return [(_vedo_ellipsoid(), {}, "surface")]
 
+def _vedo_gastruloid_layerdatatuple():
+    return [(gastruloid(), {}, "surface")]
+
+
 @napari_hook_implementation
 def napari_provide_sample_data():
     return {
         "Standford bunny (nppas)": _vedo_stanford_bunny_layerdatatuple,
-        "Ellipsoid (nppas)": _vedo_ellipsoid_layerdatatuple
+        "Ellipsoid (nppas)": _vedo_ellipsoid_layerdatatuple,
+        "Gastruloid (AV Luque and JV Veenvliet (2023), nppas)": _vedo_gastruloid_layerdatatuple
     }
+
+
+def gastruloid() -> "napari.types.SurfaceData":
+    print ("The nppas gastruloid example is derived from AV Luque and JV Veenvliet (2023) which is licensed CC-BY (https://creativecommons.org/licenses/by/4.0/legalcode) and can be downloaded from here: https://zenodo.org/record/7603081")
+    import vedo
+    from pathlib import Path
+    data = str(Path(__file__).parent / "data" / "gastruloid.ply")
+    return to_napari_surface_data(vedo.Mesh(data))
 
 
 def _vedo_ellipsoid() -> "napari.types.SurfaceData":
