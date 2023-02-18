@@ -27,7 +27,7 @@ class SurfaceAnnotationWidget(QWidget):
         self._viewer = napari_viewer
 
         # select layer
-        self._surface_layer_select = create_widget(annotation=napari.types.Surface, label="Surface_layer")
+        self._surface_layer_select = create_widget(annotation=napari.layers.Surface, label="Surface_layer")
 
         # select tool
         self._tool_select_group = QButtonGroup()
