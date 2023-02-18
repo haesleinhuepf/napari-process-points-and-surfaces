@@ -90,8 +90,8 @@ class SurfaceTuple(tuple):
 
             histogram = _png_to_html(_plt_to_png())
 
-            min_max = "<tr><td>min</td><td>" + str(self[2].min()) + "</td></tr>" + \
-                      "<tr><td>max</td><td>" + str(self[2].max()) + "</td></tr>"
+            min_max = "<tr><td>min</td><td>" + str(np.min(self[2])) + "</td></tr>" + \
+                      "<tr><td>max</td><td>" + str(np.max(self[2])) + "</td></tr>"
 
         help_text = "<b><a href=\"" + self.help_url + "\" target=\"_blank\">" + self.library_name + "</a></b><br/>"
 
