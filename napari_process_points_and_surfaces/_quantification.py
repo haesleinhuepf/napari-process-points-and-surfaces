@@ -1,6 +1,5 @@
 import warnings
 
-from napari.types import LayerDataTuple
 from napari_tools_menu import register_function, register_dock_widget
 import numpy as np
 from typing import List
@@ -266,7 +265,7 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     return SurfaceTuple((mesh.points(), np.asarray(mesh.faces()), values))
 
 @register_function(menu="Measurement maps > Surface curvature (sphere-fitted, nppas)")
-def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[LayerDataTuple]:
+def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List["napari.types.LayerDataTuple"]:
     """
     Determine surface curvature by fitting a sphere to every vertex.
     
@@ -284,7 +283,7 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
 
     Returns
     -------
-    List[LayerDataTuple]
+    List[napari.types.LayerDataTuple]
         A list of surface data items. The items correspond to the curvature- and
         fit residue-annotated surface, respectively. 
         With each item consisting of a `(points, faces, values)` tuple, the 
