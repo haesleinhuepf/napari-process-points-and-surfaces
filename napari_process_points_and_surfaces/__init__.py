@@ -4,13 +4,11 @@ __common_alias__ = "nppas"
 
 import warnings
 
-from napari.types import SurfaceData, PointsData
-from napari.types import LabelsData, ImageData
 
 from napari_plugin_engine import napari_hook_implementation
 from napari_tools_menu import register_function, register_action
 import numpy as np
-import napari
+import stackview
 
 from ._surface_annotation_widget import SurfaceAnnotationWidget
 
@@ -121,7 +119,7 @@ def _vedo_stanford_bunny() -> "napari.types.SurfaceData":
     return isotropic_scale_surface(to_napari_surface_data(vedo.Mesh(data)), 100)
 
 @register_function(menu="Points > Create points from labels centroids (nppas)")
-def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> PointsData:
+def labels_to_centroids(labels_data:"napari.types.LabelsData", viewer:"napari.Viewer" = None) -> "napari.types.PointsData":
     """Determine centroids from all labels and store them as points.
 
     Parameters
@@ -137,8 +135,9 @@ def labels_to_centroids(labels_data:LabelsData, viewer:napari.Viewer = None) -> 
 
 @register_function(menu="Points > Points to labels (nppas)")
 @register_function(menu="Segmentation / labeling > Create labels from points (nppas)")
+@stackview.jupyter_displayable_output
 @time_slicer
-def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer:napari.Viewer=None) -> LabelsData:
+def points_to_labels(points_data:"napari.types.PointsData", as_large_as_image:"napari.types.ImageData", viewer:"napari.Viewer"=None) -> "napari.types.LabelsData":
     """Mark single pixels in a zero-value pixel image if there is a point in a given point list.
     Point with index 0 in the list will get pixel intensity 1.
     If there are multiple points where the rounded coordinate is within the same pixel,
@@ -166,9 +165,10 @@ def points_to_labels(points_data:PointsData, as_large_as_image:ImageData, viewer
 
 @register_function(menu="Surfaces > Surface to binary volumne (nppas)")
 @register_function(menu="Segmentation / binarization > Create binary volume from surface (nppas)")
+@stackview.jupyter_displayable_output
 @time_slicer
-def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
-                     viewer: napari.Viewer = None) -> LabelsData:
+def surface_to_binary_volume(surface: "napari.types.SurfaceData", as_large_as_image: "napari.types.ImageData" = None,
+                     viewer: "napari.Viewer" = None) -> "napari.types.LabelsData":
     """Render a closed surface as binary image with the same size as a specified image.
 
     Notes
@@ -182,7 +182,7 @@ def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
 
     Parameters
     ----------
-    surface: SurfaceData
+    surface: napari.types.SurfaceData
     as_large_as_image: ImageData
     viewer: napari.Viewer, optional
 
@@ -196,21 +196,24 @@ def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData,
     vertices = my_mesh.points()  # get coordinates of surface vertices
 
     # get bounding box of mesh
-    boundaries_l = np.min(vertices, axis=0).astype(int)
-    boundaries_r = np.max(vertices, axis=0).astype(int)
+    boundaries_l = np.min(vertices + 0.5, axis=0).astype(int)
+    boundaries_r = np.max(vertices + 0.5, axis=0).astype(int)
 
     # replace region within bounding box with binary image
-    binary_image = np.zeros_like(as_large_as_image)
-    binary_image[boundaries_l[0] : boundaries_r[0],
-                boundaries_l[1] : boundaries_r[1],
-                boundaries_l[2] : boundaries_r[2]] = my_mesh.binarize().tonumpy()
+    if as_large_as_image is not None:
+        binary_image = np.zeros_like(as_large_as_image, dtype=int)
+        binary_image[boundaries_l[0] : boundaries_r[0],
+                    boundaries_l[1] : boundaries_r[1],
+                    boundaries_l[2] : boundaries_r[2]] = my_mesh.binarize().tonumpy()
+    else:
+        binary_image = my_mesh.binarize().tonumpy().astype(int)
 
-    return binary_image
+    return np.asarray(binary_image > 0).astype(int)
 
 
 @register_function(menu="Surfaces > Create surface from any label (marching cubes, scikit-image, nppas)")
 @time_slicer
-def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
+def label_to_surface(labels: "napari.types.LabelsData", label_id: int = 1) -> "napari.types.SurfaceData":
     """
     Turn a single label out of a label image into a surface using the marching cubes algorithm
 
@@ -230,7 +233,7 @@ def label_to_surface(labels: LabelsData, label_id: int = 1) -> SurfaceData:
 
 @register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
 @time_slicer
-def all_labels_to_surface(labels: LabelsData) -> SurfaceData:
+def all_labels_to_surface(labels: "napari.types.LabelsData") -> "napari.types.SurfaceData":
     """
     Turn a set of labels into a surface using the marching cubes algorithm
 
@@ -262,7 +265,7 @@ marching_cubes = all_labels_to_surface
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
 @time_slicer
-def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
+def largest_label_to_surface(labels: "napari.types.LabelsData") -> "napari.types.SurfaceData":
     """
     Turn the largest label in a label image into a surface using the marching cubes algorithm
 
@@ -283,7 +286,7 @@ def largest_label_to_surface(labels: LabelsData) -> SurfaceData:
 ##################################################################################
 # Deprecated functions
 
-def _knot_mesh() -> SurfaceData:
+def _knot_mesh() -> "napari.types.SurfaceData":
     warnings.warn("nppas._knot_mesh() is deprecated. ")
     if not _check_open3d():
         return
@@ -293,7 +296,7 @@ def _knot_mesh() -> SurfaceData:
     data = str(Path(__file__).parent / "data" / "knot.ply")
     return isotropic_scale_surface(to_surface(open3d.io.read_triangle_mesh(data)), 0.1)
 
-def _standford_bunny() -> SurfaceData:
+def _standford_bunny() -> "napari.types.SurfaceData":
     warnings.warn("nppas._standford_bunny() is deprecated. Use nppas._vedo_stanford_bunny() instead")
     if not _check_open3d():
         return
@@ -306,18 +309,18 @@ def _standford_bunny() -> SurfaceData:
 
 
 # @register_action(menu = "Surfaces > Example data: Knot (open3d, nppas)")
-def example_data_knot(viewer:napari.viewer):
+def example_data_knot(viewer:"napari.Viewer"):
     warnings.warn("nppas.example_data_knot() is deprecated. ")
     viewer.add_surface(_knot_mesh(), blending='additive', shading='smooth')
 
 
 # @register_action(menu = "Surfaces > Example data: Standford bunny (nppas)")
-def example_data_standford_bunny(viewer:napari.viewer):
+def example_data_standford_bunny(viewer:"napari.Viewer"):
     warnings.warn("nppas.example_data_standford_bunny() is deprecated. Use nppas._vedo_stanford_bunny() instead")
     viewer.add_surface(_standford_bunny(), blending='additive', shading='smooth')
 
 # @register_action(menu = "Surfaces > Example data: Ellipsoid (vedo, nppas)")
-def example_data_vedo_ellipsoid(viewer:napari.viewer):
+def example_data_vedo_ellipsoid(viewer:"napari.Viewer"):
     warnings.warn("nppas.example_data_vedo_ellipsoid() is deprecated. Use nppas.vedo_example_ellipsoid() instead")
     viewer.add_surface(_vedo_ellipsoid(), blending='additive', shading='smooth')
 
@@ -387,7 +390,7 @@ def to_surface(mesh):
 
 
 # @register_function(menu="Surfaces > Convex hull (open3d, nppas)")
-def convex_hull(surface:SurfaceData) -> SurfaceData:
+def convex_hull(surface:"napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """Produce the convex hull surface around a surface
     """
     warnings.warn("nppas.convex_hull() is deprecated. Use nppas.convex_hull_from_surface() instead.", DeprecationWarning)
@@ -398,7 +401,7 @@ def convex_hull(surface:SurfaceData) -> SurfaceData:
 
 
 # @register_function(menu="Surfaces > Smoothing (simple, open3d, nppas)")
-def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+def filter_smooth_simple(surface:"napari.types.SurfaceData", number_of_iterations: int = 1) -> "napari.types.SurfaceData":
     """Smooth a surface using an average filter
 
     Parameters
@@ -418,7 +421,7 @@ def filter_smooth_simple(surface:SurfaceData, number_of_iterations: int = 1) -> 
 
 
 # @register_function(menu="Surfaces > Smoothing (Laplacian, open3d, nppas)")
-def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+def filter_smooth_laplacian(surface:"napari.types.SurfaceData", number_of_iterations: int = 1) -> "napari.types.SurfaceData":
     """Smooth a surface using the Laplacian method
 
     Parameters
@@ -438,7 +441,7 @@ def filter_smooth_laplacian(surface:SurfaceData, number_of_iterations: int = 1) 
 
 
 # @register_function(menu="Surfaces > Smoothing (Taubin et al 1995., open3d, nppas)")
-def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+def filter_smooth_taubin(surface:"napari.types.SurfaceData", number_of_iterations: int = 1) -> "napari.types.SurfaceData":
     """Smooth a surface using Taubin's method
 
     Parameters
@@ -459,7 +462,7 @@ def filter_smooth_taubin(surface:SurfaceData, number_of_iterations: int = 1) -> 
 
 
 # @register_function(menu="Surfaces > Simplify using vertex clustering (open3d, nppas)")
-def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> SurfaceData:
+def simplify_vertex_clustering(surface:"napari.types.SurfaceData", voxel_size: float = 5) -> "napari.types.SurfaceData":
     """Simplify a surface using vertex clustering
 
     Parameters
@@ -486,7 +489,7 @@ def simplify_vertex_clustering(surface:SurfaceData, voxel_size: float = 5) -> Su
 
 
 # @register_function(menu="Surfaces > Simplify using quadratic decimation (open3d, nppas)")
-def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles: int = 500) -> SurfaceData:
+def simplify_quadric_decimation(surface:"napari.types.SurfaceData", target_number_of_triangles: int = 500) -> "napari.types.SurfaceData":
     """Simplify a surface using quadratic decimation
 
     Parameters
@@ -506,7 +509,7 @@ def simplify_quadric_decimation(surface:SurfaceData, target_number_of_triangles:
 
 
 # @register_function(menu="Surfaces > Subdivide loop (open3d, nppas)")
-def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> SurfaceData:
+def subdivide_loop(surface:"napari.types.SurfaceData", number_of_iterations: int = 1) -> "napari.types.SurfaceData":
     """Make a mesh more detailed by subdividing in a loop.
     If iterations are high, this can take very long.
 
@@ -527,7 +530,7 @@ def subdivide_loop(surface:SurfaceData, number_of_iterations: int = 1) -> Surfac
 
 
 # @register_function(menu="Points > Create points from surface sampling uniformly (open3d, nppas)")
-def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, viewer:napari.Viewer=None) -> PointsData:
+def sample_points_uniformly(surface:"napari.types.SurfaceData", number_of_points: int = 500, viewer:"napari.Viewer"=None) -> "napari.types.PointsData":
     """Sample points uniformly
 
     Parameters
@@ -549,7 +552,7 @@ def sample_points_uniformly(surface:SurfaceData, number_of_points: int = 500, vi
 
 
 # @register_function(menu="Points > Create points from surface using Poisson disk sampling (open3d, nppas)")
-def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500, init_factor: float = 5, viewer:napari.Viewer=None) -> PointsData:
+def sample_points_poisson_disk(surface:"napari.types.SurfaceData", number_of_points: int = 500, init_factor: float = 5, viewer:"napari.Viewer"=None) -> "napari.types.PointsData":
     """Sample a list of points from a surface using the Poisson disk algorithm
 
     Parameters
@@ -573,7 +576,7 @@ def sample_points_poisson_disk(surface:SurfaceData, number_of_points: int = 500,
 
 
 # @register_function(menu="Points > Down-sample (open3d, nppas)")
-def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napari.Viewer=None) -> PointsData:
+def voxel_down_sample(points_data:"napari.types.PointsData", voxel_size: float = 5, viewer:"napari.Viewer" = None) -> "napari.types.PointsData":
     """Removes points from a point cloud so that the remaining points lie within a grid of
     defined voxel size.
 
@@ -591,7 +594,7 @@ def voxel_down_sample(points_data:PointsData, voxel_size: float = 5, viewer:napa
 
 
 # @register_function(menu="Surfaces > Convex hull of points (open3d, nppas)")
-def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
+def points_to_convex_hull_surface(points_data:"napari.types.PointsData") -> "napari.types.SurfaceData":
     """Determine the convex hull surface of a list of points
 
     Parameters
@@ -611,7 +614,7 @@ def points_to_convex_hull_surface(points_data:PointsData) -> SurfaceData:
 
 
 # @register_function(menu="Surfaces > Create surface from points (alpha-shape, open3d, nppas)")
-def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5) -> SurfaceData:
+def surface_from_point_cloud_alpha_shape(points_data:"napari.types.PointsData", alpha:float = 5) -> "napari.types.SurfaceData":
     """Turn point into a surface using alpha shapes
 
     Parameters
@@ -634,7 +637,7 @@ def surface_from_point_cloud_alpha_shape(points_data:PointsData, alpha:float = 5
 
 
 # @register_function(menu="Surfaces > Create surface from points (ball-pivoting, open3d, nppas)")
-def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float = 5, delta_radius=0) -> SurfaceData:
+def surface_from_point_cloud_ball_pivoting(points_data:"napari.types.PointsData", radius: float = 5, delta_radius=0) -> "napari.types.SurfaceData":
     """Turn point into a surface using ball pivoting
 
     Parameters
@@ -670,7 +673,7 @@ def surface_from_point_cloud_ball_pivoting(points_data:PointsData, radius: float
 
 
 # @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
-def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
+def fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100) -> "napari.types.SurfaceData":
     """
     Fill holes in a surface up to a specified size.
 
