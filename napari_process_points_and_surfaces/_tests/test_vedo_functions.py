@@ -136,3 +136,13 @@ def test_subsample_points():
     subsampled_points = nppas.subsample_points(points, distance_fraction=0.1)
 
     assert len(points) > len(subsampled_points)
+
+def test_create_convex_hull_from_points():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+
+    points = nppas.sample_points_from_surface(gastruloid)
+
+    convex_hull = nppas.create_convex_hull_from_points(points)
+    assert len(convex_hull[0]) == 431
+    assert len(convex_hull[1]) == 858
