@@ -106,14 +106,14 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
         percent = quality_id - 2000
         fraction = percent / 100
         radius = mesh.average_size() * fraction
-        layer_data_tuple = add_spherefitted_curvature(surface, radius)
+        layer_data_tuple = _add_spherefitted_curvature(surface, radius)
 
         surface2 = layer_data_tuple[0][0]
         mesh2 = to_vedo_mesh(surface2)
         values = surface2[2]
     elif quality_id < 4000:
         radius = ORDER_OF_MAGNITUDE[quality_id]
-        layer_data_tuple = add_spherefitted_curvature(surface, radius)
+        layer_data_tuple = _add_spherefitted_curvature(surface, radius)
 
         surface2 = layer_data_tuple[0][0]
         mesh2 = to_vedo_mesh(surface2)
@@ -294,6 +294,12 @@ def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: floa
     sphere-fitting curvature: https://github.com/marcomusy/vedo/blob/master/examples/advanced/measure_curvature.py
     Curvature: https://en.wikipedia.org/wiki/Gaussian_curvature
     """
+    warnings.warn("add_spherefitted_curvature is deprecated. Use add_quality(..., Quality.SPHERE_FITTED_CURVATURE_..._VOXEL) instead")
+
+    return _add_spherefitted_curvature(surface=surface, radius=radius)
+
+def _add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List[
+    "napari.types.LayerDataTuple"]:
     import vedo
     from ._vedo import SurfaceTuple
     
