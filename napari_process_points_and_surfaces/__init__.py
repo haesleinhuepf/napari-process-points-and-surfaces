@@ -199,8 +199,8 @@ def surface_to_binary_volume(surface: SurfaceData, as_large_as_image: ImageData 
     vertices = my_mesh.points()  # get coordinates of surface vertices
 
     # get bounding box of mesh
-    boundaries_l = np.min(vertices, axis=0).astype(int)
-    boundaries_r = np.max(vertices, axis=0).astype(int)
+    boundaries_l = np.min(vertices + 0.5, axis=0).astype(int)
+    boundaries_r = np.max(vertices + 0.5, axis=0).astype(int)
 
     # replace region within bounding box with binary image
     if as_large_as_image is not None:
