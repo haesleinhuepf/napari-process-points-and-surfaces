@@ -685,5 +685,7 @@ def fill_holes(surface: SurfaceData, size_limit: float = 100) -> SurfaceData:
 def _check_open3d():
     try:
         import open3d
+        return True
     except:
         warnings.warn("Open3D is not installed. Follow the instructions here: http://www.open3d.org/docs/release/introduction.html#python-quick-start")
+    return False

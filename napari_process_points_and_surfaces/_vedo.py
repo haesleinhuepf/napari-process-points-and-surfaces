@@ -64,9 +64,11 @@ class SurfaceTuple(tuple):
         plt.tick_params(left=False, bottom=False)
         image = _png_to_html(_plt_to_png())
 
-        # mesh statisitics
-        bounds = "<br/>".join([str(min_x) + "..." + str(max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
+        # mesh statistics
+        bounds = "<br/>".join(["{min_x:.3f}...{max_x:.3f}".format(min_x=min_x, max_x=max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
         average_size = "{size:.3f}".format(size=mesh.average_size())
+        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.centerOfMass()])
+        scale = ",".join(["{size:.3f}".format(size=x) for x in mesh.scale()])
         histogram = ""
         min_max = ""
 
@@ -102,8 +104,13 @@ class SurfaceTuple(tuple):
             "<td style=\"text-align: center; vertical-align: top;\">",
             help_text,
             "<table>",
+            "<tr><td>origin (z/y/x)</td><td>" + str(mesh.origin()).replace(" ", "&nbsp;") + "</td></tr>",
+            "<tr><td>center of mass(z/y/x)</td><td>" + center_of_mass.replace(" ", "&nbsp;") + "</td></tr>",
+            "<tr><td>scale(z/y/x)</td><td>" + scale.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>bounds (z/y/x)</td><td>" + str(bounds).replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>average size</td><td>" + str(average_size) + "</td></tr>",
+            "<tr><td>number of vertices</td><td>" + str(mesh.npoints) + "</td></tr>",
+            "<tr><td>number of faces</td><td>" + str(len(mesh.faces())) + "</td></tr>",
             min_max,
             "</table>",
             histogram,
