@@ -64,11 +64,11 @@ mamba install vedo vtk libnetcdf=4.7.4 -c conda-forge
 pip install napari-process-points-and-surfaces
 ```
 
-### Troubleshooting: Open3d installation
+f### Troubleshooting: Open3d installation
 
 Since version 0.4.0, `nppas` does no longer depend on [open3d](http://www.open3d.org/). 
 Some deprecated functions still use Open3d though. 
-Follow the installation instructions in the open3d documentation to install it and keep using those functions.
+Follow the installation instructions in the [open3d documentation](http://www.open3d.org/docs/release/getting_started.htm) to install it and keep using those functions.
 Also consider updating code and no longer using these deprecated functions. 
 See [release notes](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/releases/tag/0.4.0) for details.
 
