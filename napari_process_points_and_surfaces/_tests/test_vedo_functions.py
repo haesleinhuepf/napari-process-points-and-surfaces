@@ -100,6 +100,30 @@ def test_smooth_surface():
     assert len(gastruloid[1]) == len(smoothed_gastruloid[1])
 
 
+def test_subdivide_loop_vedo():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+    subdivided_gastruloid = nppas.subdivide_loop_vedo(gastruloid)
+
+    assert len(gastruloid[0]) < len(subdivided_gastruloid[0])
+
+
+def test_subdivide_butterfly():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+    subdivided_gastruloid = nppas.subdivide_butterfly(gastruloid)
+
+    assert len(gastruloid[0]) < len(subdivided_gastruloid[0])
+
+
+def test_subdivide_linear():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+    subdivided_gastruloid = nppas.subdivide_linear(gastruloid)
+
+    assert len(gastruloid[0]) < len(subdivided_gastruloid[0])
+
+
 def test_subdivide():
     import napari_process_points_and_surfaces as nppas
     gastruloid = nppas.gastruloid()
