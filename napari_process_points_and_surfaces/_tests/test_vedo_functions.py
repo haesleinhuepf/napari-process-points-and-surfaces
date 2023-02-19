@@ -109,6 +109,7 @@ def test_subdivide():
         # nppas.subdivide_loop_vedo, # see: https://github.com/haesleinhuepf/napari-process-points-and-surfaces/issues/new
         # nppas.subdivide_linear,
         # nppas.subdivide_butterfly
+        nppas.subdivide_centroid,
         ]
 
     for func in subdivision_functions:
