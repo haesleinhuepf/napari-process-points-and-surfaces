@@ -61,10 +61,10 @@ def test_something2():
                          to_napari_surface_data,
                          to_napari_points_data,
                          smooth_surface,
-                         subdivide_loop_vedo,
-                         subdivide_linear,
+                         _subdivide_loop_vedo,
+                         _subdivide_linear,
                          subdivide_adaptive,
-                         subdivide_butterfly,
+                         _subdivide_butterfly,
                          sample_points_from_surface,
                          subsample_points,
                          create_convex_hull_from_surface,
@@ -84,10 +84,10 @@ def test_something2():
     napari_points = to_napari_points_data(vedo_points)
 
     smooth_surface(surface)
-    subdivide_loop_vedo(surface)
+    _subdivide_loop_vedo(surface)
     subdivide_adaptive(surface)
-    subdivide_linear(surface)
-    subdivide_butterfly(surface)
+    _subdivide_linear(surface)
+    _subdivide_butterfly(surface)
     sample_points_from_surface(surface)
     subsample_points(napari_points)
     create_convex_hull_from_points(napari_points)

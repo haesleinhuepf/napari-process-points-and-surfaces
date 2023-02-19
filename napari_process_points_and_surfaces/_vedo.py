@@ -199,10 +199,10 @@ def smooth_surface(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(smooth_mesh)
 
 
-@register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
-def subdivide_loop_vedo(surface: "napari.types.SurfaceData",
-                        number_of_iterations: int = 1
-                        ) -> "napari.types.SurfaceData":
+#@register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
+def _subdivide_loop_vedo(surface: "napari.types.SurfaceData",
+                         number_of_iterations: int = 1
+                         ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by subdividing in a loop.
 
@@ -224,10 +224,10 @@ def subdivide_loop_vedo(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(mesh_out)
 
 
-@register_function(menu="Surfaces > Subdivide linear (vedo, nppas)")
-def subdivide_linear(surface: "napari.types.SurfaceData",
-                     number_of_iterations: int = 1
-                     ) -> "napari.types.SurfaceData":
+#@register_function(menu="Surfaces > Subdivide linear (vedo, nppas)")
+def _subdivide_linear(surface: "napari.types.SurfaceData",
+                      number_of_iterations: int = 1
+                      ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by linear subdivision.
 
@@ -250,7 +250,7 @@ def subdivide_linear(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(mesh_out)
 
 
-@register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
+#@register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
 def subdivide_adaptive(surface: "napari.types.SurfaceData",
                        number_of_iterations: int = 1,
                        maximum_edge_length: float = 0.
@@ -285,9 +285,9 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
-def subdivide_butterfly(surface: "napari.types.SurfaceData",
-                        number_of_iterations: int = 1
-                        ) -> "napari.types.SurfaceData":
+def _subdivide_butterfly(surface: "napari.types.SurfaceData",
+                         number_of_iterations: int = 1
+                         ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by adaptive subdivision.
 
