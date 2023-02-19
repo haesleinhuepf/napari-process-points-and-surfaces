@@ -178,7 +178,7 @@ def surface_quality_table(surface: "napari.types.SurfaceData", qualities, napari
         return pandas.DataFrame(table)
 
 
-@register_function(menu="Measurement > Surface quality/annotation to table (nppas)")
+@register_function(menu="Measurement tables > Surface quality/annotation to table (nppas)")
 def surface_quality_to_properties(surface: "napari.types.SurfaceData",
                                   napari_viewer: "napari.Viewer",
                                   column_name: str = "annotation"):
