@@ -10,30 +10,30 @@
 
 Process and analyze surfaces using [vedo](https://vedo.embl.es/) in [napari].
 
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/graphical_abstract.gif)
+The nppas gastruloid example is derived from [AV Luque and JV Veenvliet (2023)](https://zenodo.org/record/7603081) which is licensed [CC-BY](https://creativecommons.org/licenses/by/4.0/legalcode) and can be downloaded from here: https://zenodo.org/record/7603081
+
 ## Usage
 
-You find a couple of surface generation, smoothing and analysis functions in the menu `Tools > Surfaces` and `Tools > Points`. For detailed explanation of the underlying algorithms, please refer to the [open3d](http://www.open3d.org/docs/release/) documentation.
-Some code snippets and the knot example data have been taken from the open3d project which is 
-[MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/open3d_LICENSE) 
-and from the [vedo documentation](https://vedo.embl.es/autodocs/index.html) 
-which is [MIT licensed](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/licenses_third_party/vedo_LICENSE).
-The Standford Bunny example dataset has been taken from the [The Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/).
+You find menus for surface generation, smoothing and analysis in the menu `Tools > Surfaces` and `Tools > Points`. 
+For detailed explanation of the underlying algorithms, please refer to the [vedo](https://vedo.embl.es/) documentation.
 
-For processing meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/demo.ipynb). There you also learn how this screenshot is made:
-
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot1.png)
-
-For performing quantitative measurements of meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/quality_measurements.ipynb). 
+For processing meshes in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/demo.ipynb). 
 There you also learn how this screenshot is made:
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot4.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot5.png)
+
+For performing quantitative measurements of surface in Python scripts, see the [demo notebook](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/blob/main/docs/quality_measurements.ipynb). 
+There you also learn how this screenshot is made:
+
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/screenshot6.png)
 
 ### Surface measurements and annotations
 
-Using the menu `Tools > Measurement > Surface quality table (vedo, nppas)` you can derived quantiative measurements of
+Using the menu `Tools > Measurement tables > Surface quality table (vedo, nppas)` you can derive quantiative measurements of
 the vertices in a given surface layer. 
 
-![img_1.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_measurements.png)
+![img_1.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_measurements2.png)
 
 To differentiate regions when analyzing those measurements it is recommended to use the menu `Tools > Surfaces > Annotate surface manually (nppas)`
 after measurements have been made. This tool allows you to draw annotation label values on the surface. 
@@ -41,19 +41,21 @@ It is recommended to do activate a colorful colormap such as `hsv` before starti
 Furthermore, set the maximum of the contrast limit range to the number of regions you want to annotate + 1.
 Annotations can be drawn as freehand lines and circles.
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_annotation.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_annotation2.png)
 
 After measurements and annotations were done, you can save the annotation in the same measurement table using the menu
-`Tools > Measurement > Surface quality/annotation to table (nppas)`
+`Tools > Measurement tables > Surface quality/annotation to table (nppas)`
 
 ![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_annotation_in_table.png)
+
+For classifying surface vertices using machine learning, please refer to the [napari APOC](https://www.napari-hub.org/plugins/napari-accelerated-pixel-and-object-classification) documentation.
 
 ### Measurement visualization
 
 To visualize measurements on the surface, just double-click on the table column headers. This also allows to visualize 
 measurements and annotations side-by-side.
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/measurement_visualization.gif)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/quality_measurements.gif)
 
 ## Installation
 
@@ -64,7 +66,7 @@ mamba install vedo vtk libnetcdf=4.7.4 -c conda-forge
 pip install napari-process-points-and-surfaces
 ```
 
-f### Troubleshooting: Open3d installation
+### Troubleshooting: Open3d installation
 
 Since version 0.4.0, `nppas` does no longer depend on [open3d](http://www.open3d.org/). 
 Some deprecated functions still use Open3d though. 
@@ -75,10 +77,15 @@ See [release notes](https://github.com/haesleinhuepf/napari-process-points-and-s
 ## See also
 
 There are other napari plugins with similar / overlapping functionality
-* [pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
 * [morphometrics](https://www.napari-hub.org/plugins/morphometrics)  
+* [napari-accelerated-pixel-and-object-classification](https://www.napari-hub.org/plugins/napari-accelerated-pixel-and-object-classification)
+* [napari-pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
 * [napari-pyclesperanto-assistant](https://www.napari-hub.org/plugins/napari-pyclesperanto-assistant)
 * [napari-stress](https://www.napari-hub.org/plugins/napari-stress)
+
+And there is software for doing similar things:
+* [meshlab](https://www.meshlab.net/)
+* [paraview](https://www.paraview.org/)
 
 ## Contributing
 
@@ -94,6 +101,8 @@ Distributed under the terms of the [BSD-3] license,
 
 Some code snippets and example data were taken from the [vedo](https://vedo.embl.es/) and [open3d](http://www.open3d.org/) 
 repositories and documentation. See [thirdparty licenses](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/tree/main/licenses_third_party) for licensing details.
+The Standford Bunny example dataset has been taken from [The Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/).
+The nppas gastruloid example is derived from [AV Luque and JV Veenvliet (2023)](https://zenodo.org/record/7603081) which is licensed [CC-BY](https://creativecommons.org/licenses/by/4.0/legalcode) and can be downloaded from here: https://zenodo.org/record/7603081
 
 ## Issues
 
