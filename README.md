@@ -46,14 +46,13 @@ Annotations can be drawn as freehand lines and circles.
 After measurements and annotations were done, you can save the annotation in the same measurement table using the menu
 `Tools > Measurement tables > Surface quality/annotation to table (nppas)`
 
-![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_annotation_in_table.png)
+![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_annotation_in_table2.png)
 
 For classifying surface vertices using machine learning, please refer to the [napari APOC](https://www.napari-hub.org/plugins/napari-accelerated-pixel-and-object-classification) documentation.
 
 ### Measurement visualization
 
-To visualize measurements on the surface, just double-click on the table column headers. This also allows to visualize 
-measurements and annotations side-by-side.
+To visualize measurements on the surface, just double-click on the table column headers.
 
 ![img.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/quality_measurements.gif)
 
