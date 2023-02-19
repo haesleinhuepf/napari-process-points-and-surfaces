@@ -250,7 +250,7 @@ def _subdivide_linear(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(mesh_out)
 
 
-#@register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
+@register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
 def subdivide_adaptive(surface: "napari.types.SurfaceData",
                        number_of_iterations: int = 1,
                        maximum_edge_length: float = 0.
@@ -284,7 +284,7 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(mesh_out)
 
 
-@register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
+# @register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
 def _subdivide_butterfly(surface: "napari.types.SurfaceData",
                          number_of_iterations: int = 1
                          ) -> "napari.types.SurfaceData":
