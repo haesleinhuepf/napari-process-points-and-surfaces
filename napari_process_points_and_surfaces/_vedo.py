@@ -310,6 +310,27 @@ def _subdivide_butterfly(surface: "napari.types.SurfaceData",
     return to_napari_surface_data(mesh_out)
 
 
+@register_function(menu="Surfaces > Subdivide centroid (vedo, nppas)")
+def subdivide_centroid(surface: "napari.types.SurfaceData",
+                         number_of_iterations: int = 1
+                         ) -> "napari.types.SurfaceData":
+    """
+    Make a mesh more detailed by centroid-based subdivision.
+
+    Parameters
+    ----------
+    surface:napari.types.SurfaceData
+    number_of_iterations:int, optional
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    """
+    mesh_in = to_vedo_mesh(surface)
+    mesh_out = mesh_in.subdivide(number_of_iterations, method=4)
+    return to_napari_surface_data(mesh_out)
+
+
 @register_function(menu="Surfaces > Decimate surface (quadric, vedo, nppas)")
 def decimate_quadric(surface: "napari.types.SurfaceData",
                      fraction: float = 0.5,
