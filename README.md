@@ -7,6 +7,7 @@
 [![codecov](https://codecov.io/gh/haesleinhuepf/napari-process-points-and-surfaces/branch/master/graph/badge.svg)](https://codecov.io/gh/haesleinhuepf/napari-process-points-and-surfaces)
 [![Development Status](https://img.shields.io/pypi/status/napari-process-points-and-surfaces.svg)](https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-process-points-and-surfaces)](https://napari-hub.org/plugins/napari-process-points-and-surfaces)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7654555.svg)](https://doi.org/10.5281/zenodo.7654555)
 
 Process and analyze surfaces using [vedo](https://vedo.embl.es/) in [napari].
 
