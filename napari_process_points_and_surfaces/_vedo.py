@@ -165,7 +165,7 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.clean
+    ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.clean
     
     """
     mesh = to_vedo_mesh(surface)
@@ -291,7 +291,7 @@ def _subdivide_loop_vedo(surface: "napari.types.SurfaceData",
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkLoopSubdivisionFilter.html
     """
     mesh_in = to_vedo_mesh(surface)
@@ -317,7 +317,7 @@ def _subdivide_linear(surface: "napari.types.SurfaceData",
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkLinearSubdivisionFilter.html
     """
     mesh_in = to_vedo_mesh(surface)
@@ -345,7 +345,7 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkAdaptiveSubdivisionFilter.html
     """
     mesh_in = to_vedo_mesh(surface)
@@ -376,7 +376,7 @@ def _subdivide_butterfly(surface: "napari.types.SurfaceData",
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkButterflySubdivisionFilter.html
     ..[2] Zorin et al. "Interpolating Subdivisions for Meshes with Arbitrary Topology," Computer Graphics Proceedings, Annual Conference Series, 1996, ACM SIGGRAPH, pp.189-192
     """
@@ -399,7 +399,7 @@ def subdivide_centroid(surface: "napari.types.SurfaceData",
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.subdivide
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     """
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=4)
@@ -476,7 +476,7 @@ def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fra
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.subsample
+    ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.subsample
     """
 
     mesh_in = to_vedo_mesh(surface)
@@ -499,7 +499,7 @@ def subsample_points(points_data: "napari.types.PointsData", distance_fraction: 
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/pointcloud.html#vedo.pointcloud.Points.subsample
+    ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.subsample
     """
 
     mesh_in = to_vedo_points(points_data)
@@ -543,7 +543,7 @@ def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float
 
     See also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.fillHoles
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.fillHoles
     """
     mesh = to_vedo_mesh((surface[0], surface[1]))
     mesh.fill_holes(size=size_limit)
