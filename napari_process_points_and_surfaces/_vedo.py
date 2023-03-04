@@ -248,7 +248,7 @@ def smooth_pointcloud_moving_least_squares_2d_radius(pointcloud: "napari.types.P
     return to_napari_points_data(smooth_points)
 
 
-@register_function(menu="Surfaces > Smooth (vedo, nppas)")
+@register_function(menu="Surfaces > Smooth (Windowed Sinc, vedo, nppas)")
 def smooth_surface(surface: "napari.types.SurfaceData",
                    number_of_iterations: int = 15,
                    pass_band: float = 0.1,
@@ -256,11 +256,11 @@ def smooth_surface(surface: "napari.types.SurfaceData",
                    feature_angle: float = 60,
                    boundary: bool = False
                    ) -> "napari.types.SurfaceData":
-    """Smooth a surface
+    """Smooth a surface using a Windowed Sinc kernel.
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/autodocs/content/vedo/mesh.html#vedo.mesh.Mesh.smooth
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.smooth
     """
 
     mesh = to_vedo_mesh(surface)
