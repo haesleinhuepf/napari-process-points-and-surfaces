@@ -1,5 +1,5 @@
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __common_alias__ = "nppas"
 
 import warnings
