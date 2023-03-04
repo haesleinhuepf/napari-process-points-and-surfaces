@@ -1,5 +1,5 @@
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __common_alias__ = "nppas"
 
 import warnings
@@ -37,10 +37,10 @@ from ._vedo import (to_vedo_mesh,
                     decimate_pro,
                     show,
                     SurfaceTuple,
-                    smooth_surface_moving_least_squares_2D,
-                    smooth_surface_moving_least_squares_2D_radius,
-                    smooth_pointcloud_moving_least_squares_2D_radius,
-                    smooth_pointcloud_moving_least_squares_2D
+                    smooth_surface_moving_least_squares_2d,
+                    smooth_surface_moving_least_squares_2d_radius,
+                    smooth_pointcloud_moving_least_squares_2d_radius,
+                    smooth_pointcloud_moving_least_squares_2d
                     )
 
 from ._utils import isotropic_scale_surface

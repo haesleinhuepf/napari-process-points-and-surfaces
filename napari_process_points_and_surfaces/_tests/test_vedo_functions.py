@@ -99,12 +99,12 @@ def test_smooth_surface():
     assert len(gastruloid[0]) == len(smoothed_gastruloid[0])
     assert len(gastruloid[1]) == len(smoothed_gastruloid[1])
 
-    smoothed_gastruloid2 = nppas.smooth_surface_moving_least_squares_2D(gastruloid, smoothing_factor=0.2)
+    smoothed_gastruloid2 = nppas.smooth_surface_moving_least_squares_2d(gastruloid, smoothing_factor=0.2)
     # check if vertices/faces are still the same count
     assert len(gastruloid[0]) == len(smoothed_gastruloid2[0])
     assert len(gastruloid[1]) == len(smoothed_gastruloid2[1])
 
-    smoothed_gastruloid3 = nppas.smooth_surface_moving_least_squares_2D_radius(gastruloid,
+    smoothed_gastruloid3 = nppas.smooth_surface_moving_least_squares_2d_radius(gastruloid,
                                                                                smoothing_factor=0.2,
                                                                                radius=3)
     # check if vertices/faces are still the same count
@@ -157,11 +157,11 @@ def test_smooth_pointclouds():
 
     points = nppas.sample_points_from_surface(gastruloid)
 
-    smoothed_points = nppas.smooth_pointcloud_moving_least_squares_2D(points,
+    smoothed_points = nppas.smooth_pointcloud_moving_least_squares_2d(points,
                                                                       smoothing_factor=0.2)
     assert len(points) == len(smoothed_points)
 
-    smoothed_points = nppas.smooth_pointcloud_moving_least_squares_2D_radius(points,
+    smoothed_points = nppas.smooth_pointcloud_moving_least_squares_2d_radius(points,
                                                                              smoothing_factor=0.2,
                                                                              radius=3)
     assert len(points) == len(smoothed_points)
