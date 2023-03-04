@@ -99,6 +99,18 @@ def test_smooth_surface():
     assert len(gastruloid[0]) == len(smoothed_gastruloid[0])
     assert len(gastruloid[1]) == len(smoothed_gastruloid[1])
 
+    smoothed_gastruloid2 = nppas.smooth_surface_moving_least_squares_2D(gastruloid, smoothing_factor=0.2)
+    # check if vertices/faces are still the same count
+    assert len(gastruloid[0]) == len(smoothed_gastruloid2[0])
+    assert len(gastruloid[1]) == len(smoothed_gastruloid2[1])
+
+    smoothed_gastruloid3 = nppas.smooth_surface_moving_least_squares_2D_radius(gastruloid,
+                                                                               smoothing_factor=0.2,
+                                                                               radius=3)
+    # check if vertices/faces are still the same count
+    assert len(gastruloid[0]) == len(smoothed_gastruloid3[0])
+    assert len(gastruloid[1]) == len(smoothed_gastruloid3[1])
+
 
 def test_subdivide():
     import napari_process_points_and_surfaces as nppas
@@ -137,6 +149,23 @@ def test_subsample_points():
     subsampled_points = nppas.subsample_points(points, distance_fraction=0.1)
 
     assert len(points) > len(subsampled_points)
+
+
+def test_smooth_pointclouds():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+
+    points = nppas.sample_points_from_surface(gastruloid)
+
+    smoothed_points = nppas.smooth_pointcloud_moving_least_squares_2D(points,
+                                                                      smoothing_factor=0.2)
+    assert len(points) == len(smoothed_points)
+
+    smoothed_points = nppas.smooth_pointcloud_moving_least_squares_2D_radius(points,
+                                                                             smoothing_factor=0.2,
+                                                                             radius=3)
+    assert len(points) == len(smoothed_points)
+
 
 def test_create_convex_hull_from_points():
     import napari_process_points_and_surfaces as nppas

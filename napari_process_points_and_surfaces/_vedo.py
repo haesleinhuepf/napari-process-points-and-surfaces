@@ -157,6 +157,7 @@ def create_convex_hull_from_surface(surface: "napari.types.SurfaceData") -> "nap
 
     return to_napari_surface_data(convex_hull_mesh)
 
+
 @register_function(menu="Surfaces > Remove duplicate vertices (vedo, nppas)")
 def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """
@@ -171,6 +172,80 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
     clean_mesh = mesh.clean()
 
     return to_napari_surface_data(clean_mesh)
+
+
+@register_function(menu="Surfaces > Smooth moving least squares (vedo, nppas)")
+def smooth_surface_moving_least_squares_2D(surface: "napari.types.SurfaceData",
+                                           smoothing_factor: float = 0.2) -> "napari.types.SurfaceData":
+    """Apply a moving least squares approach to smooth a surface
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
+    """
+
+    mesh = to_vedo_mesh(surface)
+
+    smooth_mesh = mesh.smooth_mls_2d(f=smoothing_factor)
+
+    return to_napari_surface_data(smooth_mesh)
+
+
+@register_function(menu="Surfaces > Smooth moving least squares with radius (vedo, nppas)")
+def smooth_surface_moving_least_squares_2D_radius(surface: "napari.types.SurfaceData",
+                                                  smoothing_factor: float = 0.2,
+                                                  radius: float = 0.2) -> "napari.types.SurfaceData":
+    """Apply a moving least squares approach to smooth a surface. 
+    
+    The radius is used to determine the number of points to use for the smoothing.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
+    """
+
+    mesh = to_vedo_mesh(surface)
+
+    smooth_mesh = mesh.smooth_mls_2d(f=smoothing_factor, radius=radius)
+
+    return to_napari_surface_data(smooth_mesh)
+
+
+@register_function(menu="Points > Smooth moving least squares (vedo, nppas)")
+def smooth_pointcloud_moving_least_squares_2D(pointcloud: "napari.types.PointsData",
+                                              smoothing_factor: float = 0.2) -> "napari.types.PointsData":
+    """Apply a moving least squares approach to smooth a point cloud.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
+    """
+
+    points = to_vedo_points(pointcloud)
+
+    smooth_points = points.smooth_mls_2d(f=smoothing_factor)
+
+    return to_napari_points_data(smooth_points)
+
+
+@register_function(menu="Points > Smooth moving least squares radius (vedo, nppas)")
+def smooth_pointcloud_moving_least_squares_2D_radius(pointcloud: "napari.types.PointsData",
+                                                     smoothing_factor: float = 0.2,
+                                                     radius=2) -> "napari.types.PointsData":
+    """Apply a moving least squares approach to smooth a point cloud.
+
+    The radius is used to determine the number of points to use for the smoothing.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
+    """
+
+    points = to_vedo_points(pointcloud)
+
+    smooth_points = points.smooth_mls_2d(f=smoothing_factor, radius=radius)
+
+    return to_napari_points_data(smooth_points)
 
 
 @register_function(menu="Surfaces > Smooth (vedo, nppas)")

@@ -37,6 +37,10 @@ from ._vedo import (to_vedo_mesh,
                     decimate_pro,
                     show,
                     SurfaceTuple,
+                    smooth_surface_moving_least_squares_2D,
+                    smooth_surface_moving_least_squares_2D_radius,
+                    smooth_pointcloud_moving_least_squares_2D_radius,
+                    smooth_pointcloud_moving_least_squares_2D
                     )
 
 from ._utils import isotropic_scale_surface
