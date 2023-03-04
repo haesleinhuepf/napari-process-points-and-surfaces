@@ -175,7 +175,7 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
 
 
 @register_function(menu="Surfaces > Smooth moving least squares (vedo, nppas)")
-def smooth_surface_moving_least_squares_2D(surface: "napari.types.SurfaceData",
+def smooth_surface_moving_least_squares_2d(surface: "napari.types.SurfaceData",
                                            smoothing_factor: float = 0.2) -> "napari.types.SurfaceData":
     """Apply a moving least squares approach to smooth a surface
 
@@ -192,7 +192,7 @@ def smooth_surface_moving_least_squares_2D(surface: "napari.types.SurfaceData",
 
 
 @register_function(menu="Surfaces > Smooth moving least squares with radius (vedo, nppas)")
-def smooth_surface_moving_least_squares_2D_radius(surface: "napari.types.SurfaceData",
+def smooth_surface_moving_least_squares_2d_radius(surface: "napari.types.SurfaceData",
                                                   smoothing_factor: float = 0.2,
                                                   radius: float = 0.2) -> "napari.types.SurfaceData":
     """Apply a moving least squares approach to smooth a surface. 
@@ -212,7 +212,7 @@ def smooth_surface_moving_least_squares_2D_radius(surface: "napari.types.Surface
 
 
 @register_function(menu="Points > Smooth moving least squares (vedo, nppas)")
-def smooth_pointcloud_moving_least_squares_2D(pointcloud: "napari.types.PointsData",
+def smooth_pointcloud_moving_least_squares_2d(pointcloud: "napari.types.PointsData",
                                               smoothing_factor: float = 0.2) -> "napari.types.PointsData":
     """Apply a moving least squares approach to smooth a point cloud.
 
@@ -229,7 +229,7 @@ def smooth_pointcloud_moving_least_squares_2D(pointcloud: "napari.types.PointsDa
 
 
 @register_function(menu="Points > Smooth moving least squares radius (vedo, nppas)")
-def smooth_pointcloud_moving_least_squares_2D_radius(pointcloud: "napari.types.PointsData",
+def smooth_pointcloud_moving_least_squares_2d_radius(pointcloud: "napari.types.PointsData",
                                                      smoothing_factor: float = 0.2,
                                                      radius=2) -> "napari.types.PointsData":
     """Apply a moving least squares approach to smooth a point cloud.
