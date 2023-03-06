@@ -510,6 +510,41 @@ def subsample_points(points_data: "napari.types.PointsData", distance_fraction: 
     return result
 
 
+def reconstruct_surface_from_pointcloud(point_cloud: "napari.types.PointsData",
+                                        number_of_sampling_voxels: int = 100,
+                                        point_influence_radius: float = 0.1,
+                                        padding: float = 0.05,
+                                        fill_holes: bool = True) -> "napari.types.SurfaceData":
+    """Reconstruct a surface from a point cloud.
+
+    Parameters
+    ----------
+    point_cloud:napari.types.PointsData
+    number_of_sampling_voxels: int, optional
+        number of voxels in each direction to sample the surface
+        Can be used to control reconstruction precision.
+    point_influence_radius: float, optional
+        radius of influence of each point.
+        Smaller values generally improve performance markedly.
+    padding: float, optional
+        increase by this fraction the bounding box
+    fill_holes: bool, optional
+        fill holes in the surface
+    
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.reconstruct_surface
+    """
+    point_cloud = to_vedo_points(point_cloud)
+    mesh_out = point_cloud.reconstruct_surface(
+        dims=(number_of_sampling_voxels) * 3,
+        radius=point_influence_radius,
+        padding=padding,
+        hole_filling=fill_holes)
+    return to_napari_surface_data(mesh_out)
+
+
 @register_function(menu="Surfaces > Convex hull of points (vedo, nppas)")
 def create_convex_hull_from_points(points_data: "napari.types.PointsData") -> "napari.types.SurfaceData":
     """Determine the convex hull surface of a list of points
