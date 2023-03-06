@@ -145,7 +145,9 @@ def test_reconstruct_surface():
 
     points = nppas.sample_points_from_surface(gastruloid)
 
-    surface = nppas.reconstruct_surface(points, radius=3)
+    surface = nppas.reconstruct_surface_from_pointcloud(points,
+                                                        number_of_sampling_voxels=30,
+                                                        point_influence_radius=10)
 
     assert len(surface[0]) > 0
     assert len(surface[1]) > 0
