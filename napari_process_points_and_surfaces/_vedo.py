@@ -510,6 +510,7 @@ def subsample_points(points_data: "napari.types.PointsData", distance_fraction: 
     return result
 
 
+@register_function(menu="Points > Create surface from pointcloud (flying edges, vedo, nppas)")
 def reconstruct_surface_from_pointcloud(point_cloud: "napari.types.PointsData",
                                         number_of_sampling_voxels: int = 100,
                                         point_influence_radius: float = 0.1,
