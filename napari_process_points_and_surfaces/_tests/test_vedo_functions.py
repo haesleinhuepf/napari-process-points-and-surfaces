@@ -139,6 +139,18 @@ def test_sample_points_from_surface():
     points = nppas.sample_points_from_surface(gastruloid)
     assert len(points) == 2131
 
+def test_reconstruct_surface():
+    import napari_process_points_and_surfaces as nppas
+    gastruloid = nppas.gastruloid()
+
+    points = nppas.sample_points_from_surface(gastruloid)
+
+    surface = nppas.reconstruct_surface_from_pointcloud(points,
+                                                        number_of_sampling_voxels=30,
+                                                        point_influence_radius=10)
+
+    assert len(surface[0]) > 0
+    assert len(surface[1]) > 0
 
 def test_subsample_points():
     import napari_process_points_and_surfaces as nppas

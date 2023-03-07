@@ -40,7 +40,8 @@ from ._vedo import (to_vedo_mesh,
                     smooth_surface_moving_least_squares_2d,
                     smooth_surface_moving_least_squares_2d_radius,
                     smooth_pointcloud_moving_least_squares_2d_radius,
-                    smooth_pointcloud_moving_least_squares_2d
+                    smooth_pointcloud_moving_least_squares_2d,
+                    reconstruct_surface_from_pointcloud
                     )
 
 from ._utils import isotropic_scale_surface
