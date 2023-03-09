@@ -543,7 +543,14 @@ def reconstruct_surface_from_pointcloud(point_cloud: "napari.types.PointsData",
         radius=point_influence_radius,
         padding=padding,
         hole_filling=fill_holes)
-    return to_napari_surface_data(mesh_out)
+
+    mesh_out = to_napari_surface_data(mesh_out)
+    if len(mesh_out[1]) == 0:
+        raise ValueError("No surface could be reconstructed with the given" +
+                         " parameters. Try to increase the number of " +
+                         "sampling voxels or the point influence radius.")
+
+    return mesh_out
 
 
 @register_function(menu="Surfaces > Convex hull of points (vedo, nppas)")
