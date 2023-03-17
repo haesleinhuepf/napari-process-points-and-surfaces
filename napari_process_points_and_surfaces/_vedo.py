@@ -174,6 +174,25 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
     return to_napari_surface_data(clean_mesh)
 
 
+@register_function(menu="Surfaces > Connected components labelling (vedo, nppas)")
+def connected_components_labelling(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+    """
+    Determine the connected components of a surface mesh.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_connectivity
+    """
+    mesh = to_vedo_mesh(surface)
+    mesh.compute_connectivity()
+    region_id = mesh.pointdata["RegionId"]
+
+    mesh_out = list(to_napari_surface_data(mesh))
+    mesh_out += [region_id]
+
+    return mesh_out
+
+
 @register_function(menu="Surfaces > Smooth (moving least squares, vedo, nppas)")
 def smooth_surface_moving_least_squares_2d(surface: "napari.types.SurfaceData",
                                            smoothing_factor: float = 0.2) -> "napari.types.SurfaceData":
