@@ -144,7 +144,7 @@ def labels_to_centroids(labels_data:"napari.types.LabelsData", viewer:"napari.Vi
 @register_function(menu="Segmentation / labeling > Create labels from points (nppas)")
 @stackview.jupyter_displayable_output
 @time_slicer
-def points_to_labels(points_data:"napari.types.PointsData", as_large_as_image:"napari.types.ImageData", viewer:"napari.Viewer"=None) -> "napari.types.LabelsData":
+def points_to_labels(points_data:"napari.types.PointsData", as_large_as_image:"napari.types.ImageData"=None, viewer:"napari.Viewer"=None) -> "napari.types.LabelsData":
     """Mark single pixels in a zero-value pixel image if there is a point in a given point list.
     Point with index 0 in the list will get pixel intensity 1.
     If there are multiple points where the rounded coordinate is within the same pixel,
@@ -153,11 +153,15 @@ def points_to_labels(points_data:"napari.types.PointsData", as_large_as_image:"n
     Parameters
     ----------
     points_data:napari.types.PointsData
-    as_large_as_image:napari.types.ImageData
+    as_large_as_image:napari.types.ImageData, optional
         An image to specify the size of the output image. This image will not be overwritten.
     """
 
-    labels_stack = np.zeros(as_large_as_image.shape, dtype=int)
+    if as_large_as_image is not None:
+        labels_stack = np.zeros(as_large_as_image.shape, dtype=int)
+    else:
+        labels_stack = np.zeros((points_data.max(axis=0) + [1.5, 1.5, 1.5]).astype(int), dtype=int)
+
     for i, p in enumerate(points_data):
         if len(labels_stack.shape) == 3:
             labels_stack[int(p[0] + 0.5), int(p[1] + 0.5), int(p[2] + 0.5)] = i + 1
