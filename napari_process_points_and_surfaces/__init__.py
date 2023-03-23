@@ -1,5 +1,5 @@
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 __common_alias__ = "nppas"
 
 import warnings
@@ -42,7 +42,7 @@ from ._vedo import (to_vedo_mesh,
                     smooth_pointcloud_moving_least_squares_2d_radius,
                     smooth_pointcloud_moving_least_squares_2d,
                     reconstruct_surface_from_pointcloud,
-                    connected_components_labeling
+                    connected_component_labeling
                     )
 
 from ._utils import isotropic_scale_surface

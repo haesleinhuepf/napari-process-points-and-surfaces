@@ -175,7 +175,7 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
 
 
 @register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
-def connected_components_labeling(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+def connected_component_labeling(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """
     Determine the connected components of a surface mesh.
 
@@ -183,12 +183,14 @@ def connected_components_labeling(surface: "napari.types.SurfaceData") -> "napar
     --------
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_connectivity
     """
+    from ._quantification import set_vertex_values
+
     mesh = to_vedo_mesh(surface)
     mesh.compute_connectivity()
     region_id = mesh.pointdata["RegionId"]
 
-    mesh_out = list(to_napari_surface_data(mesh))
-    mesh_out += [region_id]
+    mesh_out = to_napari_surface_data(mesh)
+    mesh_out = set_vertex_values(mesh_out, region_id)
 
     return mesh_out
 
