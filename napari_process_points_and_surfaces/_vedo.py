@@ -174,8 +174,8 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
     return to_napari_surface_data(clean_mesh)
 
 
-@register_function(menu="Surfaces > Connected components labelling (vedo, nppas)")
-def connected_components_labelling(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+@register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
+def connected_components_labeling(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
     """
     Determine the connected components of a surface mesh.
 
