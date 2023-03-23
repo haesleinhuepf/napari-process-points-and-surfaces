@@ -32,7 +32,7 @@ def test_connected_components():
     image[20:29, 20:29, 20:29] = 2
 
     surface = nppas.all_labels_to_surface(image)
-    connected_components = nppas.connected_components_labeling(surface)
+    connected_components = nppas.connected_component_labeling(surface)
 
     assert len(np.unique(connected_components[2])) == 3
 
