@@ -35,7 +35,7 @@ Using the menu `Tools > Measurement tables > Surface quality table (vedo, nppas)
 the vertices in a given surface layer. 
 
 ![img_1.png](https://github.com/haesleinhuepf/napari-process-points-and-surfaces/raw/main/docs/surface_measurements2.png)
-
+ 
 To differentiate regions when analyzing those measurements it is recommended to use the menu `Tools > Surfaces > Annotate surface manually (nppas)`
 after measurements have been made. This tool allows you to draw annotation label values on the surface. 
 It is recommended to do activate a colorful colormap such as `hsv` before starting to draw annotations. 
