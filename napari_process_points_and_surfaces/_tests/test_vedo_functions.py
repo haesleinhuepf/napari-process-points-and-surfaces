@@ -23,6 +23,19 @@ def test_create_surface():
         assert num_vertices == 384
         assert num_faces == 764
 
+def test_connected_components():
+    import numpy as np
+    import napari_process_points_and_surfaces as nppas
+
+    image = np.zeros((30, 30, 30))
+    image[1:9, 1:9, 1:9] = 1
+    image[20:29, 20:29, 20:29] = 2
+
+    surface = nppas.all_labels_to_surface(image)
+    connected_components = nppas.connected_components_labeling(surface)
+
+    assert len(np.unique(connected_components[2])) == 3
+
 def test_decimate():
     import napari_process_points_and_surfaces as nppas
     from functools import partial
