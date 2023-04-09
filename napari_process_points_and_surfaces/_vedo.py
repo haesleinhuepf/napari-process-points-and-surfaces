@@ -139,12 +139,15 @@ def _hide_vtk_warnings():
 
 
 @register_function(menu="Surfaces > Convex hull (vedo, nppas)")
-def create_convex_hull_from_surface(surface: "napari.types.SurfaceData", viewer:"napari.Viewer"=None) -> "napari.types.SurfaceData":
+def create_convex_hull_from_surface(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """Determine the convex hull of a surface
 
     Parameters
     ----------
     surface:napari.types.SurfaceData
+    viewer : napari.Viewer, optional
+        makes light follow the camera in the given viewer
+
 
     See Also
     --------
@@ -162,7 +165,7 @@ def create_convex_hull_from_surface(surface: "napari.types.SurfaceData", viewer:
 
 
 @register_function(menu="Surfaces > Remove duplicate vertices (vedo, nppas)")
-def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+def remove_duplicate_vertices(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Clean a surface mesh (i.e., remove duplicate faces & vertices).
 
@@ -171,6 +174,9 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
     ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.clean
     
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh = to_vedo_mesh(surface)
     clean_mesh = mesh.clean()
 
@@ -178,7 +184,7 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData") -> "napari.ty
 
 
 @register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
-def connected_component_labeling(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+def connected_component_labeling(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Determine the connected components of a surface mesh.
 
@@ -187,6 +193,8 @@ def connected_component_labeling(surface: "napari.types.SurfaceData") -> "napari
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_connectivity
     """
     from ._quantification import set_vertex_values
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     mesh = to_vedo_mesh(surface)
     mesh.compute_connectivity()
@@ -200,13 +208,16 @@ def connected_component_labeling(surface: "napari.types.SurfaceData") -> "napari
 
 @register_function(menu="Surfaces > Smooth (moving least squares, vedo, nppas)")
 def smooth_surface_moving_least_squares_2d(surface: "napari.types.SurfaceData",
-                                           smoothing_factor: float = 0.2) -> "napari.types.SurfaceData":
+                                           smoothing_factor: float = 0.2,
+                                           viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """Apply a moving least squares approach to smooth a surface
 
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     mesh = to_vedo_mesh(surface)
 
@@ -218,7 +229,8 @@ def smooth_surface_moving_least_squares_2d(surface: "napari.types.SurfaceData",
 @register_function(menu="Surfaces > Smooth (moving least squares with radius, vedo, nppas)")
 def smooth_surface_moving_least_squares_2d_radius(surface: "napari.types.SurfaceData",
                                                   smoothing_factor: float = 0.2,
-                                                  radius: float = 0.2) -> "napari.types.SurfaceData":
+                                                  radius: float = 0.2,
+                                                  viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """Apply a moving least squares approach to smooth a surface. 
     
     The radius is used to determine the number of points to use for the smoothing.
@@ -227,6 +239,8 @@ def smooth_surface_moving_least_squares_2d_radius(surface: "napari.types.Surface
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     mesh = to_vedo_mesh(surface)
 
@@ -237,13 +251,16 @@ def smooth_surface_moving_least_squares_2d_radius(surface: "napari.types.Surface
 
 @register_function(menu="Points > Smooth (moving least squares, vedo, nppas)")
 def smooth_pointcloud_moving_least_squares_2d(pointcloud: "napari.types.PointsData",
-                                              smoothing_factor: float = 0.2) -> "napari.types.PointsData":
+                                              smoothing_factor: float = 0.2,
+                                              viewer: "napari.Viewer" = None) -> "napari.types.PointsData":
     """Apply a moving least squares approach to smooth a point cloud.
 
     See Also
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     points = to_vedo_points(pointcloud)
 
@@ -255,7 +272,8 @@ def smooth_pointcloud_moving_least_squares_2d(pointcloud: "napari.types.PointsDa
 @register_function(menu="Points > Smooth (moving least squares radius, vedo, nppas)")
 def smooth_pointcloud_moving_least_squares_2d_radius(pointcloud: "napari.types.PointsData",
                                                      smoothing_factor: float = 0.2,
-                                                     radius=2) -> "napari.types.PointsData":
+                                                     radius: float = 2,
+                                                     viewer: "napari.Viewer" = None) -> "napari.types.PointsData":
     """Apply a moving least squares approach to smooth a point cloud.
 
     The radius is used to determine the number of points to use for the smoothing.
@@ -264,6 +282,8 @@ def smooth_pointcloud_moving_least_squares_2d_radius(pointcloud: "napari.types.P
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/pointcloud.html#Points.smooth_mls_2d
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     points = to_vedo_points(pointcloud)
 
@@ -278,7 +298,8 @@ def smooth_surface(surface: "napari.types.SurfaceData",
                    pass_band: float = 0.1,
                    edge_angle: float = 15,
                    feature_angle: float = 60,
-                   boundary: bool = False
+                   boundary: bool = False,
+                   viewer: "napari.Viewer" = None
                    ) -> "napari.types.SurfaceData":
     """Smooth a surface using a Windowed Sinc kernel.
 
@@ -286,6 +307,8 @@ def smooth_surface(surface: "napari.types.SurfaceData",
     --------
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.smooth
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     mesh = to_vedo_mesh(surface)
 
@@ -300,7 +323,8 @@ def smooth_surface(surface: "napari.types.SurfaceData",
 
 #@register_function(menu="Surfaces > Subdivide loop (vedo, nppas)")
 def _subdivide_loop_vedo(surface: "napari.types.SurfaceData",
-                         number_of_iterations: int = 1
+                         number_of_iterations: int = 1,
+                         viewer: "napari.Viewer" = None
                          ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by subdividing in a loop.
@@ -318,6 +342,9 @@ def _subdivide_loop_vedo(surface: "napari.types.SurfaceData",
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkLoopSubdivisionFilter.html
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=0)
     return to_napari_surface_data(mesh_out)
@@ -325,7 +352,8 @@ def _subdivide_loop_vedo(surface: "napari.types.SurfaceData",
 
 #@register_function(menu="Surfaces > Subdivide linear (vedo, nppas)")
 def _subdivide_linear(surface: "napari.types.SurfaceData",
-                      number_of_iterations: int = 1
+                      number_of_iterations: int = 1,
+                      viewer: "napari.Viewer" = None
                       ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by linear subdivision.
@@ -344,6 +372,9 @@ def _subdivide_linear(surface: "napari.types.SurfaceData",
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkLinearSubdivisionFilter.html
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=1)
     return to_napari_surface_data(mesh_out)
@@ -352,7 +383,8 @@ def _subdivide_linear(surface: "napari.types.SurfaceData",
 @register_function(menu="Surfaces > Subdivide adaptive (vedo, nppas)")
 def subdivide_adaptive(surface: "napari.types.SurfaceData",
                        number_of_iterations: int = 1,
-                       maximum_edge_length: float = 0.
+                       maximum_edge_length: float = 0,
+                       viewer: "napari.Viewer" = None
                        ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by adaptive subdivision.
@@ -372,6 +404,9 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     ..[1] https://vtk.org/doc/nightly/html/classvtkAdaptiveSubdivisionFilter.html
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
 
     if maximum_edge_length == 0:
@@ -385,7 +420,8 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
 
 # @register_function(menu="Surfaces > Subdivide butterfly (vedo, nppas)")
 def _subdivide_butterfly(surface: "napari.types.SurfaceData",
-                         number_of_iterations: int = 1
+                         number_of_iterations: int = 1,
+                         viewer: "napari.Viewer" = None
                          ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by adaptive subdivision.
@@ -404,6 +440,9 @@ def _subdivide_butterfly(surface: "napari.types.SurfaceData",
     ..[1] https://vtk.org/doc/nightly/html/classvtkButterflySubdivisionFilter.html
     ..[2] Zorin et al. "Interpolating Subdivisions for Meshes with Arbitrary Topology," Computer Graphics Proceedings, Annual Conference Series, 1996, ACM SIGGRAPH, pp.189-192
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=3)
     return to_napari_surface_data(mesh_out)
@@ -411,7 +450,8 @@ def _subdivide_butterfly(surface: "napari.types.SurfaceData",
 
 @register_function(menu="Surfaces > Subdivide centroid (vedo, nppas)")
 def subdivide_centroid(surface: "napari.types.SurfaceData",
-                         number_of_iterations: int = 1
+                         number_of_iterations: int = 1,
+                         viewer: "napari.Viewer" = None
                          ) -> "napari.types.SurfaceData":
     """
     Make a mesh more detailed by centroid-based subdivision.
@@ -425,6 +465,9 @@ def subdivide_centroid(surface: "napari.types.SurfaceData",
     --------
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.subdivide
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.subdivide(number_of_iterations, method=4)
     return to_napari_surface_data(mesh_out)
@@ -433,7 +476,8 @@ def subdivide_centroid(surface: "napari.types.SurfaceData",
 @register_function(menu="Surfaces > Decimate surface (quadric, vedo, nppas)")
 def decimate_quadric(surface: "napari.types.SurfaceData",
                      fraction: float = 0.5,
-                     number_of_vertices: int = None
+                     number_of_vertices: int = None,
+                     viewer: "napari.Viewer" = None
                     ) -> "napari.types.SurfaceData":
     """
     Reduce numbers of vertices of a surface to a given fraction.
@@ -454,6 +498,9 @@ def decimate_quadric(surface: "napari.types.SurfaceData",
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/mesh.html#Mesh.decimate
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.decimate(method='quadric', fraction=fraction, n=number_of_vertices)
     return to_napari_surface_data(mesh_out)
@@ -462,7 +509,8 @@ def decimate_quadric(surface: "napari.types.SurfaceData",
 @register_function(menu="Surfaces > Decimate surface (pro, vedo, nppas)")
 def decimate_pro(surface: "napari.types.SurfaceData",
                      fraction: float = 0.5,
-                     number_of_vertices: int = None
+                     number_of_vertices: int = None,
+                     viewer: "napari.Viewer" = None
                     ) -> "napari.types.SurfaceData":
     """
     Reduce numbers of vertices of a surface to a given fraction.
@@ -483,13 +531,16 @@ def decimate_pro(surface: "napari.types.SurfaceData",
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/vedo/mesh.html#Mesh.decimate
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh_in = to_vedo_mesh(surface)
     mesh_out = mesh_in.decimate(method='pro', fraction=fraction, n=number_of_vertices)
     return to_napari_surface_data(mesh_out)
 
 
 @register_function(menu="Points > Create points from surface (vedo, nppas)")
-def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fraction: float = 0.01, viewer: "napari.Viewer" = None) -> "napari.types.PointsData":
     """Sample points from a surface
 
     Parameters
@@ -502,6 +553,8 @@ def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fra
     --------
     ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.subsample
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     mesh_in = to_vedo_mesh(surface)
 
@@ -512,7 +565,7 @@ def sample_points_from_surface(surface: "napari.types.SurfaceData", distance_fra
 
 
 @register_function(menu="Points > Subsample points (vedo, nppas)")
-def subsample_points(points_data: "napari.types.PointsData", distance_fraction: float = 0.01) -> "napari.types.PointsData":
+def subsample_points(points_data: "napari.types.PointsData", distance_fraction: float = 0.01, viewer: "napari.Viewer" = None) -> "napari.types.PointsData":
     """Subsample points
 
     Parameters
@@ -525,6 +578,8 @@ def subsample_points(points_data: "napari.types.PointsData", distance_fraction: 
     --------
     ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.subsample
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     mesh_in = to_vedo_points(points_data)
 
@@ -539,7 +594,8 @@ def reconstruct_surface_from_pointcloud(point_cloud: "napari.types.PointsData",
                                         number_of_sampling_voxels: int = 100,
                                         point_influence_radius: float = 0.1,
                                         padding: float = 0.05,
-                                        fill_holes: bool = True) -> "napari.types.SurfaceData":
+                                        fill_holes: bool = True,
+                                        viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """Reconstruct a surface from a point cloud.
 
     Parameters
@@ -555,12 +611,14 @@ def reconstruct_surface_from_pointcloud(point_cloud: "napari.types.PointsData",
         increase by this fraction the bounding box
     fill_holes: bool, optional
         fill holes in the surface
-    
 
     See Also
     --------
     ..[0] https://vedo.embl.es/docs/vedo/pointcloud.html#Points.reconstruct_surface
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     point_cloud = to_vedo_points(point_cloud)
     mesh_out = point_cloud.reconstruct_surface(
         dims=(number_of_sampling_voxels) * 3,
@@ -578,7 +636,8 @@ def reconstruct_surface_from_pointcloud(point_cloud: "napari.types.PointsData",
 
 
 @register_function(menu="Surfaces > Convex hull of points (vedo, nppas)")
-def create_convex_hull_from_points(points_data: "napari.types.PointsData") -> "napari.types.SurfaceData":
+def create_convex_hull_from_points(points_data: "napari.types.PointsData",
+                                   viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """Determine the convex hull surface of a list of points
 
     Parameters
@@ -590,6 +649,8 @@ def create_convex_hull_from_points(points_data: "napari.types.PointsData") -> "n
     ..[0] https://vedo.embl.es/autodocs/content/vedo/shapes.html#vedo.shapes.ConvexHull
     """
     import vedo
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     point_cloud = to_vedo_points(points_data)
     mesh_out = vedo.shapes.ConvexHull(point_cloud)
@@ -598,7 +659,7 @@ def create_convex_hull_from_points(points_data: "napari.types.PointsData") -> "n
 
 
 @register_function(menu="Surfaces > Fill holes (vedo, nppas)")
-def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float = 100) -> "napari.types.SurfaceData":
+def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float = 100, viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Fill holes in a surface up to a specified size.
 
@@ -612,6 +673,9 @@ def fill_holes_in_surface(surface: "napari.types.SurfaceData", size_limit: float
     --------
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.fillHoles
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh = to_vedo_mesh((surface[0], surface[1]))
     mesh.fill_holes(size=size_limit)
 

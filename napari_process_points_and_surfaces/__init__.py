@@ -133,6 +133,9 @@ def labels_to_centroids(labels_data:"napari.types.LabelsData", viewer:"napari.Vi
     ----------
     labels_data:napari.types.LabelsData
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     from skimage.measure import regionprops
 
     statistics = regionprops(labels_data)
@@ -156,6 +159,8 @@ def points_to_labels(points_data:"napari.types.PointsData", as_large_as_image:"n
     as_large_as_image:napari.types.ImageData
         An image to specify the size of the output image. This image will not be overwritten.
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     labels_stack = np.zeros(as_large_as_image.shape, dtype=int)
     for i, p in enumerate(points_data):
@@ -198,6 +203,8 @@ def surface_to_binary_volume(surface: "napari.types.SurfaceData", as_large_as_im
     binary_image:ImageData
     """
     import vedo
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     my_mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     vertices = my_mesh.points()  # get coordinates of surface vertices
@@ -220,7 +227,7 @@ def surface_to_binary_volume(surface: "napari.types.SurfaceData", as_large_as_im
 
 @register_function(menu="Surfaces > Create surface from any label (marching cubes, scikit-image, nppas)")
 @time_slicer
-def label_to_surface(labels: "napari.types.LabelsData", label_id: int = 1) -> "napari.types.SurfaceData":
+def label_to_surface(labels: "napari.types.LabelsData", label_id: int = 1, viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Turn a single label out of a label image into a surface using the marching cubes algorithm
 
@@ -230,6 +237,8 @@ def label_to_surface(labels: "napari.types.LabelsData", label_id: int = 1) -> "n
     label_id: int
     """
     from skimage.measure import marching_cubes
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     binary = np.asarray(labels == label_id)
 
@@ -240,7 +249,7 @@ def label_to_surface(labels: "napari.types.LabelsData", label_id: int = 1) -> "n
 
 @register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
 @time_slicer
-def all_labels_to_surface(labels: "napari.types.LabelsData") -> "napari.types.SurfaceData":
+def all_labels_to_surface(labels: "napari.types.LabelsData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Turn a set of labels into a surface using the marching cubes algorithm
 
@@ -250,6 +259,8 @@ def all_labels_to_surface(labels: "napari.types.LabelsData") -> "napari.types.Su
     """
     import vedo
     from skimage.measure import marching_cubes
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     # convert to numpy in case it's not (clesperanto, dask, ...)
     labels = np.asarray(labels)
@@ -272,7 +283,7 @@ marching_cubes = all_labels_to_surface
 
 @register_function(menu="Surfaces > Create surface from largest label (marching cubes, scikit-image, nppas)")
 @time_slicer
-def largest_label_to_surface(labels: "napari.types.LabelsData") -> "napari.types.SurfaceData":
+def largest_label_to_surface(labels: "napari.types.LabelsData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Turn the largest label in a label image into a surface using the marching cubes algorithm
 
@@ -281,6 +292,9 @@ def largest_label_to_surface(labels: "napari.types.LabelsData") -> "napari.types
     labels_data:napari.types.LabelsData
     """
     from skimage.measure import regionprops
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     statistics = regionprops(labels)
 
     label_index = np.argmax([r.area for r in statistics])
@@ -715,8 +729,10 @@ def _check_open3d():
 
 
 @register_function(menu="Surfaces > Flip (vedo, nppas)")
-def flip(surface: "napari.types.SurfaceData", flip_x:bool=True, flip_y:bool=True, flip_z:bool=True) -> "napari.types.SurfaceData":
+def flip(surface: "napari.types.SurfaceData", flip_x:bool=True, flip_y:bool=True, flip_z:bool=True, viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     import numpy as np
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
 
     surface = [f.copy() for f in surface]
 
