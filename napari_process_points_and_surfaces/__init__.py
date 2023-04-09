@@ -244,7 +244,21 @@ def label_to_surface(labels: "napari.types.LabelsData", label_id: int = 1, viewe
 
     vertices, faces, normals, values = marching_cubes(binary, 0)
 
-    return remove_duplicate_vertices(SurfaceTuple((vertices, faces, values)))
+    result = remove_duplicate_vertices(SurfaceTuple((vertices, faces, values)))
+
+    # invert faces to make sure lighting works
+    return invert_faces(result)
+
+
+@register_function(menu="Surfaces > Invert faces (reverse, vedo, nppas)")
+@time_slicer
+def invert_faces(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
+    """
+    Invert faces (turn inside outside), which might make sense for visualization purposes such as lightning.
+    """
+    mesh = to_vedo_mesh(surface)
+    mesh.reverse()
+    return to_napari_surface_data(mesh)
 
 
 @register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
