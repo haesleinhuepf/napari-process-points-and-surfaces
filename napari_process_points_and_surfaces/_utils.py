@@ -39,6 +39,7 @@ def _init_viewer(viewer: "napari.Viewer"):
         # prevent registering the same event in one viewer multiple times
     if viewer in _StaticMemory.viewers:
         return
+    _StaticMemory.viewers.append(viewer)
 
     def _on_camera_change(event=None):
         view_direction = np.asarray(viewer.camera.view_direction)
@@ -48,7 +49,8 @@ def _init_viewer(viewer: "napari.Viewer"):
         for layer, visual in zip(viewer.layers, selected_layer_visuals):
             dims_displayed = _get_dims_displayed(layer)
             layer_view_direction = np.asarray(layer._world_to_data_ray(view_direction))[dims_displayed]
-            visual.node.shading_filter.light_dir = layer_view_direction[::-1]
+            if hasattr(visual, "node") and hasattr(visual.node, "shading_filter"):
+                visual.node.shading_filter.light_dir = layer_view_direction[::-1]
 
     viewer.camera.events.angles.connect(_on_camera_change)
 
