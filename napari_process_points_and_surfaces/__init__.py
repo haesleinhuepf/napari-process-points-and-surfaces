@@ -712,3 +712,21 @@ def _check_open3d():
     except:
         warnings.warn("Open3D is not installed. Follow the instructions here: http://www.open3d.org/docs/release/introduction.html#python-quick-start")
     return False
+
+
+@register_function(menu="Surfaces > Flip (vedo, nppas)")
+def flip(surface: "napari.types.SurfaceData", flip_x:bool=True, flip_y:bool=True, flip_z:bool=True) -> "napari.types.SurfaceData":
+    import numpy as np
+
+    surface = [f.copy() for f in surface]
+
+    coordinates = surface[0]
+    if flip_x:
+        coordinates[:,-1] = coordinates[:,-1] * -1 + np.max(coordinates[:,-1])
+    if flip_y:
+        coordinates[:,-2] = coordinates[:,-2] * -1 + np.max(coordinates[:,-2])
+    if flip_z:
+        coordinates[:,-3] = coordinates[:,-3] * -1 + np.max(coordinates[:,-3])
+
+    surface[0] = coordinates
+    return surface

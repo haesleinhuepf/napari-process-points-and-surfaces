@@ -139,7 +139,7 @@ def _hide_vtk_warnings():
 
 
 @register_function(menu="Surfaces > Convex hull (vedo, nppas)")
-def create_convex_hull_from_surface(surface: "napari.types.SurfaceData") -> "napari.types.SurfaceData":
+def create_convex_hull_from_surface(surface: "napari.types.SurfaceData", viewer:"napari.Viewer"=None) -> "napari.types.SurfaceData":
     """Determine the convex hull of a surface
 
     Parameters
@@ -150,6 +150,9 @@ def create_convex_hull_from_surface(surface: "napari.types.SurfaceData") -> "nap
     --------
     ..[0] https://vedo.embl.es/autodocs/content/vedo/shapes.html#vedo.shapes.ConvexHull
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh = to_vedo_mesh(surface)
 
     import vedo
