@@ -83,10 +83,13 @@ class Curvature(Enum):
 
 
 @register_function(menu="Measurement maps > Surface quality (vedo, nppas)")
-def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quality.MIN_ANGLE) -> "napari.types.SurfaceData":
+def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quality.MIN_ANGLE, viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     from ._vedo import to_vedo_mesh
     import vedo
     from ._vedo import SurfaceTuple
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     if not isinstance(quality_id, int):
         quality_id = quality_id.value
@@ -227,6 +230,7 @@ def surface_quality_to_properties(surface: "napari.types.SurfaceData",
 @register_function(menu="Measurement maps > Surface curvature (vedo, nppas)")
 def add_curvature_scalars(surface: "napari.types.SurfaceData",
                           curvature_id: Curvature = Curvature.Gauss_Curvature,
+                          viewer: "napari.Viewer" = None
                           ) -> "napari.types.SurfaceData":
     """
     Determine the surface curvature using vedo built-in functions.
@@ -241,6 +245,9 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     curvature_id : Union[Curvature, int] optional
         Method to be used: 0-gaussian, 1-mean, 2-max, 3-min curvature. The
         default is 0 (gaussian).
+    viewer : napari.Viewer, optional
+        makes light follow the camera in the given viewer
+
     Returns
     -------
     "napari.types.SurfaceData"
@@ -250,6 +257,9 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     --------
     Vedo curvature: https://vedo.embl.es/autodocs/content/vedo/mesh.html?highlight=curvature#vedo.mesh.Mesh.addCurvatureScalars
     """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
     import vedo
     from ._vedo import SurfaceTuple
 

@@ -24,7 +24,9 @@ def test_something():
             largest_label_to_surface,\
             add_quality,\
             Quality,\
-            fill_holes
+            fill_holes, \
+            invert_faces, \
+            flip
 
     from skimage.data import cells3d
     nuclei = cells3d()[:, 1, 60:120, 30:80]
@@ -54,6 +56,9 @@ def test_something():
     surface_from_point_cloud_ball_pivoting(points)
     surface_from_point_cloud_alpha_shape(points)
     add_quality(surface, Quality.SKEW)
+
+    invert_faces(surface)
+    flip(surface)
 
 def test_something2():
     from .._vedo import (to_vedo_mesh,
