@@ -284,7 +284,7 @@ def all_labels_to_surface(labels: "napari.types.LabelsData", add_label_id_as_val
     # Create a surface for every label
     mesh_list = []
     all_values = []
-    for label in np.unique(labels)[:-1]:
+    for label in np.unique(labels)[1:]:
         print("label", label)
         verts, faces, normals, values = marching_cubes(labels==label)
         if add_label_id_as_value:
