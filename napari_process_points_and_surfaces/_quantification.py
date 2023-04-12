@@ -360,6 +360,8 @@ def set_vertex_values(surface: "napari.types.SurfaceData", values) -> "napari.ty
     """
     from ._vedo import SurfaceTuple
 
+    values = np.asarray(values)
+
     num_vertices = len(surface[0])
     num_values = len(values)
     if num_vertices != num_values:

@@ -35,6 +35,8 @@ def test_something():
     labels = label(nuclei > 20000)
 
     surface = all_labels_to_surface(labels)
+    surface = all_labels_to_surface(labels, add_label_id_as_value=False)
+    surface = all_labels_to_surface(labels, add_label_id_as_value=True)
     surface = label_to_surface(labels, 3)
 
     surface = largest_label_to_surface(labels)

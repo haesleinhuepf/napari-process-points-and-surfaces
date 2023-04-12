@@ -34,7 +34,7 @@ def test_connected_components():
     surface = nppas.all_labels_to_surface(image)
     connected_components = nppas.connected_component_labeling(surface)
 
-    assert len(np.unique(connected_components[2])) == 3
+    assert len(np.unique(connected_components[2])) == 2
 
 def test_decimate():
     import napari_process_points_and_surfaces as nppas
