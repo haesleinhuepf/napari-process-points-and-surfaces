@@ -263,13 +263,15 @@ def invert_faces(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = 
 
 @register_function(menu="Surfaces > Create surface from all labels (marching cubes, scikit-image, nppas)")
 @time_slicer
-def all_labels_to_surface(labels: "napari.types.LabelsData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
+def all_labels_to_surface(labels: "napari.types.LabelsData", add_label_id_as_value:bool = False, viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
     """
     Turn a set of labels into a surface using the marching cubes algorithm
 
     Parameters
     ----------
     labels_data:napari.types.LabelsData
+    add_label_id_as_value: bool, optional
+        if True, will give the same label value to the surface vertices it had in the label image
     """
     import vedo
     from skimage.measure import marching_cubes
@@ -281,15 +283,25 @@ def all_labels_to_surface(labels: "napari.types.LabelsData", viewer: "napari.Vie
 
     # Create a surface for every label
     mesh_list = []
+    all_values = []
     for label in np.unique(labels)[:-1]:
+        print("label", label)
         verts, faces, normals, values = marching_cubes(labels==label)
+        if add_label_id_as_value:
+            all_values = all_values + (np.ones_like(verts[:,0]) * label).tolist()
+            print("unique labels:", np.unique(all_values))
         mesh = vedo.mesh.Mesh((verts, faces))
         mesh_list.append(mesh)
     
     # merge the meshes; label is stored in `mesh.pointdata['OriginalMeshID']`
     mesh = vedo.merge(mesh_list, flag=True)
 
-    return to_napari_surface_data(mesh)
+    surface = to_napari_surface_data(mesh)
+
+    if add_label_id_as_value:
+        surface = set_vertex_values(surface, all_values)
+
+    return surface
     #(mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
 
 # alias
