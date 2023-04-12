@@ -297,6 +297,7 @@ def all_labels_to_surface(labels: "napari.types.LabelsData", add_label_id_as_val
     mesh = vedo.merge(mesh_list, flag=True)
 
     surface = to_napari_surface_data(mesh)
+    surface = invert_faces(surface)
 
     if add_label_id_as_value:
         surface = set_vertex_values(surface, all_values)
