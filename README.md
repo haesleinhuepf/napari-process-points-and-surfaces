@@ -59,10 +59,12 @@ To visualize measurements on the surface, just double-click on the table column 
 
 ## Installation
 
-You can install `napari-process-points-and-surfaces` via mamba/conda and pip:
+You can install `napari-process-points-and-surfaces` via mamba/conda and pip by executing these lines line-by-line:
 
 ```
-mamba install vedo vtk libnetcdf=4.7.4 -c conda-forge
+mamba install vedo -c conda-forge
+```
+```
 pip install napari-process-points-and-surfaces
 ```
 
