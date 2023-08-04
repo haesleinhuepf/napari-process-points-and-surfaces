@@ -144,3 +144,19 @@ def test_surface_to_measurement_table():
     table = surface_quality_table(surface, qualities=[Quality.MIN_ANGLE, Quality.MAX_ANGLE, Quality.AREA])
     assert len(table.keys()) == 4
 
+
+def test_toggle_wireframe(make_napari_viewer):
+    from napari_process_points_and_surfaces import (
+        _vedo_stanford_bunny_layerdatatuple,
+        toggle_wireframe
+    )
+
+    surface = _vedo_stanford_bunny_layerdatatuple()[0][0]
+    viewer = make_napari_viewer()
+    layer = viewer.add_surface(surface)
+
+    toggle_wireframe(layer, viewer)
+    assert viewer.layers[layer.name].wireframe.visible == True
+
+    toggle_wireframe(layer, viewer)
+    assert viewer.layers[layer.name].wireframe.visible == False

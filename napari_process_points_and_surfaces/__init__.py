@@ -45,7 +45,7 @@ from ._vedo import (to_vedo_mesh,
                     connected_component_labeling
                     )
 
-from ._utils import isotropic_scale_surface
+from ._utils import isotropic_scale_surface, toggle_wireframe
 
 
 @napari_hook_implementation
