@@ -67,7 +67,7 @@ class SurfaceTuple(tuple):
         # mesh statistics
         bounds = "<br/>".join(["{min_x:.3f}...{max_x:.3f}".format(min_x=min_x, max_x=max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
         average_size = "{size:.3f}".format(size=mesh.average_size())
-        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.centerOfMass()])
+        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.center_of_mass()])
         scale = ",".join(["{size:.3f}".format(size=x) for x in mesh.scale()])
         histogram = ""
         min_max = ""
