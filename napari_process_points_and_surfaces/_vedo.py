@@ -411,7 +411,7 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
 
     if maximum_edge_length == 0:
         maximum_edge_length = mesh_in.diagonal_size(
-        ) / np.sqrt(mesh_in._data.GetNumberOfPoints()) / number_of_iterations
+        ) / np.sqrt(mesh_in.npoints) / number_of_iterations
 
     mesh_out = mesh_in.subdivide(
         number_of_iterations, method=2, mel=maximum_edge_length)
