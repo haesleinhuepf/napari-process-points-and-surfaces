@@ -116,7 +116,7 @@ def gastruloid() -> "napari.types.SurfaceData":
 def _vedo_ellipsoid() -> "napari.types.SurfaceData":
     import vedo
     shape = vedo.shapes.Ellipsoid().scale(10)
-    return (shape.vertices, np.asarray(shape.faces()))
+    return (shape.vertices, np.asarray(shape.cells))
 
 
 def _vedo_stanford_bunny() -> "napari.types.SurfaceData":
@@ -303,7 +303,7 @@ def all_labels_to_surface(labels: "napari.types.LabelsData", add_label_id_as_val
         surface = set_vertex_values(surface, all_values)
 
     return surface
-    #(mesh.vertices, np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
+    #(mesh.vertices, np.asarray(mesh.cells), mesh.pointdata['OriginalMeshID'])
 
 # alias
 marching_cubes = all_labels_to_surface
@@ -744,7 +744,7 @@ def fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100) -> 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.fill_holes(size=size_limit)
 
-    return (mesh.vertices, np.asarray(mesh.faces()))
+    return (mesh.vertices, np.asarray(mesh.cells))
 
 def _check_open3d():
     try:

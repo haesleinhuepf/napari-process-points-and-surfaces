@@ -125,7 +125,7 @@ def add_quality(surface: "napari.types.SurfaceData", quality_id: Quality = Quali
         raise NotImplementedError(f"Quality {quality_id} is not implemented.")
 
     vertices = np.asarray(mesh2.vertices)
-    faces = np.asarray(mesh2.faces())
+    faces = np.asarray(mesh2.cells)
 
     return SurfaceTuple((vertices, faces, values))
 
@@ -272,7 +272,7 @@ def add_curvature_scalars(surface: "napari.types.SurfaceData",
     mesh.compute_curvature(method=used_method)
     values = mesh.pointdata[curvature_id.name]
     
-    return SurfaceTuple((mesh.vertices, np.asarray(mesh.faces()), values))
+    return SurfaceTuple((mesh.vertices, np.asarray(mesh.cells), values))
 
 @register_function(menu="Measurement maps > Surface curvature (sphere-fitted, nppas)")
 def add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: float = 1.0) -> List["napari.types.LayerDataTuple"]:
@@ -337,8 +337,8 @@ def _add_spherefitted_curvature(surface: "napari.types.SurfaceData", radius: flo
     properties_curvature_layer = {'name': 'curvature', 'colormap': 'viridis'}
     properties_residues_layer = {'name': 'fit residues', 'colormap': 'magma'}
         
-    layer1 = (SurfaceTuple((mesh.vertices, np.asarray(mesh.faces()), curvature)), properties_curvature_layer, 'surface')
-    layer2 = (SurfaceTuple((mesh.vertices, np.asarray(mesh.faces()), residues)), properties_residues_layer, 'surface')
+    layer1 = (SurfaceTuple((mesh.vertices, np.asarray(mesh.cells), curvature)), properties_curvature_layer, 'surface')
+    layer2 = (SurfaceTuple((mesh.vertices, np.asarray(mesh.cells), residues)), properties_residues_layer, 'surface')
         
     return [layer1, layer2]
 

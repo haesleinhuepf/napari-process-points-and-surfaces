@@ -109,7 +109,7 @@ def test_curvature():
     import numpy as np
 
     shape = vedo.shapes.Ellipsoid()
-    surface_data = (shape.vertices, np.asarray(shape.faces()))
+    surface_data = (shape.vertices, np.asarray(shape.cells))
 
     add_curvature_scalars(surface_data, Curvature.Gauss_Curvature)
     add_curvature_scalars(surface_data, Curvature.Mean_Curvature)

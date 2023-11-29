@@ -110,7 +110,7 @@ class SurfaceTuple(tuple):
             "<tr><td>bounds (z/y/x)</td><td>" + str(bounds).replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>average size</td><td>" + str(average_size) + "</td></tr>",
             "<tr><td>number of vertices</td><td>" + str(mesh.npoints) + "</td></tr>",
-            "<tr><td>number of faces</td><td>" + str(len(mesh.faces())) + "</td></tr>",
+            "<tr><td>number of faces</td><td>" + str(len(mesh.cells)) + "</td></tr>",
             min_max,
             "</table>",
             histogram,
@@ -124,9 +124,9 @@ class SurfaceTuple(tuple):
 
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
-        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.faces())))
+        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.cells)))
     else:
-        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.faces()), values))
+        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.cells), values))
 
 
 def to_napari_points_data(vedo_points):
