@@ -124,13 +124,13 @@ class SurfaceTuple(tuple):
 
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
-        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces())))
+        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.faces())))
     else:
-        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values))
+        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.faces()), values))
 
 
 def to_napari_points_data(vedo_points):
-    return vedo_points.points()
+    return vedo_points.vertices
 
 
 def _hide_vtk_warnings():
