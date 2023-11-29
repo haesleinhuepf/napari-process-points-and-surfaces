@@ -1,5 +1,6 @@
 from napari_tools_menu import register_function
 import numpy as np
+from typing import List
 
 def to_vedo_mesh(surface):
     _hide_vtk_warnings()
@@ -67,7 +68,7 @@ class SurfaceTuple(tuple):
         # mesh statistics
         bounds = "<br/>".join(["{min_x:.3f}...{max_x:.3f}".format(min_x=min_x, max_x=max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
         average_size = "{size:.3f}".format(size=mesh.average_size())
-        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.centerOfMass()])
+        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.center_of_mass()])
         scale = ",".join(["{size:.3f}".format(size=x) for x in mesh.scale()])
         histogram = ""
         min_max = ""
@@ -104,7 +105,7 @@ class SurfaceTuple(tuple):
             "<td style=\"text-align: center; vertical-align: top;\">",
             help_text,
             "<table>",
-            "<tr><td>origin (z/y/x)</td><td>" + str(mesh.origin()).replace(" ", "&nbsp;") + "</td></tr>",
+            #"<tr><td>origin (z/y/x)</td><td>" + str(mesh.origin()).replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>center of mass(z/y/x)</td><td>" + center_of_mass.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>scale(z/y/x)</td><td>" + scale.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>bounds (z/y/x)</td><td>" + str(bounds).replace(" ", "&nbsp;") + "</td></tr>",
@@ -184,7 +185,9 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData", viewer: "napa
 
 
 @register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
-def connected_component_labeling(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
+def split_mesh(
+    surface: "napari.types.SurfaceData",
+    viewer: "napari.Viewer" = None) -> List["napari.types.LayerDataTuple"]:
     """
     Determine the connected components of a surface mesh.
 
@@ -192,18 +195,17 @@ def connected_component_labeling(surface: "napari.types.SurfaceData", viewer: "n
     --------
     ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_connectivity
     """
-    from ._quantification import set_vertex_values
     from ._utils import _init_viewer
     _init_viewer(viewer)
 
     mesh = to_vedo_mesh(surface)
-    mesh.compute_connectivity()
-    region_id = mesh.pointdata["RegionId"]
+    meshes = mesh.split()
 
-    mesh_out = to_napari_surface_data(mesh)
-    mesh_out = set_vertex_values(mesh_out, region_id)
+    meshes_out = [
+        (to_napari_surface_data(mesh), {}, 'surface') for mesh in meshes
+    ]
 
-    return mesh_out
+    return meshes_out
 
 
 @register_function(menu="Surfaces > Smooth (moving least squares, vedo, nppas)")
