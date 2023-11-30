@@ -208,6 +208,3 @@ def test_create_convex_hull_from_points():
 #    gastruloid = nppas.gastruloid()
 #
 #    nppas.show(gastruloid)
-
-if __name__ == '__main__':
-    test_connected_components()
