@@ -42,6 +42,7 @@ from ._vedo import (to_vedo_mesh,
                     smooth_pointcloud_moving_least_squares_2d_radius,
                     smooth_pointcloud_moving_least_squares_2d,
                     reconstruct_surface_from_pointcloud,
+                    connected_components,
                     split_mesh
                     )
 

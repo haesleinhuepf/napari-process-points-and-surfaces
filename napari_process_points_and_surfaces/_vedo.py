@@ -185,9 +185,40 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData", viewer: "napa
 
 
 @register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
-def split_mesh(
+def connected_components(
     surface: "napari.types.SurfaceData",
-    viewer: "napari.Viewer" = None) -> List["napari.types.LayerDataTuple"]:
+    viewer: "napari.Viewer" = None) -> 'napari.types.SurfaceData':
+    from ._utils import _init_viewer
+    import vtk
+    import vtk.util.numpy_support as vtk_to_np
+
+    _init_viewer(viewer)
+
+    mesh = to_vedo_mesh(surface)
+
+    # Set up connectivity filter
+    conn = vtk.vtkConnectivityFilter()
+    conn.SetInputData(mesh.dataset)
+    conn.SetExtractionModeToAllRegions()
+
+    # Enable coloring of regions
+    conn.ColorRegionsOn()
+    conn.Update()
+    result = conn.GetOutput()
+
+    region_ids = vtk_to_np.vtk_to_numpy(
+        result.GetCellData().GetArray("RegionId"))
+
+    vertex_labels = np.zeros(mesh.npoints, dtype=np.uint32)
+    vertex_labels[np.asarray(mesh.cells)[:, 0]] = region_ids
+    vertex_labels[np.asarray(mesh.cells)[:, 1]] = region_ids
+    vertex_labels[np.asarray(mesh.cells)[:, 2]] = region_ids
+
+    return SurfaceTuple((
+        surface[0],
+        np.asarray(surface[1]),
+        vertex_labels))
+
     """
     Determine the connected components of a surface mesh.
 
