@@ -36,7 +36,7 @@ def test_connected_components():
     assert len(connected_components) == 2
 
     labelled_components = nppas.connected_components(surface)
-    assert max(labelled_components[2]) == 2
+    assert len(np.unique((labelled_components[2]))) == 2
 
 def test_decimate():
     import napari_process_points_and_surfaces as nppas
@@ -210,3 +210,6 @@ def test_create_convex_hull_from_points():
 #    gastruloid = nppas.gastruloid()
 #
 #    nppas.show(gastruloid)
+
+if __name__ == '__main__':
+    test_connected_components()
