@@ -219,24 +219,49 @@ def connected_components(
         np.asarray(surface[1]),
         vertex_labels))
 
+
+def split_mesh(
+    surface: "napari.types.SurfaceData"
+    ) -> list:
     """
-    Determine the connected components of a surface mesh.
+    Split a mesh into its connected components.
 
     See Also
     --------
-    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_connectivity
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.split
     """
-    from ._utils import _init_viewer
-    _init_viewer(viewer)
-
     mesh = to_vedo_mesh(surface)
     meshes = mesh.split()
 
     meshes_out = [
-        (to_napari_surface_data(mesh), {}, 'surface') for mesh in meshes
+        SurfaceTuple(to_napari_surface_data(mesh)) for mesh in meshes
     ]
 
     return meshes_out
+
+
+@register_function(menu="Surfaces > Split mesh (vedo, nppas)")
+def _split_mesh(
+    surface: "napari.types.SurfaceData",
+    viewer: "napari.Viewer" = None
+    ) -> List["napari.types.LayerDataTuple"]:
+    """
+    Split a mesh into its connected components.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.split
+
+    """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
+    meshes = split_mesh(surface)
+
+    return [(mesh,
+             {'colormap': 'hsv',
+              'name': 'Component ' + str(i)},
+             'surface') for i, mesh in enumerate(meshes)]
 
 
 @register_function(menu="Surfaces > Smooth (moving least squares, vedo, nppas)")
