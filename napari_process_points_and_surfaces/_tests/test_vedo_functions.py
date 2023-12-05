@@ -35,7 +35,7 @@ def test_connected_components():
     connected_components = nppas.split_mesh(surface)
     assert len(connected_components) == 2
 
-    labelled_components = nppas.connected_components(surface)
+    labelled_components = nppas.connected_component_labeling(surface)
     assert len(np.unique((labelled_components[2]))) == 2
 
 def test_decimate():

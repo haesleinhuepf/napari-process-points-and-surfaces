@@ -185,7 +185,7 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData", viewer: "napa
 
 
 @register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
-def connected_components(
+def connected_component_labeling(
     surface: "napari.types.SurfaceData",
     viewer: "napari.Viewer" = None) -> 'napari.types.SurfaceData':
     from ._utils import _init_viewer
