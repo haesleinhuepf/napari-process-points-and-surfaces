@@ -105,7 +105,6 @@ class SurfaceTuple(tuple):
             "<td style=\"text-align: center; vertical-align: top;\">",
             help_text,
             "<table>",
-            #"<tr><td>origin (z/y/x)</td><td>" + str(mesh.origin()).replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>center of mass(z/y/x)</td><td>" + center_of_mass.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>scale(z/y/x)</td><td>" + scale.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>bounds (z/y/x)</td><td>" + str(bounds).replace(" ", "&nbsp;") + "</td></tr>",
