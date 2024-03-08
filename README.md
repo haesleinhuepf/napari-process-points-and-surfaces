@@ -84,6 +84,7 @@ There are other napari plugins with similar / overlapping functionality
 * [napari-pymeshlab](https://www.napari-hub.org/plugins/napari-pymeshlab)
 * [napari-pyclesperanto-assistant](https://www.napari-hub.org/plugins/napari-pyclesperanto-assistant)
 * [napari-stress](https://www.napari-hub.org/plugins/napari-stress)
+* [surforama](https://github.com/cellcanvas/surforama)
 
 And there is software for doing similar things:
 * [meshlab](https://www.meshlab.net/)
