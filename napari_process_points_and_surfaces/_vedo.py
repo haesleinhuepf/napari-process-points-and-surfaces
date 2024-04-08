@@ -502,7 +502,7 @@ def decimate_quadric(surface: "napari.types.SurfaceData",
     _init_viewer(viewer)
 
     mesh_in = to_vedo_mesh(surface)
-    mesh_out = mesh_in.decimate(method='quadric', fraction=fraction, n=number_of_vertices)
+    mesh_out = mesh_in.decimate(fraction=fraction, n=number_of_vertices)
     return to_napari_surface_data(mesh_out)
 
 
