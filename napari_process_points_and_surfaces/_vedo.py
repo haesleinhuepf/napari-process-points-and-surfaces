@@ -592,7 +592,7 @@ def decimate_pro(surface: "napari.types.SurfaceData",
     _init_viewer(viewer)
 
     mesh_in = to_vedo_mesh(surface)
-    mesh_out = mesh_in.decimate(method='pro', fraction=fraction, n=number_of_vertices)
+    mesh_out = mesh_in.decimate_pro(fraction=fraction, n=number_of_vertices)
     return to_napari_surface_data(mesh_out)
 
 
