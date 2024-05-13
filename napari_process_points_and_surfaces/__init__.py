@@ -42,8 +42,7 @@ from ._vedo import (to_vedo_mesh,
                     smooth_pointcloud_moving_least_squares_2d_radius,
                     smooth_pointcloud_moving_least_squares_2d,
                     reconstruct_surface_from_pointcloud,
-                    connected_component_labeling,
-                    split_mesh
+                    connected_component_labeling
                     )
 
 from ._utils import isotropic_scale_surface
@@ -117,7 +116,7 @@ def gastruloid() -> "napari.types.SurfaceData":
 def _vedo_ellipsoid() -> "napari.types.SurfaceData":
     import vedo
     shape = vedo.shapes.Ellipsoid().scale(10)
-    return (shape.vertices, np.asarray(shape.cells))
+    return (shape.points(), np.asarray(shape.faces()))
 
 
 def _vedo_stanford_bunny() -> "napari.types.SurfaceData":
@@ -208,7 +207,7 @@ def surface_to_binary_volume(surface: "napari.types.SurfaceData", as_large_as_im
     _init_viewer(viewer)
 
     my_mesh = vedo.mesh.Mesh((surface[0], surface[1]))
-    vertices = my_mesh.vertices  # get coordinates of surface vertices
+    vertices = my_mesh.points()  # get coordinates of surface vertices
 
     # get bounding box of mesh
     boundaries_l = np.min(vertices + 0.5, axis=0).astype(int)
@@ -304,7 +303,7 @@ def all_labels_to_surface(labels: "napari.types.LabelsData", add_label_id_as_val
         surface = set_vertex_values(surface, all_values)
 
     return surface
-    #(mesh.vertices, np.asarray(mesh.cells), mesh.pointdata['OriginalMeshID'])
+    #(mesh.points(), np.asarray(mesh.faces()), mesh.pointdata['OriginalMeshID'])
 
 # alias
 marching_cubes = all_labels_to_surface
@@ -745,7 +744,7 @@ def fill_holes(surface: "napari.types.SurfaceData", size_limit: float = 100) -> 
     mesh = vedo.mesh.Mesh((surface[0], surface[1]))
     mesh.fill_holes(size=size_limit)
 
-    return (mesh.vertices, np.asarray(mesh.cells))
+    return (mesh.points(), np.asarray(mesh.faces()))
 
 def _check_open3d():
     try:
