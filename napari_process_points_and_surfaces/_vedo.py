@@ -1,5 +1,6 @@
 from napari_tools_menu import register_function
 import numpy as np
+from typing import List
 
 def to_vedo_mesh(surface):
     _hide_vtk_warnings()
@@ -67,7 +68,7 @@ class SurfaceTuple(tuple):
         # mesh statistics
         bounds = "<br/>".join(["{min_x:.3f}...{max_x:.3f}".format(min_x=min_x, max_x=max_x) for min_x, max_x in zip(mesh.bounds()[::2], mesh.bounds()[1::2])])
         average_size = "{size:.3f}".format(size=mesh.average_size())
-        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.centerOfMass()])
+        center_of_mass = ",".join(["{size:.3f}".format(size=x) for x in mesh.center_of_mass()])
         scale = ",".join(["{size:.3f}".format(size=x) for x in mesh.scale()])
         histogram = ""
         min_max = ""
@@ -104,13 +105,12 @@ class SurfaceTuple(tuple):
             "<td style=\"text-align: center; vertical-align: top;\">",
             help_text,
             "<table>",
-            "<tr><td>origin (z/y/x)</td><td>" + str(mesh.origin()).replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>center of mass(z/y/x)</td><td>" + center_of_mass.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>scale(z/y/x)</td><td>" + scale.replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>bounds (z/y/x)</td><td>" + str(bounds).replace(" ", "&nbsp;") + "</td></tr>",
             "<tr><td>average size</td><td>" + str(average_size) + "</td></tr>",
             "<tr><td>number of vertices</td><td>" + str(mesh.npoints) + "</td></tr>",
-            "<tr><td>number of faces</td><td>" + str(len(mesh.faces())) + "</td></tr>",
+            "<tr><td>number of faces</td><td>" + str(len(mesh.cells)) + "</td></tr>",
             min_max,
             "</table>",
             histogram,
@@ -124,13 +124,13 @@ class SurfaceTuple(tuple):
 
 def to_napari_surface_data(vedo_mesh, values=None):
     if values is None:
-        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces())))
+        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.cells)))
     else:
-        return SurfaceTuple((vedo_mesh.points(), np.asarray(vedo_mesh.faces()), values))
+        return SurfaceTuple((vedo_mesh.vertices, np.asarray(vedo_mesh.cells), values))
 
 
 def to_napari_points_data(vedo_points):
-    return vedo_points.points()
+    return vedo_points.vertices
 
 
 def _hide_vtk_warnings():
@@ -184,26 +184,83 @@ def remove_duplicate_vertices(surface: "napari.types.SurfaceData", viewer: "napa
 
 
 @register_function(menu="Surfaces > Connected components labeling (vedo, nppas)")
-def connected_component_labeling(surface: "napari.types.SurfaceData", viewer: "napari.Viewer" = None) -> "napari.types.SurfaceData":
-    """
-    Determine the connected components of a surface mesh.
-
-    See Also
-    --------
-    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.compute_connectivity
-    """
-    from ._quantification import set_vertex_values
+def connected_component_labeling(
+    surface: "napari.types.SurfaceData",
+    viewer: "napari.Viewer" = None) -> 'napari.types.SurfaceData':
     from ._utils import _init_viewer
+    import vtk
+    import vtk.util.numpy_support as vtk_to_np
+
     _init_viewer(viewer)
 
     mesh = to_vedo_mesh(surface)
-    mesh.compute_connectivity()
-    region_id = mesh.pointdata["RegionId"]
 
-    mesh_out = to_napari_surface_data(mesh)
-    mesh_out = set_vertex_values(mesh_out, region_id)
+    # Set up connectivity filter
+    conn = vtk.vtkConnectivityFilter()
+    conn.SetInputData(mesh.dataset)
+    conn.SetExtractionModeToAllRegions()
 
-    return mesh_out
+    # Enable coloring of regions
+    conn.ColorRegionsOn()
+    conn.Update()
+    result = conn.GetOutput()
+
+    region_ids = vtk_to_np.vtk_to_numpy(
+        result.GetCellData().GetArray("RegionId"))
+
+    vertex_labels = np.zeros(mesh.npoints, dtype=np.uint32)
+    vertex_labels[np.asarray(mesh.cells)[:, 0]] = region_ids
+    vertex_labels[np.asarray(mesh.cells)[:, 1]] = region_ids
+    vertex_labels[np.asarray(mesh.cells)[:, 2]] = region_ids
+
+    return SurfaceTuple((
+        surface[0],
+        np.asarray(surface[1]),
+        vertex_labels))
+
+
+def split_mesh(
+    surface: "napari.types.SurfaceData"
+    ) -> list:
+    """
+    Split a mesh into its connected components.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.split
+    """
+    mesh = to_vedo_mesh(surface)
+    meshes = mesh.split()
+
+    meshes_out = [
+        SurfaceTuple(to_napari_surface_data(mesh)) for mesh in meshes
+    ]
+
+    return meshes_out
+
+
+@register_function(menu="Surfaces > Split mesh (vedo, nppas)")
+def _split_mesh(
+    surface: "napari.types.SurfaceData",
+    viewer: "napari.Viewer" = None
+    ) -> List["napari.types.LayerDataTuple"]:
+    """
+    Split a mesh into its connected components.
+
+    See Also
+    --------
+    ..[0] https://vedo.embl.es/docs/vedo/mesh.html#Mesh.split
+
+    """
+    from ._utils import _init_viewer
+    _init_viewer(viewer)
+
+    meshes = split_mesh(surface)
+
+    return [(mesh,
+             {'colormap': 'hsv',
+              'name': 'Component ' + str(i)},
+             'surface') for i, mesh in enumerate(meshes)]
 
 
 @register_function(menu="Surfaces > Smooth (moving least squares, vedo, nppas)")
@@ -411,7 +468,7 @@ def subdivide_adaptive(surface: "napari.types.SurfaceData",
 
     if maximum_edge_length == 0:
         maximum_edge_length = mesh_in.diagonal_size(
-        ) / np.sqrt(mesh_in._data.GetNumberOfPoints()) / number_of_iterations
+        ) / np.sqrt(mesh_in.npoints) / number_of_iterations
 
     mesh_out = mesh_in.subdivide(
         number_of_iterations, method=2, mel=maximum_edge_length)
@@ -502,7 +559,7 @@ def decimate_quadric(surface: "napari.types.SurfaceData",
     _init_viewer(viewer)
 
     mesh_in = to_vedo_mesh(surface)
-    mesh_out = mesh_in.decimate(method='quadric', fraction=fraction, n=number_of_vertices)
+    mesh_out = mesh_in.decimate(fraction=fraction, n=number_of_vertices)
     return to_napari_surface_data(mesh_out)
 
 
@@ -535,7 +592,7 @@ def decimate_pro(surface: "napari.types.SurfaceData",
     _init_viewer(viewer)
 
     mesh_in = to_vedo_mesh(surface)
-    mesh_out = mesh_in.decimate(method='pro', fraction=fraction, n=number_of_vertices)
+    mesh_out = mesh_in.decimate_pro(fraction=fraction, n=number_of_vertices)
     return to_napari_surface_data(mesh_out)
 
 
