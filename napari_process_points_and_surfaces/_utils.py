@@ -1,6 +1,21 @@
 from napari_tools_menu import register_function
 import numpy as np
 
+
+@register_function(menu="Surfaces > Toggle wireframe (nppas)")
+def toggle_wireframe(layer: "napari.layers.Surface",
+                     viewer: "napari.Viewer") -> None:
+    """
+    Toggles the wireframe of a napari surface layer.
+    """
+    wireframe_visible = viewer.layers[layer.name].wireframe.visible
+
+    if wireframe_visible:
+        viewer.layers[layer.name].wireframe.visible = False
+    else:
+        viewer.layers[layer.name].wireframe.visible = True
+
+
 @register_function(menu = "Surfaces > Scale surface (isotropic, nppas)",
                     scale_factor={'min':0.01, 'max':100000})
 def isotropic_scale_surface(surface: "napari.types.SurfaceData", scale_factor:float = 1) -> "napari.types.SurfaceData":
